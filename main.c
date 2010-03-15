@@ -9,7 +9,8 @@
  #include <unistd.h>
  #include <stdlib.h>
  #include <string.h>
- 
+ #include <math.h>
+
  #include <jack/jack.h>
  
  jack_port_t *input_port;
@@ -19,13 +20,77 @@
   * The process callback for this JACK application.
   * It is called by JACK at the appropriate times.
   */
-int process (jack_nframes_t nframes, void *arg) {
 
-     jack_default_audio_sample_t *out = (jack_default_audio_sample_t *) jack_port_get_buffer (output_port, nframes);
-     jack_default_audio_sample_t *in = (jack_default_audio_sample_t *) jack_port_get_buffer (input_port, nframes);
-     memcpy (out, in, sizeof (jack_default_audio_sample_t) * nframes);
-     
-     return 0;      
+float f_dist(float f1){
+	float f2 = (f1*f1*2.0);
+	float f3 = (f1*f1*f1)*3.0;
+	float c = 0.01;
+	float f = f1;
+	//sqrt(f1 + f2 + f3)/(100.0)+sqrt(f1 + f2)/(100.0);
+	//f1 + f2 + f3 + c;
+	return f/10;
+}
+
+//void distortion(jack_default_audio_sample_t * buf){
+float* distortion(jack_default_audio_sample_t * buf){
+	float* prom = (float*) malloc(8);
+	int n = sizeof(buf);
+	int i = 0;
+	float umbral = 10.0/1.0; //pasar algun parametro
+	float bufi = buf[0];
+	prom[0] = 0.0;
+	prom[1] = n;
+	while(i<n){
+		bufi = buf[i];
+		prom[0]+=bufi;
+		if (bufi < (-0.0015)) 	buf[i] = 0.0;
+		else					buf[i] = f_dist(bufi);
+		printf("bufi = %f\n",buf[i]);
+		/*
+		if(bufi < 0.0)	buf[i] = -1.0;
+		else			buf[i] = 1.0;
+		if (bufi > umbral)						buf[i] = umbral; 
+		if (bufi < -umbral)						buf[i] = -umbral;
+		if (bufi < 0.0009)						buf[i] = 0.0;		///noise reduction
+		if (bufi > -umbral && bufi < umbral) 	buf[i] = f_dist(bufi);*/
+		i+=1;
+	}
+return prom;
+}
+
+void arcify(float* data,long len,float mult){
+  int i = 0;
+  for(i;i<len;i++)
+    data[i]=atan(data[i]*mult)/atan(mult);
+}
+/*
+int process (jack_nframes_t nframes, void *arg) {
+	float * prom;
+    
+    jack_default_audio_sample_t *out = (jack_default_audio_sample_t *) jack_port_get_buffer (output_port, nframes);
+    jack_default_audio_sample_t *in = (jack_default_audio_sample_t *) jack_port_get_buffer (input_port, nframes);
+	jack_default_audio_sample_t distor_buffer[nframes];///linea agregada
+	
+	memcpy (distor_buffer,in,sizeof(jack_default_audio_sample_t) * nframes);///linea agregada
+	prom = distortion(distor_buffer);///linea agregada
+    
+    memcpy (out, distor_buffer, sizeof (jack_default_audio_sample_t) * nframes);///linea modif
+
+	
+
+    return 0;      
+}*/
+
+int process (jack_nframes_t nframes, void *arg)
+{
+  float multiplier = 3000.14;
+  jack_default_audio_sample_t *out = (jack_default_audio_sample_t *) jack_port_get_buffer (output_port, nframes);
+  jack_default_audio_sample_t *in = (jack_default_audio_sample_t *) jack_port_get_buffer (input_port, nframes);
+  
+  memcpy (out, in, sizeof (jack_default_audio_sample_t) * nframes);
+  arcify(out,nframes,multiplier);
+  
+  return 0;      
 }
  /**
   * This is the shutdown callback for this JACK application.
