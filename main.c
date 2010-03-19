@@ -64,17 +64,19 @@ void m_dist_5(float* data,long len,float mult){//
 	}
 }
 
-void m_dist_6(float* data,long len,float vol){//raiz nasty
+void m_dist_6(float* data,long len,float volume){//raiz nasty
 	int i = 0;
 	for(i;i<len;i++){
-		data[i]= sqrt(data[i]); ///se puede elevar hasta el cuadrado data y suena copado
+		data[i]= pow(volume,4)*sqrt(data[i]); ///se puede elevar hasta el cuadrado data y suena copado
 	}
 }
 
 
 int process (jack_nframes_t nframes, void *arg)
 {
+	///puedo usar x⁴ como una buena aproximacion para el volumen.
 	float divider = 1.0;
+	float volume = 10.0;
 	float multiplier = 250000.0;
 	jack_default_audio_sample_t *outL = (jack_default_audio_sample_t *) jack_port_get_buffer (output_left, nframes);
   	jack_default_audio_sample_t *outR = (jack_default_audio_sample_t *) jack_port_get_buffer (output_right, nframes);
@@ -82,8 +84,8 @@ int process (jack_nframes_t nframes, void *arg)
 
 	memcpy (outL, in, sizeof (jack_default_audio_sample_t) * nframes);
 	memcpy (outR, in, sizeof (jack_default_audio_sample_t) * nframes);
-	m_dist_6(outL,nframes,divider);
-	m_dist_6(outR,nframes,divider);
+	m_dist_6(outL,nframes,volume);
+	m_dist_6(outR,nframes,volume);
 //	m_dist_5(out,nframes,divider);
 //	m_dist_4(out,nframes,divider);
 //	m_dist_3(out,nframes,multiplier);
