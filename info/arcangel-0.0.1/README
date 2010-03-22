@@ -1,0 +1,38 @@
+About
+-----
+
+arcangel - arctangent saturate/distort
+
+Very simply reshapes input with atan to give a nice grungy overdrive without clipping.
+
+
+Building and installing
+-----------------------
+
+Use "make" to build, "make install" as root to install.
+
+
+Running
+-------
+
+arcangel <name>
+
+Where <name> is the name given to jack
+
+
+Requirements
+------------
+
+jack	- http://jackit.sourceforge.net/
+xforms	- http://world.std.com/~xforms/
+
+
+Copyright
+---------
+
+Copyright (C) 2006 James Shuttleworth
+arcangel comes with ABSOLUTELY NO WARRANTY
+This is free software, and you are welcome to redistribute it
+under certain conditions; see the COPYING file for details
+
+
