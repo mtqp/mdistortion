@@ -1,7 +1,8 @@
+OBJS = m_distortion.o m_distortion_ch.o
 
-
-mdistor: main.o 
-	gcc -o m_distortion `pkg-config --cflags --libs jack` main.c
+mdistor: main.c $(OBJS)
+	gcc -o m_distortion `pkg-config --cflags --libs jack` -lm main.c $(OBJS)
 
 clean:
-	rm $(OBJS) main.o m_distortion 
+	rm -f m_distortion
+	rm -f *.o

@@ -1,0 +1,74 @@
+Magic: 13000
+
+Internal Form Definition File
+    (do not change)
+
+Number of forms: 1
+Unit of measure: FL_COORD_PIXEL
+
+=============== FORM ===============
+Name: arcangel
+Width: 210
+Height: 100
+Number of Objects: 3
+
+--------------------
+class: FL_BOX
+type: FRAME_BOX
+box: 0 0 210 100
+boxtype: FL_FRAME_BOX
+colors: FL_WHITE FL_COL1
+alignment: FL_ALIGN_CENTER
+style: FL_NORMAL_STYLE
+size: FL_DEFAULT_SIZE
+lcol: FL_BLACK
+label: 
+shortcut: 
+resize: FL_RESIZE_ALL
+gravity: FL_NoGravity FL_NoGravity
+name: 
+callback: 
+argument: 
+
+--------------------
+class: FL_BUTTON
+type: NORMAL_BUTTON
+box: 120 10 80 80
+boxtype: FL_BORDER_BOX
+colors: FL_WHITE FL_COL1
+alignment: FL_ALIGN_CENTER
+style: FL_NORMAL_STYLE
+size: FL_DEFAULT_SIZE
+lcol: FL_BLACK
+label: Quit
+shortcut: q
+resize: FL_RESIZE_ALL
+gravity: FL_SouthEast FL_SouthEast
+name: quit
+callback: form_quit
+argument: 0
+
+--------------------
+class: FL_DIAL
+type: FILL_DIAL
+box: 10 10 80 70
+boxtype: FL_FLAT_BOX
+colors: FL_WHITE FL_DODGERBLUE
+alignment: FL_ALIGN_BOTTOM
+style: FL_NORMAL_STYLE
+size: FL_DEFAULT_SIZE
+lcol: FL_BLACK
+label: drive
+shortcut: 
+resize: FL_RESIZE_ALL
+gravity: FL_SouthEast FL_SouthEast
+name: dial
+callback: form_dial
+argument: 0
+  bounds: 0.1 400
+  value: 1
+  step: 0.1
+  return: FL_RETURN_ALWAYS
+
+==============================
+create_the_forms
