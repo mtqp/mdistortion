@@ -14,7 +14,6 @@ void init_m_distortion_ch(m_distortion_channel *d, float vol, float gain, float 
 	d->_pow_dgain= pow(gain,4);
 	d->_variacion_vol  = var_vol;
 	d->_variacion_gain = var_gain;
-	//d->_nframes = nframes;
 
 	//SETEAR TODAS LAS DISTORSIONES! EN EL ARRAY MALDITO INT! :d:d:d:d:
 	
@@ -69,17 +68,70 @@ void gain_down(m_distortion_channel *mdc){		//notar q no hay problema, el metodo
 
 /////////////////////////////////////////////////////
 ///----------------DISTORSIONES-------------------///
-////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
 
-////PENSAR EN Q LAS GANACIAS Y VOLUMENES VAN A TENER Q ESTAR ESTABILIZADOS PARA TODOS X IGUAL DESDE LAS FUNCIONES
+///LAS CTES SE ENCARGAN DE ESTABILIZAR TODOS EN MISMO VOLUMENES, Y CON DISTORS COPADAS
+
+void log_rock(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){//logaritmic rock //seno hace mas agudo// cos mas grave
+//	printf("log rock\n");
+	int i = 0;
+	for(i;i<nframes;i++){
+		out[i]=sin(cos(log(sin(log(out[i])))));//con seno tbm qda RE buena
+	}
+}
+
+void log_rock2(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){//
+//	printf("log rock II\n");
+	int i = 0;
+	for(i;i<nframes;i++){
+		out[i]= cos(tan(tan(log((out[i])))));//tan lo hace mas grave sintbm, pero menos q tan ///-sen mas grave todavia
+	}
+}
+
+void hell_sqr(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){//raiz nasty
+//	printf("hell sqrt\n");
+	int i = 0;
+	for(i;i<nframes;i++){
+		out[i]= 1000.0*sqrt(out[i]); ///se puede elevar hasta el cuadrado data y suena copado
+	}
+}
+
+void psychedelic_if(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){ //arco tangente
+//	printf("sweet_arc_tan\n");
+	int i = 0;
+	float vol = (mdc->_pow_dvol)/5;
+	for(i;i<nframes;i++){
+		if(i < nframes/3) {
+			out[i] = (log(out[i])*10000.0)/5;
+		} else {
+			out[i] = sin(log(sin(out[i])));	 	//q la mejor aproximacion es la x4
+		}
+	}
+}
+
+void by_60s(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){
+//	printf("by pass\n");
+	int i = 0;
+	for(i;i<nframes;i++){
+		out[i]= 100.0 * out[i];
+	}
+}
+
+void fuzzy_dark_pow4(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){ //fuzzy oscura // siempre negativa.
+//	printf("fuzzy dark pow4\n");
+	int i = 0;
+	for(i;i<nframes;i++){
+		out[i]= 100000000.0*(-pow(out[i],4));
+	}
+}
+
 void rare_cuadratic(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){ //cuadratica RARISIMA
 //	printf("rare_cuadratic\n");
 	int i = 0;
 	for(i;i<nframes;i++){
-		out[i]= (mdc->_pow_dvol+10.0)*(pow(out[i],2)/*/(mdc->_pow_dgain)*/)*1000.0;
+		out[i]= 11000.0*(pow(out[i],2));
 	}
 }
-
 
 void random_day(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){ //sum(d/2^i) bastante normal
 //	printf("raw sum 2i\n");
@@ -115,61 +167,5 @@ void random_day(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jac
 	if(mod2 == 4)			by_60s(out,mdc,nframes);
 	if(mod2 == 5)			fuzzy_dark_pow4(out,mdc,nframes);
 	if(mod2 == 6)			rare_cuadratic(out,mdc,nframes);
-
-
 }	
-
-void fuzzy_dark_pow4(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){ //fuzzy oscura // siempre negativa.
-//	printf("fuzzy dark pow4\n");
-	int i = 0;
-	for(i;i<nframes;i++){
-		out[i]= 100000000.0*(-pow(out[i],4))*(mdc->_pow_dvol);
-	}
-}
-
-void log_rock(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){//logaritmic rock //seno hace mas agudo// cos mas grave
-//	printf("log rock\n");
-	int i = 0;
-	for(i;i<nframes;i++){
-		out[i]=sin(cos(log(sin(log(out[i])))));//con seno tbm qda RE buena
-	}
-}
-
-void log_rock2(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){//
-//	printf("log rock II\n");
-	int i = 0;
-	for(i;i<nframes;i++){
-		out[i]= cos(tan(tan(log((out[i])))));//tan lo hace mas grave sintbm, pero menos q tan ///-sen mas grave todavia
-	}
-}
-
-void hell_sqr(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){//raiz nasty
-//	printf("hell sqrt\n");
-	int i = 0;
-	for(i;i<nframes;i++){
-		out[i]= 1000.0*(mdc->_pow_dvol)*sqrt(out[i]); ///se puede elevar hasta el cuadrado data y suena copado
-	}
-}
-
-void psychedelic_if(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){ //arco tangente
-//	printf("sweet_arc_tan\n");
-	int i = 0;
-	float vol = (mdc->_pow_dvol)/5;
-	for(i;i<nframes;i++){
-		if(i < nframes/3) {
-			out[i] = vol * (log(out[i])*(mdc->_pow_dgain));
-		} else {
-			out[i] = sin(log(sin(out[i])));	 	//q la mejor aproximacion es la x4
-		}
-	}
-}
-
-
-void by_60s(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){
-//	printf("by pass\n");
-	int i = 0;
-	for(i;i<nframes;i++){
-		out[i]= 100.0*mdc->_pow_dvol * out[i];
-	}
-}
 
