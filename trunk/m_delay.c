@@ -1,15 +1,10 @@
 #include "m_distortion.h"
-#include "m_distortion_ch.h"
+//#include "m_distortion_ch.h"
 #include <jack/jack.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct _m_delay {
-//	speaker _s_delayed;
-	jack_default_audio_sample_t *_delay_buf;	
-	jack_nframes_t _buf_size;
-	bool _occupied_buf
-} m_delay;
+//ESTA FUNCIONANDO SOLO EN IZQUIERDO DELAYEDder Y NO ADMITE DELAY CON OTRAS DISTORSIONES.
 
 void init_m_delay(m_delay *mdelay, /*speaker delayed,*/ jack_nframes_t nframes){
 //	mdelay->_s_delayed = delayed;
@@ -23,7 +18,12 @@ void free_m_delay(m_delay *mdelay){
 	free(mdelay);
 }
 
-void delaying(m_distortion *md, jack_default_audio_sample_t *outL, jack_default_audio_sample_t *outR, jack_nframes_t nframes){
-
-
+void delaying(m_distortion *md, m_delay *delay,jack_default_audio_sample_t *outL, jack_default_audio_sample_t *outR, jack_nframes_t nframes){
+	distorsion_left(outL,md->_s_left,nframes);
+	if(!delay->_occupied_buf){
+		memcpy(delay->_delay_buf,outL,delay->_buf_size);
+	} else {
+		memcpy(outR,delay->_delay_buf,delay->_buf_size);				
+	}
+	delay->_occupied_buf = !delay->_occupied_buf;
 }

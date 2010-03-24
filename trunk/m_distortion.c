@@ -11,8 +11,10 @@ void init_m_distortion(m_distortion * md, master_type master){
 	float var = 1.0;
 	md->_s_left = (m_distortion_channel *) malloc(sizeof(m_distortion_channel));
 	md->_s_right = (m_distortion_channel *) malloc(sizeof(m_distortion_channel));
+//	md->_delay = (m_delay *) malloc(sizeof(m_delay));
 	init_m_distortion_ch(md->_s_left, vol, gain, var, var);
 	init_m_distortion_ch(md->_s_right, vol, gain ,var ,var);
+//	init_m_delay(md->_delay)
 	md->_master_ch = master;
 	md->_d_left = 5;			//comienzan en by_passASDOIFJAORJVADOFIV
 	md->_d_right= 5;
