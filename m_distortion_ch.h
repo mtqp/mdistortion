@@ -7,8 +7,6 @@
 typedef struct _m_distortion_channel {
 	float _dvol;
 	float _dgain;
-	float _pow_dvol;
-	float _pow_dgain;
 	float _variacion_vol;
 	float _variacion_gain;
 }m_distortion_channel;

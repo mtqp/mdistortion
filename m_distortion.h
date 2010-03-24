@@ -45,5 +45,7 @@ void vol_up_md (m_distortion *md, speaker sp);
 void vol_down_md (m_distortion *md, speaker sp);
 void gain_up_md (m_distortion *md, speaker sp);
 void gain_down_md (m_distortion *md, speaker sp);
+void reset_gain(m_distortion *md, speaker sp);
+void reset_vol(m_distortion *md, speaker sp);
 
 #endif
