@@ -15,14 +15,14 @@ typedef struct _m_distortion_channel {
 
 typedef void (DISTORTION)(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes);
 
-DISTORTION sweet_arc_tan;
-DISTORTION rare_cuadratic;
-DISTORTION raw_sum2i;
-DISTORTION fuzzy_dark_pow4;
 DISTORTION log_rock;
 DISTORTION log_rock2;
 DISTORTION hell_sqr;
-DISTORTION by_pass;
+DISTORTION psychedelic_if;
+DISTORTION by_60s;
+DISTORTION fuzzy_dark_pow4;
+DISTORTION rare_cuadratic;
+DISTORTION random_day;
 
 DISTORTION * f_dist[8];			///esto dependera de la cantidad de distorsiones finales q tenga.
 

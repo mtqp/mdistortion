@@ -34,7 +34,7 @@ int process (jack_nframes_t nframes, void *arg)
 	memcpy (outR, in, sizeof (jack_default_audio_sample_t) * nframes);
 
 	distortionize(m_dist, outL, outR, sizeof (jack_default_audio_sample_t) * nframes); //la gran magia
-//	distortionize(m_dist, outL, outR, nframes); //la gran magia
+
 	return 0;      
 }
  /**
@@ -134,34 +134,83 @@ void jack_shutdown (void *arg) {
 
 		/* POR AHORA, SERA EN ALGUN TIEMPO PURO ROCK BABY Since this is just a toy, run for a few seconds, then finish */
 		
-		printf ("se ha inicializado todo lo correspondiente a jack \n");
-		////inicializar m dist///
+		///////////////////////////////////////
+		/////////inicializar m dist////////////
+		///////////////////////////////////////
+		
 		m_dist = (m_distortion *) malloc(sizeof(m_distortion));
 		init_m_distortion(m_dist,master_on);
-/*
-printf("master ch == %d",m_dist->_master_ch);
-printf(" d_left == %d",m_dist->_d_left);
-printf(" d_right == %d",  m_dist->_d_right);
-printf("cant_dist == %d",m_dist->_cant_distors);
-*/
-		char quit;
-		unsigned char left;
-		unsigned char i;
-		while(!((quit = (char) getchar()) == 'q')){
-			if (quit = (char) getchar() == '+'){
-//				set_m_distortion( m_dist, i , 7);
-				vol_up_md(m_dist, speaker_izq);
+
+		char option;
+		unsigned char l = 0;
+		unsigned char r = 0;
+
+		while(1){
+			switch(option = (char) getchar()){
+				case 'q':
+					printf("closing m_distortion\n");
+					free_m_distortion(m_dist);
+					exit(0);
+					break;
+				case 'm':
+					change_master(m_dist);
+					break;
+				case 's':
+					printf("set distortion NOT WORKING YET\n\n\n");
+					printf("ingrese el valor para izq\n");		
+					//l = (unsigned char) getchar();
+					printf("ingrese el valor para der\n");							
+					//r = (unsigned char) getchar();
+					//set_m_distortion(m_dist,l,r);
+					break;
+				case '1':
+					printf("changing sig dist left\n");		
+					l++;
+					l = l%8;
+					set_m_distortion(m_dist,l,r);
+					break;
+				case '2':
+					printf("changing pre dist left\n");
+					if(l == 0){
+						l == 7;
+						set_m_distortion(m_dist,l,r);
+					} else {
+						l--;
+						set_m_distortion(m_dist,l,r);
+					}
+					break;
+				case '4':
+					printf("changing sig dist right\n");		
+					r++;
+					r = r%8;
+					set_m_distortion(m_dist,l,r);
+					break;
+				case '5':
+					printf("changing pre dist right\n");
+					if(r == 0){
+						r == 7;
+						set_m_distortion(m_dist,l,r);
+					} else {
+						r--;
+						set_m_distortion(m_dist,l,r);
+					}
+					break;
+				case 'b':
+					printf("volume up\n");
+					vol_up_md(m_dist, speaker_izq);
+					break;
+				case 'v':
+					printf("volume down\n");
+					vol_down_md(m_dist, speaker_izq);
+					break;
+				case 'x':
+					printf("gain up\n");
+					gain_up_md(m_dist, speaker_izq);
+					break;
+				case 'z':
+					printf("gain down\n");
+					gain_down_md(m_dist, speaker_izq);
+					break;		
 			}
-			if (quit = (char) getchar() == '-'){
-				vol_down_md(m_dist,speaker_izq);
-			}
-			if (quit = (char) getchar() == 'a'){
-				gain_up_md(m_dist, speaker_izq);
-			}
-			if (quit = (char) getchar() == 'z'){
-				gain_down_md(m_dist,speaker_izq);
-			}
-	
 		}
-		exit (0);
 	}
