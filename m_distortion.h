@@ -25,6 +25,7 @@
 typedef struct _m_distortion {
 	m_distortion_channel *_s_left;
 	m_distortion_channel *_s_right;
+//	m_delay *_delay;
 	master_type _master_ch;
 	unsigned char _d_left;
 	unsigned char _d_right;

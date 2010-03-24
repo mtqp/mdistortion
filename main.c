@@ -13,6 +13,7 @@
 
 //____________________________ insertado x mi
 #include "m_distortion.h"
+#include "m_delay.h"
 //----------------------------
 
 #include <jack/jack.h>
@@ -22,7 +23,7 @@ jack_port_t *output_left;
 jack_port_t *output_right;
 
 m_distortion *m_dist; 
-
+m_delay *delay
 int process (jack_nframes_t nframes, void *arg)
 {
 	///puedo usar x⁴ como una buena aproximacion para el volumen.
@@ -31,10 +32,10 @@ int process (jack_nframes_t nframes, void *arg)
 	jack_default_audio_sample_t *in = (jack_default_audio_sample_t *) jack_port_get_buffer (input_port, nframes);
 
 	memcpy (outL, in, sizeof (jack_default_audio_sample_t) * nframes);
-	memcpy (outR, in, sizeof (jack_default_audio_sample_t) * nframes);
+//	memcpy (outR, in, sizeof (jack_default_audio_sample_t) * nframes);
 
-	distortionize(m_dist, outL, outR, sizeof (jack_default_audio_sample_t) * nframes); //la gran magia
-
+//	distortionize(m_dist, outL, outR, sizeof (jack_default_audio_sample_t) * nframes); //la gran magia
+	delaying(m_dist, delay, outL, outR, sizeof (jack_default_audio_sample_t) * nframes);
 	return 0;      
 }
  /**
@@ -96,6 +97,16 @@ void jack_shutdown (void *arg) {
 
 		/* tell the JACK server that we are ready to roll */
 
+		/////////////////////////////////////
+		//PEDACITO DE CODIGO ESCRITO POR MI//
+		/////////////////////////////////////
+		
+		jack_n_frames_t bufsize = jack_get_buffer_size(client);
+		
+		/////////////////////////////////////
+		/////////////////////////////////////
+		////////////////////////////////////
+
 		if (jack_activate (client)) {
 			 fprintf (stderr, "cannot activate client");
 			 return 1;
@@ -132,7 +143,6 @@ void jack_shutdown (void *arg) {
 		}
 		free (ports);
 
-		/* POR AHORA, SERA EN ALGUN TIEMPO PURO ROCK BABY Since this is just a toy, run for a few seconds, then finish */
 		
 		///////////////////////////////////////
 		/////////inicializar m dist////////////
@@ -140,7 +150,14 @@ void jack_shutdown (void *arg) {
 		
 		m_dist = (m_distortion *) malloc(sizeof(m_distortion));
 		init_m_distortion(m_dist,master_on);
-
+		
+		delay = (m_delay *) malloc(sizeof(m_delay));
+		init_m_delay(delay,bufsize);		//TENGO Q SABER ESTOS PARAMETROS DE ENTRADA SI O SI
+		
+		////////////////////////////////////////
+		////////////////TERMINAL////////////////
+		////////////////////////////////////////
+		
 		char option;
 		unsigned char l = 0;
 		unsigned char r = 0;
@@ -150,6 +167,7 @@ void jack_shutdown (void *arg) {
 				case 'q':
 					printf("closing m_distortion\n");
 					free_m_distortion(m_dist);
+					free_m_delay(delay);
 					exit(0);
 					break;
 				case 'm':
