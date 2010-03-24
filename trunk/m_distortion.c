@@ -7,8 +7,8 @@
 void init_m_distortion(m_distortion * md, master_type master){
 	printf("inicializando m_distortion\n");
 	float vol = 1.0;
-	float gain = 10.0;
-	float var = 2.0;
+	float gain = 1.0;
+	float var = 1.0;
 	md->_s_left = (m_distortion_channel *) malloc(sizeof(m_distortion_channel));
 	md->_s_right = (m_distortion_channel *) malloc(sizeof(m_distortion_channel));
 	init_m_distortion_ch(md->_s_left, vol, gain, var, var);
@@ -108,7 +108,7 @@ void gain_up_md (m_distortion *md, speaker sp){
 	if (md->_master_ch){
 		gain_up(md->_s_left);
 		gain_up(md->_s_right);
-		printf("setting gain for both channels");
+		printf("setting gain for both channels\n");
 	} else {
 		if(sp){
 			gain_up(md->_s_left);
@@ -122,12 +122,38 @@ void gain_down_md (m_distortion *md, speaker sp){
 	if (md->_master_ch){
 		gain_down(md->_s_left);
 		gain_down(md->_s_right);
-		printf("setting gain for both channels");
+		printf("setting gain for both channels\n");
 	} else {
 		if(sp){
 			gain_down(md->_s_left);
 		} else {
 			gain_down(md->_s_right);
+		}
+	}
+}
+
+void reset_gain(m_distortion *md, speaker sp){
+	if (md->_master_ch){
+		md->_s_left->_dgain = 1.0;
+		md->_s_right->_dgain = 1.0;
+	} else {
+		if (sp == speaker_izq){
+			md->_s_left->_dgain = 1.0;
+		} else {
+			md->_s_right->_dgain = 1.0;		
+		}
+	}
+}
+
+void reset_vol(m_distortion *md, speaker sp){	
+	if (md->_master_ch){
+		md->_s_left->_dvol = 1.0;
+		md->_s_right->_dvol = 1.0;
+	} else {
+		if (sp == speaker_izq){
+			md->_s_left->_dvol = 1.0;
+		} else {
+			md->_s_right->_dvol = 1.0;		
 		}
 	}
 }

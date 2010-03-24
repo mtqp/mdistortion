@@ -33,15 +33,13 @@ float actual_volume (m_distortion_channel *mdc){
 }
 
 void volume_up(m_distortion_channel *mdc){
-	mdc->_dvol += mdc-> _variacion_vol;	///if no alcanzo el max, ver como corregir eso
-	mdc->_pow_dvol = pow(mdc->_dvol,4);
+	mdc->_dvol -= mdc-> _variacion_vol;	///if no alcanzo el max, ver como corregir eso
 }
 
 
 void volume_down(m_distortion_channel *mdc){
 	//if(mdc->_dvol > mdc->_variacion_vol){
-		mdc->_dvol -= mdc ->_variacion_vol;
-		mdc->_pow_dvol = pow(mdc->_dvol,4);
+		mdc->_dvol += mdc ->_variacion_vol;
 	//} else {
 		//mdc->_dvol = 0.0;
 	//}
@@ -52,18 +50,16 @@ float actual_gain (m_distortion_channel *mdc){
 }
 
 void gain_up(m_distortion_channel *mdc){
-	mdc->_dgain += mdc-> _variacion_gain;	///if no alcanzo el max, ver como corregir eso
-	mdc->_pow_dgain = pow(mdc->_dgain,4);
+	mdc->_dgain -= mdc-> _variacion_gain;	///if no alcanzo el max, ver como corregir eso
 }
 
 
 void gain_down(m_distortion_channel *mdc){		//notar q no hay problema, el metodo distor se encarga de elevar⁴ este parametro tanto como en volumen
-	if(mdc->_dgain > mdc->_variacion_gain){
-		mdc->_dgain -= mdc ->_variacion_gain;
-		mdc->_pow_dgain = pow(mdc->_dgain,4);
-	} else {
+//	if(mdc->_dgain > mdc->_variacion_gain){
+		mdc->_dgain += mdc ->_variacion_gain;
+/*	} else {
 		mdc->_dgain = 0.0;
-	}
+	}*/
 }
 
 /////////////////////////////////////////////////////
@@ -76,7 +72,8 @@ void log_rock(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_
 //	printf("log rock\n");
 	int i = 0;
 	for(i;i<nframes;i++){
-		out[i]=sin(cos(log(sin(log(out[i])))));//con seno tbm qda RE buena
+		out[i]=(sin(cos(log(sin(log(out[i]))))))/mdc->_dvol; /// ENTRA CON EL VOL MAX Q TIENE
+		//con seno tbm qda RE buena
 	}
 }
 
@@ -84,7 +81,8 @@ void log_rock2(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack
 //	printf("log rock II\n");
 	int i = 0;
 	for(i;i<nframes;i++){
-		out[i]= cos(tan(tan(log((out[i])))));//tan lo hace mas grave sintbm, pero menos q tan ///-sen mas grave todavia
+		out[i]= cos(tan(tan(log((out[i])))))/mdc->_dvol;//todavia se puede poner un poquito ams fuerte pero nada mas
+		//tan lo hace mas grave sintbm, pero menos q tan ///-sen mas grave todavia
 	}
 }
 
@@ -92,19 +90,18 @@ void hell_sqr(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_
 //	printf("hell sqrt\n");
 	int i = 0;
 	for(i;i<nframes;i++){
-		out[i]= 1000.0*sqrt(out[i]); ///se puede elevar hasta el cuadrado data y suena copado
+		out[i]= (1000.0*sqrt(out[i]))/pow(mdc->_dvol,3); ///cuesta mucho mas q baje la volumen
 	}
 }
 
 void psychedelic_if(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){ //arco tangente
 //	printf("sweet_arc_tan\n");
 	int i = 0;
-	float vol = (mdc->_pow_dvol)/5;
 	for(i;i<nframes;i++){
 		if(i < nframes/3) {
-			out[i] = (log(out[i])*10000.0)/5;
+			out[i] = (log(out[i])*10000.0)/(5*pow(mdc->_dvol,5));		//cuesta mucho q baje el volumen! use pow y funcionaba mejor
 		} else {
-			out[i] = sin(log(sin(out[i])));	 	//q la mejor aproximacion es la x4
+			out[i] = sin(log(sin(out[i])))/pow(mdc->_dvol,5);	 	//q la mejor aproximacion es la x4
 		}
 	}
 }
@@ -113,7 +110,7 @@ void by_60s(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nf
 //	printf("by pass\n");
 	int i = 0;
 	for(i;i<nframes;i++){
-		out[i]= 100.0 * out[i];
+		out[i]= (100.0 * out[i])/mdc->_dgain; ///funciona de volumen-ganancia, fijarse q se puede hacer
 	}
 }
 
@@ -121,7 +118,7 @@ void fuzzy_dark_pow4(jack_default_audio_sample_t *out, m_distortion_channel *mdc
 //	printf("fuzzy dark pow4\n");
 	int i = 0;
 	for(i;i<nframes;i++){
-		out[i]= 100000000.0*(-pow(out[i],4));
+		out[i]= (100000000.0*(-pow(out[i],4)))/pow(mdc->_dvol,3); //mas bien mutea la guitarra
 	}
 }
 
@@ -129,7 +126,7 @@ void rare_cuadratic(jack_default_audio_sample_t *out, m_distortion_channel *mdc,
 //	printf("rare_cuadratic\n");
 	int i = 0;
 	for(i;i<nframes;i++){
-		out[i]= 11000.0*(pow(out[i],2));
+		out[i]= (11000.0*(pow(out[i],2)))/pow(mdc->_dgain,2);
 	}
 }
 
