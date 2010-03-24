@@ -14,7 +14,7 @@ void init_m_distortion(m_distortion * md, master_type master){
 	init_m_distortion_ch(md->_s_left, vol, gain, var, var);
 	init_m_distortion_ch(md->_s_right, vol, gain ,var ,var);
 	md->_master_ch = master;
-	md->_d_left = 5;			//comienzan en by_pass
+	md->_d_left = 5;			//comienzan en by_passASDOIFJAORJVADOFIV
 	md->_d_right= 5;
 	md->_cant_distors = 8;
 	distorsion_left  =	f_dist[md->_d_left]; 
