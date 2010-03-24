@@ -29,7 +29,9 @@ typedef struct _m_distortion {
 	unsigned char _d_left;
 	unsigned char _d_right;
 	unsigned char _cant_distors;
+	char* _name_dists[8];
 }m_distortion;
+
 
 DISTORTION *distorsion_left;
 DISTORTION *distorsion_right;
@@ -37,7 +39,7 @@ DISTORTION *distorsion_right;
 void init_m_distortion(m_distortion * md, master_type master);
 void free_m_distortion(m_distortion *md);
 void distortionize(m_distortion *md, jack_default_audio_sample_t *outL, jack_default_audio_sample_t *outR, jack_nframes_t nframes);
-void reset_master (m_distortion *md, master_type master);
+void change_master (m_distortion *md);
 void set_m_distortion( m_distortion * md, unsigned char left, unsigned char right);
 void vol_up_md (m_distortion *md, speaker sp);
 void vol_down_md (m_distortion *md, speaker sp);
