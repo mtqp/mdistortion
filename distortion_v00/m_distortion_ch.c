@@ -22,8 +22,7 @@ void init_m_distortion_ch(m_distortion_channel *d, float vol, float gain, float 
 	f_dist[4] = &by_60s;
 	f_dist[5] = &fuzzy_dark_pow4;
 	f_dist[6] = &rare_cuadratic;
-	f_dist[7] = &random_day;
-	f_dist[8] = &mute_time;	
+	f_dist[7] = &random_day;	
 	
 }
 
@@ -164,13 +163,4 @@ void random_day(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jac
 	if(mod2 == 5)			fuzzy_dark_pow4(out,mdc,nframes);
 	if(mod2 == 6)			rare_cuadratic(out,mdc,nframes);
 }	
-
-void mute_time(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){
-	int i = 0;
-	float *cast = (float*) out;
-	for(i;i<2*nframes;i+=2){
-		cast[i] = 0.0;
-		cast[i+1]= (11000.0*(pow(cast[i+1],2)))/pow(mdc->_dgain,2);
-	}
-}
 

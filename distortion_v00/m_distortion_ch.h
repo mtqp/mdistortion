@@ -21,9 +21,8 @@ DISTORTION by_60s;
 DISTORTION fuzzy_dark_pow4;
 DISTORTION rare_cuadratic;
 DISTORTION random_day;
-DISTORTION mute_time;
 
-DISTORTION * f_dist[9];			///esto dependera de la cantidad de distorsiones finales q tenga.
+DISTORTION * f_dist[8];			///esto dependera de la cantidad de distorsiones finales q tenga.
 
 void init_m_distortion_ch(m_distortion_channel *d, float vol, float gain, float var_vol, float var_gain);
 float actual_volume (m_distortion_channel *mdc);

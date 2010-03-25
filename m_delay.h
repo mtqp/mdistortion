@@ -13,6 +13,6 @@ typedef struct _m_delay {
 
 void init_m_delay(m_delay *mdelay, /*speaker delayed,*/ jack_nframes_t nframes);
 void free_m_delay(m_delay *mdelay);
-void delaying(m_distortion *md, m_delay *delayjack_default_audio_sample_t *outL, jack_default_audio_sample_t *outR, jack_nframes_t nframes);
+void delaying(m_distortion *md, m_delay *delay, jack_default_audio_sample_t *outL, jack_default_audio_sample_t *outR, jack_nframes_t nframes);
 
 #endif
