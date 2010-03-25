@@ -13,7 +13,6 @@
 
 //____________________________ insertado x mi
 #include "m_distortion.h"
-#include "m_delay.h"
 //----------------------------
 
 #include <jack/jack.h>
@@ -23,20 +22,19 @@ jack_port_t *output_left;
 jack_port_t *output_right;
 
 m_distortion *m_dist; 
-//m_delay *delay;
 
 int process (jack_nframes_t nframes, void *arg)
 {
-	
+	///puedo usar x⁴ como una buena aproximacion para el volumen.
 	jack_default_audio_sample_t *outL = (jack_default_audio_sample_t *) jack_port_get_buffer (output_left, nframes);
- 	jack_default_audio_sample_t *outR = (jack_default_audio_sample_t *) jack_port_get_buffer (output_right, nframes);
+  	jack_default_audio_sample_t *outR = (jack_default_audio_sample_t *) jack_port_get_buffer (output_right, nframes);
 	jack_default_audio_sample_t *in = (jack_default_audio_sample_t *) jack_port_get_buffer (input_port, nframes);
 
 	memcpy (outL, in, sizeof (jack_default_audio_sample_t) * nframes);
 	memcpy (outR, in, sizeof (jack_default_audio_sample_t) * nframes);
-	
+
 	distortionize(m_dist, outL, outR, sizeof (jack_default_audio_sample_t) * nframes); //la gran magia
-//	delaying(m_dist, delay, outL, outR, sizeof (jack_default_audio_sample_t) * nframes);
+
 	return 0;      
 }
  /**
@@ -92,25 +90,11 @@ void jack_shutdown (void *arg) {
 
 		/* create three ports, two for stereo speakers and the other for the input*/
 
-		input_port = jack_port_register (client, "input", JACK_DEFAULT_AUDIO_TYPE, /*JackPortIsPhysical|*/JackPortIsInput, buf_size);
-		output_left = jack_port_register (client, "outputLEFT", JACK_DEFAULT_AUDIO_TYPE, /*JackPortIsPhysical|*/JackPortIsOutput, buf_size);
-		output_right = jack_port_register (client, "outputRIGHT",JACK_DEFAULT_AUDIO_TYPE, /*JackPortIsPhysical|*/JackPortIsOutput, buf_size);
+		input_port = jack_port_register (client, "input", JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, buf_size);
+		output_left = jack_port_register (client, "outputLEFT", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, buf_size);
+		output_right = jack_port_register (client, "outputRIGHT",JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, buf_size);
 
 		/* tell the JACK server that we are ready to roll */
-
-		/////////////////////////////////////
-		//PEDACITO DE CODIGO ESCRITO POR MI//
-		/////////////////////////////////////
-		
-		////////VOY A NECESITAR UNA CALLBACK X SI ME CAMBIAN EL BUF SIZE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		
-		/*jack_nframes_t bufsize = jack_get_buffer_size(client);
-		printf("\n\nTHE BUF SIZE IS == %d\n\n", (int) bufsize);
-		*/
-		
-		/////////////////////////////////////
-		/////////////////////////////////////
-		////////////////////////////////////
 
 		if (jack_activate (client)) {
 			 fprintf (stderr, "cannot activate client");
@@ -131,7 +115,7 @@ void jack_shutdown (void *arg) {
 		if (jack_connect (client, ports[0], jack_port_name (input_port))) {
 			 fprintf (stderr, "cannot connect input ports\n");
 		}
-		
+
 		free (ports);
 
 		if ((ports = jack_get_ports (client, NULL, NULL, JackPortIsPhysical|JackPortIsInput)) == NULL) {
@@ -148,6 +132,7 @@ void jack_shutdown (void *arg) {
 		}
 		free (ports);
 
+		/* POR AHORA, SERA EN ALGUN TIEMPO PURO ROCK BABY Since this is just a toy, run for a few seconds, then finish */
 		
 		///////////////////////////////////////
 		/////////inicializar m dist////////////
@@ -155,14 +140,7 @@ void jack_shutdown (void *arg) {
 		
 		m_dist = (m_distortion *) malloc(sizeof(m_distortion));
 		init_m_distortion(m_dist,master_on);
-		
-		//delay = (m_delay *) malloc(sizeof(m_delay));
-		//init_m_delay(delay,bufsize);		//TENGO Q SABER ESTOS PARAMETROS DE ENTRADA SI O SI
-		
-		////////////////////////////////////////
-		////////////////TERMINAL////////////////
-		////////////////////////////////////////
-		
+
 		char option;
 		unsigned char l = 0;
 		unsigned char r = 0;
@@ -171,8 +149,7 @@ void jack_shutdown (void *arg) {
 			switch(option = (char) getchar()){
 				case 'q':
 					printf("closing m_distortion\n");
-					//free_m_distortion(m_dist);
-					//free_m_delay(delay);
+					free_m_distortion(m_dist);
 					exit(0);
 					break;
 				case 'm':
@@ -189,7 +166,7 @@ void jack_shutdown (void *arg) {
 				case '1':
 					printf("changing sig dist left\n");		
 					l++;
-					l = l%9;
+					l = l%8;
 					set_m_distortion(m_dist,l,r);
 					break;
 				case '2':
@@ -205,7 +182,7 @@ void jack_shutdown (void *arg) {
 				case '4':
 					printf("changing sig dist right\n");		
 					r++;
-					r = r%9;
+					r = r%8;
 					set_m_distortion(m_dist,l,r);
 					break;
 				case '5':

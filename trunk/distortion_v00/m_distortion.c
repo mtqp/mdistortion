@@ -16,7 +16,7 @@ void init_m_distortion(m_distortion * md, master_type master){
 	md->_master_ch = master;
 	md->_d_left = 5;			//comienzan en by_passASDOIFJAORJVADOFIV
 	md->_d_right= 5;
-	md->_cant_distors = 9;
+	md->_cant_distors = 8;
 	distorsion_left  =	f_dist[md->_d_left]; 
 	distorsion_right =  f_dist[md->_d_right];
 
@@ -28,7 +28,6 @@ void init_m_distortion(m_distortion * md, master_type master){
 	md->_name_dists[5] = "fuzzy_dark_pow4";
 	md->_name_dists[6] = "rare_cuadratic";
 	md->_name_dists[7] = "random_day";
-	md->_name_dists[8] = "mute_time";
 
 	printf("\n\nm_distortion inicializada\n\n");
 }
@@ -42,7 +41,7 @@ void free_m_distortion(m_distortion *md){
 
 void distortionize(m_distortion *md, jack_default_audio_sample_t *outL, jack_default_audio_sample_t *outR, jack_nframes_t nframes){
 	distorsion_left(outL, md->_s_left, nframes);
-	//distorsion_right(outR, md->_s_right, nframes);
+	distorsion_right(outR, md->_s_right, nframes);
 }
 
 void change_master (m_distortion *md){

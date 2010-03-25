@@ -1,4 +1,4 @@
-OBJS = m_distortion.o m_distortion_ch.o m_delay.o
+OBJS = m_distortion.o m_distortion_ch.o
 
 mdistor: main.c $(OBJS)
 	gcc -o m_distortion `pkg-config --cflags --libs jack` -lm main.c $(OBJS)
