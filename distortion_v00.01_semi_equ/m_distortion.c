@@ -42,13 +42,13 @@ void free_m_distortion(m_distortion *md){
 }
 
 void distortionize(m_distortion *md, jack_default_audio_sample_t *outL, jack_default_audio_sample_t *outR, jack_nframes_t nframes, m_equalizer *eq, bool eqbool){
-	distorsion_left(outL, md->_s_left, nframes);
-	/*int i = 0;
+//	distorsion_left(outL, md->_s_left, nframes);
+	int i = 0;
 	if (eqbool) {
-		for(i;i<(nframes/3);i++){
-			outL[i] = equalize(eq, outL[i]);
+		for(i;i<nframes/2;i++){
+			outL[i] = (float) equalize(eq, (double) outL[i]);
 		}
-	}*/	
+	}	
 	//distorsion_right(outR, md->_s_right, nframes);
 }
 
