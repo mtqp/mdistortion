@@ -172,7 +172,7 @@ void jack_shutdown (void *arg) {
 				case '2':
 					printf("changing pre dist left\n");
 					if(l == 0){
-						l == 7;
+						l = 7;
 						set_m_distortion(m_dist,l,r);
 					} else {
 						l--;
@@ -188,7 +188,7 @@ void jack_shutdown (void *arg) {
 				case '5':
 					printf("changing pre dist right\n");
 					if(r == 0){
-						r == 7;
+						r = 7;
 						set_m_distortion(m_dist,l,r);
 					} else {
 						r--;
