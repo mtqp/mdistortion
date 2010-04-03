@@ -16,16 +16,21 @@
 
 
 #include "m_distortion.h"
+//#include "callbacks.c"
 
 
 #include <jack/jack.h>
 #include <gtk/gtk.h>
- 
+
 jack_port_t *input_port;
 jack_port_t *output_left;
 jack_port_t *output_right;
 
 m_distortion *m_dist; 
+
+////////////////////////////////////////////
+///////////CALLBACKS-JACK///////////////////
+////////////////////////////////////////////
 
 int process (jack_nframes_t nframes, void *arg)
 {
@@ -49,7 +54,31 @@ int process (jack_nframes_t nframes, void *arg)
 void jack_shutdown (void *arg) {
 	exit (1);
 }
- 
+
+////////////////////////////////////////////
+///////////CALLBACKS-INTERFAZ///////////////
+////////////////////////////////////////////
+
+bool on_m_distortion_destroy (GtkObject *object, gpointer user_data)
+{
+    gtk_main_quit();
+	return false;	
+}
+
+
+
+//* Our callback.
+// * The data passed to this function is printed to stdout 
+static void callback( GtkWidget *widget, gpointer   data ) {
+    g_print ("Hello again - %s was pressed\n", (char *) data);
+}
+
+//* This callback quits the program 
+bool on_quit_clicked( GtkButton *button/*, gpointer   data*/ ) {
+    gtk_main_quit ();
+    return FALSE;
+}
+
 /////////////////////////////////////////////
 ///////////CODIGO-MAIN//////////////////////
 ////////////////////////////////////////////
