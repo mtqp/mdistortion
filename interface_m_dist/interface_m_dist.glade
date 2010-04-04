@@ -4,10 +4,9 @@
   <!-- interface-naming-policy project-wide -->
   <object class="GtkWindow" id="m_distortion">
     <property name="border_width">6</property>
-    <property name="default_width">640</property>
-    <property name="default_height">480</property>
+    <property name="resizable">False</property>
     <property name="opacity">0.94999999999999996</property>
-    <signal name="destroy" handler="gtk_main_quit"/>
+    <signal name="destroy" handler="on_m_distortion_destroy"/>
     <child>
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
@@ -487,16 +486,16 @@
                           <object class="GtkHBox" id="hbox3">
                             <property name="visible">True</property>
                             <child>
-                              <object class="GtkToggleButton" id="rock_mode">
+                              <object class="GtkRadioButton" id="rock_mode">
                                 <property name="label" translatable="yes">ROCK</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="active">True</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="on_rock_mode_clicked" object="distors"/>
                               </object>
                               <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="padding">8</property>
                                 <property name="position">0</property>
                               </packing>
                             </child>
@@ -514,14 +513,17 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkToggleButton" id="random_day">
+                                  <object class="GtkRadioButton" id="random_mode">
                                     <property name="label" translatable="yes">Random Day</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                    <property name="group">rock_mode</property>
+                                    <signal name="clicked" handler="on_random_mode_clicked" object="distors"/>
                                   </object>
                                   <packing>
-                                    <property name="fill">False</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -555,14 +557,17 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkToggleButton" id="by_pass">
+                                  <object class="GtkRadioButton" id="by_pass_mode">
                                     <property name="label" translatable="yes">By Pass</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                    <property name="group">rock_mode</property>
+                                    <signal name="clicked" handler="on_by_pass_mode_clicked" object="distors"/>
                                   </object>
                                   <packing>
-                                    <property name="fill">False</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -597,15 +602,17 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkToggleButton" id="mute">
+                                  <object class="GtkRadioButton" id="mute_mode">
                                     <property name="label" translatable="yes">Mute</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="yalign">0.49000000953674316</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                    <property name="group">rock_mode</property>
+                                    <signal name="clicked" handler="on_mute_mode_clicked" object="distors"/>
                                   </object>
                                   <packing>
-                                    <property name="fill">False</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -678,7 +685,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkVBox" id="vbox10">
+                                  <object class="GtkVBox" id="dist">
                                     <property name="visible">True</property>
                                     <property name="orientation">vertical</property>
                                     <child>
@@ -688,6 +695,8 @@
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="draw_indicator">True</property>
+                                        <property name="group">hell_sqrt</property>
+                                        <signal name="clicked" handler="on_log_rock_clicked"/>
                                       </object>
                                       <packing>
                                         <property name="position">0</property>
@@ -701,6 +710,8 @@
                                         <property name="receives_default">False</property>
                                         <property name="relief">none</property>
                                         <property name="draw_indicator">True</property>
+                                        <property name="group">hell_sqrt</property>
+                                        <signal name="clicked" handler="on_log_rock_II_clicked"/>
                                       </object>
                                       <packing>
                                         <property name="position">1</property>
@@ -714,6 +725,7 @@
                                         <property name="receives_default">False</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="on_hell_sqrt_clicked"/>
                                       </object>
                                       <packing>
                                         <property name="position">2</property>
@@ -726,6 +738,8 @@
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="draw_indicator">True</property>
+                                        <property name="group">hell_sqrt</property>
+                                        <signal name="clicked" handler="on_psychedelic_if_clicked"/>
                                       </object>
                                       <packing>
                                         <property name="position">3</property>
@@ -733,11 +747,13 @@
                                     </child>
                                     <child>
                                       <object class="GtkRadioButton" id="by_60s">
-                                        <property name="label" translatable="yes">psychedelic_if</property>
+                                        <property name="label" translatable="yes">by_60's</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="draw_indicator">True</property>
+                                        <property name="group">hell_sqrt</property>
+                                        <signal name="clicked" handler="on_by_60s_clicked"/>
                                       </object>
                                       <packing>
                                         <property name="position">4</property>
@@ -750,6 +766,8 @@
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="draw_indicator">True</property>
+                                        <property name="group">hell_sqrt</property>
+                                        <signal name="clicked" handler="on_fuzzy_dark_pow_IV_clicked"/>
                                       </object>
                                       <packing>
                                         <property name="position">5</property>
@@ -763,6 +781,8 @@
                                         <property name="receives_default">False</property>
                                         <property name="relief">none</property>
                                         <property name="draw_indicator">True</property>
+                                        <property name="group">hell_sqrt</property>
+                                        <signal name="clicked" handler="on_rare_cuadratic_clicked"/>
                                       </object>
                                       <packing>
                                         <property name="position">6</property>

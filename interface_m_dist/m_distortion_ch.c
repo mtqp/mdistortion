@@ -23,7 +23,8 @@ void init_m_distortion_ch(m_distortion_channel *d, float vol, float gain, float 
 	f_dist[5] = &fuzzy_dark_pow4;
 	f_dist[6] = &rare_cuadratic;
 	f_dist[7] = &random_day;	
-	
+	f_dist[8] = &mute;
+	f_dist[9] = &by_pass;
 }
 
 float actual_volume (m_distortion_channel *mdc){
@@ -132,28 +133,6 @@ void random_day(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jac
 //	printf("raw sum 2i\n");
 	srand(time(NULL));
 	int mod2;
-	/*switch (mod2 = rand()%7){
-		case '0':
-			log_rock(out,mdc,nframes);
-			break;
-		case '1':
-			log_rock2(out,mdc,nframes);
-			break;
-		case '2':
-			hell_sqr(out,mdc,nframes);
-			break;
-		case '3':
-			psychedelic_if(out,mdc,nframes);
-			break;
-		case '4':
-			by_60s(out,mdc,nframes);
-			break;
-		case '5':
-			fuzzy_dark_pow4(out,mdc,nframes);
-			break;
-		case '6':
-			rare_cuadratic(out,mdc,nframes);
-	}*/
 	mod2 = rand()%7;
 	if(mod2 == 0) 			log_rock(out,mdc,nframes);
 	if(mod2 == 1)			log_rock2(out,mdc,nframes);
@@ -164,3 +143,13 @@ void random_day(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jac
 	if(mod2 == 6)			rare_cuadratic(out,mdc,nframes);
 }	
 
+void mute(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){
+	int i=0;
+	for(i;i<nframes;i++){
+		out[i] = 0.0;
+	}	
+}
+
+void by_pass(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){
+	//mmm no hago nada?
+}

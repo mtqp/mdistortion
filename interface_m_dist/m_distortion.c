@@ -1,5 +1,5 @@
 #include "m_distortion.h"
-#include "m_distortion_ch.h"
+//#include "m_distortion_ch.h"
 #include <jack/jack.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,15 +10,17 @@ void init_m_distortion(m_distortion * md, master_type master){
 	float gain = 1.0;
 	float var = 1.0;
 	md->_s_left = (m_distortion_channel *) malloc(sizeof(m_distortion_channel));
-	md->_s_right = (m_distortion_channel *) malloc(sizeof(m_distortion_channel));
+//	md->_s_right = (m_distortion_channel *) malloc(sizeof(m_distortion_channel));
 	init_m_distortion_ch(md->_s_left, vol, gain, var, var);
-	init_m_distortion_ch(md->_s_right, vol, gain ,var ,var);
-	md->_master_ch = master;
+//	init_m_distortion_ch(md->_s_right, vol, gain ,var ,var);
+//	md->_master_ch = master;
 	md->_d_left = 5;			//comienzan en by_passASDOIFJAORJVADOFIV
-	md->_d_right= 5;
-	md->_cant_distors = 8;
+//	md->_d_right= 5;
+	md->_cant_distors = 10;
 	distorsion_left  =	f_dist[md->_d_left]; 
-	distorsion_right =  f_dist[md->_d_right];
+//	distorsion_right =  f_dist[md->_d_right];
+
+	md->_last_dist_active = md->_d_left;
 
 	md->_name_dists[0] = "log_rock";
 	md->_name_dists[1] = "log_rockII";
@@ -28,22 +30,24 @@ void init_m_distortion(m_distortion * md, master_type master){
 	md->_name_dists[5] = "fuzzy_dark_pow4";
 	md->_name_dists[6] = "rare_cuadratic";
 	md->_name_dists[7] = "random_day";
-
+	md->_name_dists[8] = "mute";
+	md->_name_dists[9] = "by_pass";
 	printf("\n\nm_distortion inicializada\n\n");
 }
 
 void free_m_distortion(m_distortion *md){
 	free (md->_s_left);
-	free (md->_s_right);
+//	free (md->_s_right);
 	free (md);
 	printf("freeing m_distortion exitoso\n");
 }
 
 void distortionize(m_distortion *md, jack_default_audio_sample_t *outL, jack_default_audio_sample_t *outR, jack_nframes_t nframes){
 	distorsion_left(outL, md->_s_left, nframes);
-	distorsion_right(outR, md->_s_right, nframes);
+//	distorsion_right(outR, md->_s_right, nframes);
 }
 
+/*
 void change_master (m_distortion *md){
 	if(md->_master_ch){
 		printf("setting to master off\n");
@@ -55,8 +59,10 @@ void change_master (m_distortion *md){
 	}
 
 }
+*/
 
-void set_m_distortion( m_distortion * md, unsigned char left, unsigned char right){
+void set_m_distortion( m_distortion * md, unsigned char dist){//name_dists *dist/*, unsigned char right*/){
+	/*
 	if (md->_master_ch == master_off){		//esto quizas es redundante ya q master es un bool
 		if(!(left >= md->_cant_distors || right >= md->_cant_distors)){
 			md->_d_left = left;
@@ -74,8 +80,24 @@ void set_m_distortion( m_distortion * md, unsigned char left, unsigned char righ
 		distorsion_right =  f_dist[md->_d_right];
 	}
 	printf("left channel == %s\nright channel == %s\n",md->_name_dists[md->_d_left],md->_name_dists[md->_d_right]);
+	*/
+
+	
+	if (dist == -1){
+		distorsion_left = f_dist[md->_last_dist_active];
+		printf("dist channel == %s\n",md->_name_dists[md->_last_dist_active]);
+	}else {
+		md->_d_left = dist;
+		distorsion_left = f_dist[md->_d_left];
+		if (dist <= 6){
+			md->_last_dist_active = dist;
+		}
+		printf("dist channel == %s\n",md->_name_dists[md->_d_left]);
+	}
+	
 }
 
+/*
 void vol_up_md (m_distortion *md, speaker sp){
 	if (md->_master_ch == master_on){		//esto quizas es redundante ya q master es un bool
 		volume_up(md->_s_left);
@@ -156,4 +178,4 @@ void reset_vol(m_distortion *md, speaker sp){
 			md->_s_right->_dvol = 1.0;		
 		}
 	}
-}
+}*/
