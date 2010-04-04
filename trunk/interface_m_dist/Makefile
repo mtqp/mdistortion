@@ -1,4 +1,4 @@
-OBJS = m_distortion.o m_distortion_ch.o
+OBJS = m_distortion.o m_distortion_ch.o callbacks.o
 JACK = `pkg-config --cflags --libs jack`
 GTK  = `pkg-config --cflags --libs gtk+-2.0 gmodule-2.0`
 MATH = -lm

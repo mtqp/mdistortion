@@ -1,6 +1,3 @@
-//http://tadeboro.blogspot.com/2009/09/glade3-tutorial-2-constructing.html
-
-
 /*
 	* 
 	*BIENVENIDOS AL PROGRAMA M_DISTORTION!
@@ -14,9 +11,9 @@
 #include <string.h>
 #include <math.h>
 
-
+#include "globals.h"
 #include "m_distortion.h"
-//#include "callbacks.h"
+#include "callbacks.h"
 
 
 #include <jack/jack.h>
@@ -24,105 +21,6 @@
 
 #define sensitivo true;
 #define no_sensitivo false;
-
-jack_port_t *input_port;
-jack_port_t *output_left;
-jack_port_t *output_right;
-
-m_distortion *m_dist; 
-
-////////////////////////////////////////////
-///////////CALLBACKS-INTERFAZ///////////////
-////////////////////////////////////////////
-
-//cierra con la X
-G_MODULE_EXPORT bool on_m_distortion_destroy (GtkObject *object, gpointer user_data)
-{
-    gtk_main_quit();
-	return false;	
-}
-
-//cierra con el boton QUIT
-G_MODULE_EXPORT bool  on_quit_clicked( GtkButton *button, gpointer   data ) {
-    gtk_main_quit ();
-    return false;
-}
-
-//////////MODOS//////////////////
-G_MODULE_EXPORT void on_rock_mode_clicked (gpointer distors, GtkRadioButton *button){
-	g_print("CLICKED ROCK AND ROOL BABY\n");
-	gtk_widget_set_sensitive((GtkWidget*) distors, true);//sensitivo);
-	set_m_distortion(m_dist, -1);
-}
-
-G_MODULE_EXPORT void on_random_mode_clicked ( gpointer distors,GtkRadioButton *button){
-	g_print("CLICKED random mode\n");
-	gtk_widget_set_sensitive((GtkWidget*) distors, false);//no_sensitivo);
-	set_m_distortion(m_dist,7);//e_random_day);		//quizas es mejor hacer un enum de los numeros para q se entienda mas!
-}
-
-G_MODULE_EXPORT void on_mute_mode_clicked ( gpointer distors,GtkRadioButton *button){
-	g_print("CLICKED muteeeee\n");
-	gtk_widget_set_sensitive((GtkWidget*) distors, false);//no_sensitivo);
-	set_m_distortion(m_dist, 8);//e_mute);
-}
-
-G_MODULE_EXPORT void on_by_pass_mode_clicked ( gpointer distors, GtkRadioButton *button){
-	g_print("CLICKED by_pass\n");
-	gtk_widget_set_sensitive((GtkWidget*) distors, false);//no_sensitivo);
-	set_m_distortion(m_dist, 9);//e_by_pass);
-}
-
-
-//////////////DISTORSIONES/////////////////
-G_MODULE_EXPORT void on_log_rock_clicked(gpointer distors,GtkRadioButton *button){
-	set_m_distortion(m_dist, 0);//e_log_rock);
-}
-G_MODULE_EXPORT void on_log_rock_II_clicked(gpointer distors,GtkRadioButton *button){
-	set_m_distortion(m_dist, 1);//e_log_rock_II);
-}
-G_MODULE_EXPORT void on_hell_sqrt_clicked(gpointer distors,GtkRadioButton *button){
-	set_m_distortion(m_dist, 2);//e_hell_sqrt);
-}
-G_MODULE_EXPORT void on_psychedelic_if_clicked(gpointer distors,GtkRadioButton *button){
-	set_m_distortion(m_dist, 3);//e_psychedelic_if);
-}
-G_MODULE_EXPORT void on_by_60s_clicked(gpointer distors,GtkRadioButton *button){
-	set_m_distortion(m_dist, 4);//e_by_60s);
-}
-G_MODULE_EXPORT void on_fuzzy_dark_pow_IV_clicked(gpointer distors,GtkRadioButton *button){
-	set_m_distortion(m_dist, 5);//e_fuzzy_dark_pow_IV);
-}
-G_MODULE_EXPORT void on_rare_cuadratic_clicked(gpointer distors,GtkRadioButton *button){
-	set_m_distortion(m_dist, 6);//e_rare_cuadratic);
-}
-
-////////////////////////////////////////////
-///////////CALLBACKS-JACK///////////////////
-////////////////////////////////////////////
-
-int process (jack_nframes_t nframes, void *arg)
-{
-	///puedo usar x⁴ como una buena aproximacion para el volumen.
-	jack_default_audio_sample_t *outL = (jack_default_audio_sample_t *) jack_port_get_buffer (output_left, nframes);
-  	jack_default_audio_sample_t *outR = (jack_default_audio_sample_t *) jack_port_get_buffer (output_right, nframes);
-	jack_default_audio_sample_t *in = (jack_default_audio_sample_t *) jack_port_get_buffer (input_port, nframes);
-
-	memcpy (outL, in, sizeof (jack_default_audio_sample_t) * nframes);
-	memcpy (outR, in, sizeof (jack_default_audio_sample_t) * nframes);
-
-	distortionize(m_dist, outL, outR, sizeof (jack_default_audio_sample_t) * nframes); //la gran magia
-
-	return 0;      
-}
- /**
-  * This is the shutdown callback for this JACK application.
-  * It is called by JACK if the server ever shuts down or
-  * decides to disconnect the client.
-  */
-void jack_shutdown (void *arg) {
-	exit (1);
-}
 
 
 /////////////////////////////////////////////
@@ -216,7 +114,7 @@ void jack_shutdown (void *arg) {
 		///////////////////////////////////////
 		
 		m_dist = (m_distortion *) malloc(sizeof(m_distortion));
-		init_m_distortion(m_dist,master_on);
+		init_m_distortion(m_dist);
 
 		///////////////////////////////////////
 		//////inicializar interfaz grafica/////
@@ -255,80 +153,3 @@ void jack_shutdown (void *arg) {
 
 	}
 
-		//////////////////////////////////////////////
-		///////manejo en terminal m_distortion////////
-		//////////////////////////////////////////////
-/*
-		char option;
-		unsigned char l = 0;
-		unsigned char r = 0;
-
-		while(1){
-			switch(option = (char) getchar()){
-				case 'q':
-					printf("closing m_distortion\n");
-					free_m_distortion(m_dist);
-					exit(0);
-					break;
-				case 'm':
-					change_master(m_dist);
-					break;
-				case 's':
-					printf("set distortion NOT WORKING YET\n\n\n");
-					printf("ingrese el valor para izq\n");		
-					//l = (unsigned char) getchar();
-					printf("ingrese el valor para der\n");							
-					//r = (unsigned char) getchar();
-					//set_m_distortion(m_dist,l,r);
-					break;
-				case '1':
-					printf("changing sig dist left\n");		
-					l++;
-					l = l%8;
-					set_m_distortion(m_dist,l,r);
-					break;
-				case '2':
-					printf("changing pre dist left\n");
-					if(l == 0){
-						l = 7;
-						set_m_distortion(m_dist,l,r);
-					} else {
-						l--;
-						set_m_distortion(m_dist,l,r);
-					}
-					break;
-				case '4':
-					printf("changing sig dist right\n");		
-					r++;
-					r = r%8;
-					set_m_distortion(m_dist,l,r);
-					break;
-				case '5':
-					printf("changing pre dist right\n");
-					if(r == 0){
-						r = 7;
-						set_m_distortion(m_dist,l,r);
-					} else {
-						r--;
-						set_m_distortion(m_dist,l,r);
-					}
-					break;
-				case 'b':
-					printf("volume up\n");
-					vol_up_md(m_dist, speaker_izq);
-					break;
-				case 'v':
-					printf("volume down\n");
-					vol_down_md(m_dist, speaker_izq);
-					break;
-				case 'x':
-					printf("gain up\n");
-					gain_up_md(m_dist, speaker_izq);
-					break;
-				case 'z':
-					printf("gain down\n");
-					gain_down_md(m_dist, speaker_izq);
-					break;		
-			}
-		}
-	*/
