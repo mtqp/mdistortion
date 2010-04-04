@@ -2,7 +2,6 @@
 #define __M_DISTORTION_CH_H__
 
 #include <jack/jack.h>
-//#include "m_distortion.h"
 
 typedef struct _m_distortion_channel {
 	float _dvol;

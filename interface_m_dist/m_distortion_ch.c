@@ -13,8 +13,6 @@ void init_m_distortion_ch(m_distortion_channel *d, float vol, float gain, float 
 	d->_variacion_vol  = var_vol;
 	d->_variacion_gain = var_gain;
 
-	//SETEAR TODAS LAS DISTORSIONES! EN EL ARRAY MALDITO INT! :d:d:d:d:
-	
 	f_dist[0] = &log_rock;
 	f_dist[1] = &log_rock2;
 	f_dist[2] = &hell_sqr;
@@ -25,6 +23,7 @@ void init_m_distortion_ch(m_distortion_channel *d, float vol, float gain, float 
 	f_dist[7] = &random_day;	
 	f_dist[8] = &mute;
 	f_dist[9] = &by_pass;
+	printf("m_distortion_channel initialized\n");
 }
 
 float actual_volume (m_distortion_channel *mdc){
@@ -37,11 +36,7 @@ void volume_up(m_distortion_channel *mdc){
 
 
 void volume_down(m_distortion_channel *mdc){
-	//if(mdc->_dvol > mdc->_variacion_vol){
 		mdc->_dvol += mdc ->_variacion_vol;
-	//} else {
-		//mdc->_dvol = 0.0;
-	//}
 }
 
 float actual_gain (m_distortion_channel *mdc){
@@ -54,30 +49,22 @@ void gain_up(m_distortion_channel *mdc){
 
 
 void gain_down(m_distortion_channel *mdc){		//notar q no hay problema, el metodo distor se encarga de elevar⁴ este parametro tanto como en volumen
-//	if(mdc->_dgain > mdc->_variacion_gain){
 		mdc->_dgain += mdc ->_variacion_gain;
-/*	} else {
-		mdc->_dgain = 0.0;
-	}*/
 }
 
 /////////////////////////////////////////////////////
 ///----------------DISTORSIONES-------------------///
 /////////////////////////////////////////////////////
-
 ///LAS CTES SE ENCARGAN DE ESTABILIZAR TODOS EN MISMO VOLUMENES, Y CON DISTORS COPADAS
 
 void log_rock(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){//logaritmic rock //seno hace mas agudo// cos mas grave
-//	printf("log rock\n");
 	int i = 0;
 	for(i;i<nframes;i++){
 		out[i]=(sin(cos(log(sin(log(out[i]))))))/mdc->_dvol; /// ENTRA CON EL VOL MAX Q TIENE
-		//con seno tbm qda RE buena
 	}
 }
 
 void log_rock2(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){//
-//	printf("log rock II\n");
 	int i = 0;
 	for(i;i<nframes;i++){
 		out[i]= cos(tan(tan(log((out[i])))))/mdc->_dvol;//todavia se puede poner un poquito ams fuerte pero nada mas
@@ -86,27 +73,24 @@ void log_rock2(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack
 }
 
 void hell_sqr(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){//raiz nasty
-//	printf("hell sqrt\n");
 	int i = 0;
 	for(i;i<nframes;i++){
-		out[i]= (1000.0*sqrt(out[i]))/pow(mdc->_dvol,3); ///cuesta mucho mas q baje la volumen
+		out[i]= (1000.0*sqrt(out[i]))/pow(mdc->_dvol,3);
 	}
 }
 
 void psychedelic_if(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){ //arco tangente
-//	printf("sweet_arc_tan\n");
 	int i = 0;
 	for(i;i<nframes;i++){
 		if(i < nframes/3) {
-			out[i] = (log(out[i])*10000.0)/(5*pow(mdc->_dvol,5));		//cuesta mucho q baje el volumen! use pow y funcionaba mejor
+			out[i] = (log(out[i])*10000.0)/(5*pow(mdc->_dvol,5));
 		} else {
-			out[i] = sin(log(sin(out[i])))/pow(mdc->_dvol,5);	 	//q la mejor aproximacion es la x4
+			out[i] = sin(log(sin(out[i])))/pow(mdc->_dvol,5);
 		}
 	}
 }
 
 void by_60s(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){
-//	printf("by pass\n");
 	int i = 0;
 	for(i;i<nframes;i++){
 		out[i]= (100.0 * out[i])/mdc->_dgain; ///funciona de volumen-ganancia, fijarse q se puede hacer
@@ -114,7 +98,6 @@ void by_60s(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nf
 }
 
 void fuzzy_dark_pow4(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){ //fuzzy oscura // siempre negativa.
-//	printf("fuzzy dark pow4\n");
 	int i = 0;
 	for(i;i<nframes;i++){
 		out[i]= (100000000.0*(-pow(out[i],4)))/pow(mdc->_dvol,3); //mas bien mutea la guitarra
@@ -122,15 +105,13 @@ void fuzzy_dark_pow4(jack_default_audio_sample_t *out, m_distortion_channel *mdc
 }
 
 void rare_cuadratic(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){ //cuadratica RARISIMA
-//	printf("rare_cuadratic\n");
 	int i = 0;
 	for(i;i<nframes;i++){
 		out[i]= (11000.0*(pow(out[i],2)))/pow(mdc->_dgain,2);
 	}
 }
 
-void random_day(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){ //sum(d/2^i) bastante normal
-//	printf("raw sum 2i\n");
+void random_day(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){
 	srand(time(NULL));
 	int mod2;
 	mod2 = rand()%7;
