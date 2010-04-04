@@ -36,8 +36,8 @@ void free_m_distortion(m_distortion *md){
 	printf("freeing m_distortion exitoso\n");
 }
 
-void distortionize(m_distortion *md, jack_default_audio_sample_t *outL, jack_default_audio_sample_t *outR, jack_nframes_t nframes){
-	distorsion_channel(outL, md->_d_ch, nframes);
+void distortionize(m_distortion *md, jack_default_audio_sample_t *out, jack_nframes_t nframes){
+	distorsion_channel(out, md->_d_ch, nframes);
 
 }
 
@@ -58,16 +58,12 @@ void change_master (m_distortion *md){
 void set_m_distortion( m_distortion * md, int dist){//name_dists *dist/*, unsigned char right*/){
 	if (dist == -1){
 		distorsion_channel = f_dist[md->_last_dist_active];
-		printf("\n\nULTIMA DIST ACTIVA == %d\n\n",md->_last_dist_active);
-		printf("dist channel == %s\n",md->_name_dists[md->_last_dist_active]);
 	}else {
 		md->_d_left = dist;
 		distorsion_channel = f_dist[md->_d_left];
 		if (dist <= 6){
 			md->_last_dist_active = dist;
 		}
-		printf("\n\nULTIMA DIST ACTIVA == %d\n\n",md->_last_dist_active);
-		printf("dist channel == %s\n",md->_name_dists[md->_d_left]);
 	}
 }
 
