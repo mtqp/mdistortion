@@ -32,7 +32,7 @@ DISTORTION *distorsion_channel;
 
 void init_m_distortion(m_distortion * md);
 void free_m_distortion(m_distortion *md);
-void distortionize(m_distortion *md, jack_default_audio_sample_t *outL, jack_default_audio_sample_t *outR, jack_nframes_t nframes);
+void distortionize(m_distortion *md, jack_default_audio_sample_t *out, jack_nframes_t nframes);
 void set_m_distortion( m_distortion * md, int n);//name_dists *n/*, unsigned char right*/);
 
 /*
