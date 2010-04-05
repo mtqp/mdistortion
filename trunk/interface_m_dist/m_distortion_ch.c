@@ -125,12 +125,33 @@ void random_day(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jac
 }	
 
 void mute(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){
-	int i=0;
+/*	int i=0;
 	for(i;i<nframes;i++){
 		out[i] = 0.0;
 	}	
+*/
+	printf("HIGH PASS FILTER, SE SIENTE SE SIENTE???\n\n");
+	
+// Return RC high-pass filter output samples, given input samples,
+// time interval dt, and time constant RC
+	float limpio_i;
+	float limpio_i_menos_uno;
+
+	int i = 1;
+
+	float dt = 0.1;
+	float RC = 1.0;
+	float alpha = RC / (RC+dt);
+
+	out[0] = out[0];
+   
+   	for (i;i<nframes;i++){
+   		limpio_i = out[i];
+   		limpio_i_menos_uno = out[i-1];
+   		out[i] = alpha * (out[i-1] + limpio_i - limpio_i_menos_uno);
+   	}
 }
 
 void by_pass(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){
-	//mmm no hago nada?
+	//no hago nada?
 }
