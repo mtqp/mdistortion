@@ -7,3 +7,4 @@ jack_port_t *output_right;
 
 m_distortion *m_dist; 
 
+int global_eq_sensitive; 

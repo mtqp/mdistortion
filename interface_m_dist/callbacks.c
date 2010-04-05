@@ -67,6 +67,19 @@ G_MODULE_EXPORT void on_rare_cuadratic_clicked(gpointer distors,GtkRadioButton *
 	set_m_distortion(m_dist, 6);//e_rare_cuadratic);
 }
 
+///////////////////EQ///////////////////////
+
+
+//ESTA MEDIO FEO Q EMPIEZA SETEADO CON BASURA... IMAGINATE SI ERA CERO!?!?!? se da vuelta todo
+
+
+
+G_MODULE_EXPORT void on_eq_onoff_toggled (gpointer eqs, GtkToggleButton *b){
+	if(global_eq_sensitive)	global_eq_sensitive = 0;
+	else					global_eq_sensitive = 1;
+	gtk_widget_set_sensitive((GtkWidget*) eqs, global_eq_sensitive);
+}
+
 ////////////////////////////////////////////
 //-----------CALLBACKS-JACK---------------//
 ////////////////////////////////////////////
