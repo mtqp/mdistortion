@@ -69,17 +69,22 @@ G_MODULE_EXPORT void on_rare_cuadratic_clicked(gpointer distors,GtkRadioButton *
 
 ///////////////////EQ///////////////////////
 
-
-//ESTA MEDIO FEO Q EMPIEZA SETEADO CON BASURA... IMAGINATE SI ERA CERO!?!?!? se da vuelta todo
-
-
-
-G_MODULE_EXPORT void on_eq_onoff_toggled (gpointer eqs, GtkToggleButton *b){
+G_MODULE_EXPORT 
+void on_eq_onoff_toggled (gpointer eqs, GtkToggleButton *b){
 	if(global_eq_sensitive)	global_eq_sensitive = 0;
 	else					global_eq_sensitive = 1;
 	gtk_widget_set_sensitive((GtkWidget*) eqs, global_eq_sensitive);
+	g_print("eq sensitive == %d\n", global_eq_sensitive);
 }
 
+G_MODULE_EXPORT
+static gchar* on_bass_scale_format_value (GtkScale *scale, gdouble   value) {
+	return g_strdup_printf ("-->%0.*g<--", gtk_scale_get_digits (scale), value);
+}
+
+/*G_MODULE_EXPORT void on_bass_scale_format_value (GtkScale *bass, gpointer eqs){
+	g_print("cambiando valor de bass, se mueve la giladA?\n");
+}*/
 ////////////////////////////////////////////
 //-----------CALLBACKS-JACK---------------//
 ////////////////////////////////////////////

@@ -202,6 +202,7 @@
                                     <property name="visible">True</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">False</property>
                                     <property name="fill">False</property>
                                     <property name="position">2</property>
                                   </packing>
@@ -225,6 +226,7 @@
                                     <property name="visible">True</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">False</property>
                                     <property name="fill">False</property>
                                     <property name="position">4</property>
                                   </packing>
@@ -268,6 +270,7 @@
                                     <property name="visible">True</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">False</property>
                                     <property name="fill">False</property>
                                     <property name="position">6</property>
                                   </packing>
@@ -371,6 +374,7 @@
                                         <property name="can_focus">True</property>
                                         <property name="orientation">vertical</property>
                                         <property name="digits">2</property>
+                                        <signal name="format_value" handler="on_bass_scale_format_value"/>
                                       </object>
                                       <packing>
                                         <property name="fill">False</property>
@@ -393,6 +397,8 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="orientation">vertical</property>
+                                        <property name="lower_stepper_sensitivity">on</property>
+                                        <property name="upper_stepper_sensitivity">on</property>
                                         <property name="digits">2</property>
                                       </object>
                                       <packing>
