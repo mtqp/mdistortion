@@ -1,8 +1,0 @@
-#include <sodio.h>
-extern long long int suma (long long int a, long long int b);
-
-main() {
-	long long int res = suma(1111111111,2222222222);
-	printf("%lld\n",res);
-
-}
