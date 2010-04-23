@@ -1,4 +1,5 @@
 #include "m_distortion_ch.h"
+#include "globals.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -12,6 +13,12 @@ void init_m_distortion_ch(m_distortion_channel *d, float vol, float gain, float 
 	d->_dgain= gain;
 	d->_variacion_vol  = var_vol;
 	d->_variacion_gain = var_gain;
+
+	//////parte de eq//////
+	dt = 0.1;
+	RC = 1.0;
+	alpha = RC / (RC+dt);
+	//////////////////////
 
 	f_dist[0] = &log_rock;
 	f_dist[1] = &log_rock2;
@@ -133,27 +140,23 @@ void mute(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nfra
 }
 
 void by_pass(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){
-	//no hago nada?
+
+	if(global_eq_sensitive){
+	// Return RC high-pass filter output samples, given input samples,
+	// time interval dt, and time constant RC
+		float limpio_i;
+		float limpio_i_menos_uno;
+
+		int i = 1;
+
+		out[0] = out[0];
+	   
+	   	for (i;i<nframes;i++){
+	   		limpio_i = out[i];
+	   		limpio_i_menos_uno = out[i-1];
+	   		out[i] = alpha * (out[i-1] + limpio_i - limpio_i_menos_uno);
+	   	}
+	}
+
 }
 
-/*	printf("HIGH PASS FILTER, SE SIENTE SE SIENTE???\n\n");
-	
-// Return RC high-pass filter output samples, given input samples,
-// time interval dt, and time constant RC
-	float limpio_i;
-	float limpio_i_menos_uno;
-
-	int i = 1;
-
-	float dt = 0.1;
-	float RC = 1.0;
-	float alpha = RC / (RC+dt);
-
-	out[0] = out[0];
-   
-   	for (i;i<nframes;i++){
-   		limpio_i = out[i];
-   		limpio_i_menos_uno = out[i-1];
-   		out[i] = alpha * (out[i-1] + limpio_i - limpio_i_menos_uno);
-   	}
-*/

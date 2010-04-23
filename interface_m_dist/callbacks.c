@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include <gtk/gtk.h>
 #include <jack/jack.h>
@@ -86,17 +87,23 @@ G_MODULE_EXPORT void on_bass_scale_format_value (GtkScale *bass, gpointer eqs){
 	g_print("cambiando valor de bass, se mueve la giladA?\n");
 }*/
 G_MODULE_EXPORT
-void on_bass_scale_value_changed( GtkAdjustment *get, GtkAdjustment *set ){
-	g_print("bass value changed, xq no haces nada puti?\n");
-    /* Set the page size and page increment size of the sample
-     * adjustment to the value specified by the "Page Size" scale */
-    set->page_size = get->value;
-    set->page_increment = get->value;
+void on_bass_scale_value_changed(GtkAdjustment *b_adjs, GtkRange *range ){
+	g_print("bass eq is not working right now == %f\n", b_adjs->value);
+}
 
-    /* This sets the adjustment and makes it emit the "changed" signal to
-       reconfigure all the widgets that are attached to this signal.  */
-    gtk_adjustment_set_value (set, CLAMP (set->value, set->lower, (set->upper - set->page_size)));
-    g_signal_emit_by_name(G_OBJECT(set), "changed");
+G_MODULE_EXPORT
+void on_mid_scale_value_changed(GtkAdjustment *m_adjs, GtkRange *range ){
+	g_print("mid eq is not working right now == %f\n", m_adjs->value);
+}
+
+G_MODULE_EXPORT
+void on_treb_scale_value_changed(GtkAdjustment *t_adjs, GtkRange *range ){
+//	g_print("treb eq should be working");
+	//if(dt = t_adjs->value > 0.0) dt = pow(1.1,dt);	
+	dt = (t_adjs->value);
+	RC = 1.0;
+	alpha = RC / (RC+dt);
+
 }
 
 G_MODULE_EXPORT
