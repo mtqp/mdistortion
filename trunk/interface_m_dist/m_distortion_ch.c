@@ -135,8 +135,7 @@ void mute(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nfra
 	int i=0;
 	for(i;i<nframes;i++){
 		out[i] = 0.0;
-	}	
-
+	}
 }
 
 void by_pass(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){
@@ -145,16 +144,19 @@ void by_pass(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_n
 	// Return RC high-pass filter output samples, given input samples,
 	// time interval dt, and time constant RC
 		float limpio_i;
-		float limpio_i_menos_uno;
+		//float limpio_i_menos_uno;
 
 		int i = 1;
-
-		out[0] = out[0];
+		
+		out[0] = out[0] + limpio_i_menos_uno;
 	   
-	   	for (i;i<nframes;i++){
-	   		limpio_i = out[i];
-	   		limpio_i_menos_uno = out[i-1];
-	   		out[i] = alpha * (out[i-1] + limpio_i - limpio_i_menos_uno);
+	   	for (i;i<nframes;i+=3){
+	   		limpio_i 			= out[i];
+	   		limpio_i_menos_uno 	= out[i-1];
+	   		out[i+1] = 0.0;
+	   		out[i+2] = 0.0;
+	   		//out[i] = alpha * (out[i-1] + limpio_i - limpio_i_menos_uno);
+	   		out[i] = (alpha*limpio_i) + (alpha*limpio_i_menos_uno);
 	   	}
 	}
 

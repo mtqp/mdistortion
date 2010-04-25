@@ -100,9 +100,11 @@ G_MODULE_EXPORT
 void on_treb_scale_value_changed(GtkAdjustment *t_adjs, GtkRange *range ){
 //	g_print("treb eq should be working");
 	//if(dt = t_adjs->value > 0.0) dt = pow(1.1,dt);	
-	dt = (t_adjs->value);
+
+/*	dt = (t_adjs->value);
 	RC = 1.0;
-	alpha = RC / (RC+dt);
+	alpha = RC / (RC+dt);*/
+	alpha = t_adjs->value;
 
 }
 
