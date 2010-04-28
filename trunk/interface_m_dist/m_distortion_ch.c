@@ -18,6 +18,7 @@ void init_m_distortion_ch(m_distortion_channel *d, float vol, float gain, float 
 	dt = 0.1;
 	RC = 1.0;
 	alpha = RC / (RC+dt);
+	plot_x = 0;
 	//////////////////////
 
 	f_dist[0] = &log_rock;
@@ -133,13 +134,20 @@ void random_day(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jac
 
 void mute(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){
 	int i=0;
+	FILE *f_out;
+	f_out = fopen("by_pass.dat","a+");
 	for(i;i<nframes;i++){
-		out[i] = 0.0;
+		//out[i] = 0.0;
+		fprintf(f_out,"%d %f\n",plot_by_pass,out[i]);
+		plot_by_pass++;
 	}
+	fclose(f_out);
 }
 
 void by_pass(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nframes_t nframes){
-
+	FILE * f_out;
+	f_out = fopen("from_treb_to_bass.dat", "a+");
+	
 	if(global_eq_sensitive){
 	// Return RC high-pass filter output samples, given input samples,
 	// time interval dt, and time constant RC
@@ -157,8 +165,12 @@ void by_pass(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_n
 	   		out[i+2] = 0.0;
 	   		//out[i] = alpha * (out[i-1] + limpio_i - limpio_i_menos_uno);
 	   		out[i] = (alpha*limpio_i) + (alpha*limpio_i_menos_uno);
+	   		
+
+			fprintf(f_out,"%d %f\n",plot_x,out[i]);
+	   		plot_x +=3;
 	   	}
 	}
-
+	fclose(f_out);
 }
 
