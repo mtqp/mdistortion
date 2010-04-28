@@ -88,7 +88,10 @@ G_MODULE_EXPORT void on_bass_scale_format_value (GtkScale *bass, gpointer eqs){
 }*/
 G_MODULE_EXPORT
 void on_bass_scale_value_changed(GtkAdjustment *b_adjs, GtkRange *range ){
-	g_print("bass eq is not working right now == %f\n", b_adjs->value);
+/*	dt = (t_adjs->value);
+	RC = 1.0;
+	alpha = RC / (RC+dt);*/
+	alpha = b_adjs->value;
 }
 
 G_MODULE_EXPORT
@@ -98,14 +101,7 @@ void on_mid_scale_value_changed(GtkAdjustment *m_adjs, GtkRange *range ){
 
 G_MODULE_EXPORT
 void on_treb_scale_value_changed(GtkAdjustment *t_adjs, GtkRange *range ){
-//	g_print("treb eq should be working");
-	//if(dt = t_adjs->value > 0.0) dt = pow(1.1,dt);	
-
-/*	dt = (t_adjs->value);
-	RC = 1.0;
-	alpha = RC / (RC+dt);*/
-	alpha = t_adjs->value;
-
+	g_print("treb eq is not working right now == %f\n", t_adjs->value);
 }
 
 G_MODULE_EXPORT
@@ -122,6 +118,17 @@ G_MODULE_EXPORT
 void on_reset_treb_clicked(gpointer reset, GtkRadioButton *button){
 	gtk_adjustment_set_value(reset,0.0);
 } 
+
+////////////NOISE-RED///////////////////////
+
+G_MODULE_EXPORT
+void on_noise_toggled(gpointer p, GtkToggleButton *button){
+	if(global_noise_toggled) global_noise_toggled = 0;
+	else					 global_noise_toggled = 1;						
+	g_print("noise reduction still not working, toggled button value == %d\n", global_noise_toggled);
+}
+
+
 ////////////////////////////////////////////
 //-----------CALLBACKS-JACK---------------//
 ////////////////////////////////////////////
