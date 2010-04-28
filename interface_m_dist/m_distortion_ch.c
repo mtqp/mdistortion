@@ -19,6 +19,8 @@ void init_m_distortion_ch(m_distortion_channel *d, float vol, float gain, float 
 	RC = 1.0;
 	alpha = RC / (RC+dt);
 	plot_x = 0;
+
+	global_noise_toggled = 0;
 	//////////////////////
 
 	f_dist[0] = &log_rock;

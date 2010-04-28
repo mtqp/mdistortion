@@ -9,6 +9,8 @@ jack_port_t *output_right;
 m_distortion *m_dist; 
 
 int global_eq_sensitive; 
+int global_noise_toggled;
+
 float dt;
 float RC;
 float alpha;
