@@ -1,0 +1,29 @@
+#!/usr/bin/gnuplot -persist
+
+#exporto como png
+set term png
+set output 'from_treb_to_bass.png'
+
+#le pone titulo al grafico
+set title "from_treb_to_bass"
+
+#pone la descripccion de los ejes
+set xlabel "out[i]"
+set ylabel "valor"
+
+#pone la leyenda a la izquierda y con borde
+set key left box
+
+#defino dos tipos de lineas
+#lt=tipo de linea y color,  pt=point type,  ps=point size
+#(para ver los distintos point types pongan "test" en el gnuplot)
+set style line 1 lt 1 pt 1 ps 1
+#set style line 2 lt 3 pt 1 ps 1
+
+#dibuja los puntos. index es porque lo separe en bloques de primos/no primos para ponerle distinto estilo..
+plot	'from_treb_to_bass.dat' title "filtros" linestyle 1
+
+#pongo la salida default para mostrar en pantalla
+#set term pop
+#set output
+#replot
