@@ -100,9 +100,9 @@
 		//-------inicializar m dist----------//
 		///////////////////////////////////////
 		
-		global_eq_sensitive = 1;
 		m_dist = (m_distortion *) malloc(sizeof(m_distortion));
 		init_m_distortion(m_dist);
+		global_ptr->_eq_sensitive = 1;
 
 		///////////////////////////////////////
 		//----inicializar interfaz grafica---//
