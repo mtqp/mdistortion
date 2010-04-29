@@ -8,18 +8,23 @@ jack_port_t *output_right;
 
 m_distortion *m_dist; 
 
-int global_eq_sensitive; 
-int global_noise_toggled;
 
-float dt;
-float RC;
-float alpha;
+typedef struct _globals {
 
-float limpio_i_menos_uno;
+	int _eq_sensitive; 
+	int _noise_toggled;
+
+	float dt;
+	float RC;
+	float alpha;
+
+	float limpio_i_menos_uno;
+
+	//FILE *f_out;
+	int plot_x;
+	int plot_by_pass;
+
+} globals;
 
 
-
-
-//FILE *f_out;
-int plot_x;
-int plot_by_pass;
+globals* global_ptr;

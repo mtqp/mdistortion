@@ -1,5 +1,6 @@
 #include "m_distortion_ch.h"
 #include "globals.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -15,12 +16,15 @@ void init_m_distortion_ch(m_distortion_channel *d, float vol, float gain, float 
 	d->_variacion_gain = var_gain;
 
 	//////parte de eq//////
-	dt = 0.1;
-	RC = 1.0;
-	alpha = RC / (RC+dt);
-	plot_x = 0;
+	global_ptr = (globals*) malloc(sizeof(globals));
+	
+	
+	global_ptr->dt = 0.1;
+	global_ptr->RC = 1.0;
+	global_ptr->alpha = global_ptr->RC / (global_ptr->RC+global_ptr->dt);
+	global_ptr->plot_x = 0;
 
-	global_noise_toggled = 0;
+	global_ptr->_noise_toggled = 0;
 	//////////////////////
 
 	f_dist[0] = &log_rock;
@@ -140,8 +144,8 @@ void mute(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_nfra
 	f_out = fopen("by_pass.dat","a+");
 	for(i;i<nframes;i++){
 		//out[i] = 0.0;
-		fprintf(f_out,"%d %f\n",plot_by_pass,out[i]);
-		plot_by_pass++;
+		fprintf(f_out,"%d %f\n",global_ptr->plot_by_pass,out[i]);
+		global_ptr->plot_by_pass++;
 	}
 	fclose(f_out);
 }
@@ -150,7 +154,7 @@ void by_pass(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_n
 	FILE * f_out;
 	f_out = fopen("from_treb_to_bass.dat", "a+");
 	
-	if(global_eq_sensitive){
+	if(global_ptr->_eq_sensitive){
 	// Return RC high-pass filter output samples, given input samples,
 	// time interval dt, and time constant RC
 		float limpio_i;
@@ -158,19 +162,19 @@ void by_pass(jack_default_audio_sample_t *out, m_distortion_channel *mdc, jack_n
 
 		int i = 1;
 		
-		out[0] = out[0] + limpio_i_menos_uno;
+		out[0] = out[0] + global_ptr->limpio_i_menos_uno;
 	   
 	   	for (i;i<nframes;i+=3){
 	   		limpio_i 			= out[i];
-	   		limpio_i_menos_uno 	= out[i-1];
+	   		global_ptr->limpio_i_menos_uno 	= out[i-1];
 	   		out[i+1] = 0.0;
 	   		out[i+2] = 0.0;
 	   		//out[i] = alpha * (out[i-1] + limpio_i - limpio_i_menos_uno);
-	   		out[i] = (alpha*limpio_i) + (alpha*limpio_i_menos_uno);
+	   		out[i] = (global_ptr->alpha*limpio_i) + (global_ptr->alpha*global_ptr->limpio_i_menos_uno);
 	   		
 
-			fprintf(f_out,"%d %f\n",plot_x,out[i]);
-	   		plot_x +=3;
+			fprintf(f_out,"%d %f\n",global_ptr->plot_x,out[i]);
+	   		global_ptr->plot_x +=3;
 	   	}
 	}
 	fclose(f_out);

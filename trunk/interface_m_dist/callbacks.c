@@ -72,9 +72,9 @@ G_MODULE_EXPORT void on_rare_cuadratic_clicked(gpointer distors,GtkRadioButton *
 
 G_MODULE_EXPORT 
 void on_eq_onoff_toggled (gpointer eqs, GtkToggleButton *b){
-	if(global_eq_sensitive)	global_eq_sensitive = 0;
-	else					global_eq_sensitive = 1;
-	gtk_widget_set_sensitive((GtkWidget*) eqs, global_eq_sensitive);
+	if(global_ptr->_eq_sensitive)	global_ptr->_eq_sensitive = 0;
+	else							global_ptr->_eq_sensitive = 1;
+	gtk_widget_set_sensitive((GtkWidget*) eqs, global_ptr->_eq_sensitive);
 //	g_print("eq sensitive == %d\n", global_eq_sensitive);
 }
 /*
@@ -91,7 +91,7 @@ void on_bass_scale_value_changed(GtkAdjustment *b_adjs, GtkRange *range ){
 /*	dt = (t_adjs->value);
 	RC = 1.0;
 	alpha = RC / (RC+dt);*/
-	alpha = b_adjs->value;
+	global_ptr->alpha = b_adjs->value;
 }
 
 G_MODULE_EXPORT
@@ -123,9 +123,9 @@ void on_reset_treb_clicked(gpointer reset, GtkRadioButton *button){
 
 G_MODULE_EXPORT
 void on_noise_toggled(gpointer p, GtkToggleButton *button){
-	if(global_noise_toggled) global_noise_toggled = 0;
-	else					 global_noise_toggled = 1;						
-	g_print("noise reduction still not working, toggled button value == %d\n", global_noise_toggled);
+	if(global_ptr->_noise_toggled) 	global_ptr->_noise_toggled = 0;
+	else					 		global_ptr->_noise_toggled = 1;						
+	g_print("noise reduction still not working, toggled button value == %d\n", global_ptr->_noise_toggled);
 }
 
 
