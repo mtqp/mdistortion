@@ -20,8 +20,8 @@ enum name_dists {
 */
 
 typedef struct _m_distortion {
-	unsigned char _d_active;
-	unsigned char _last_dist_active;		//para q esta esto!?!?
+	unsigned int _d_active;
+	unsigned int _last_dist_active;		//para q esta esto!?!?
 	
 	EQSTATE* m_eq;
 		
@@ -30,7 +30,7 @@ typedef struct _m_distortion {
 	float _variacion_vol;
 	float _variacion_gain;
 	
-	unsigned char _cant_distors;
+	unsigned int _cant_distors;
 	char* _name_dists[10];
 }m_distortion;
 
@@ -55,6 +55,8 @@ DISTORTION by_pass;
 
 DISTORTION * f_dist[10];	
 DISTORTION * distortion_channel;
+
+extern volume_hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes);
 
 float actual_gain (m_distortion *mdc);
 void gain_up(m_distortion *mdc);
