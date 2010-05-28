@@ -135,8 +135,9 @@ void hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_
 //	printf("hell sqrt\n");
 	int i = 0;
 	float vol;
-	if(mdc->_dvol<=0.95)vol = 0.015+(0.015*mdc->_dvol);
-	else 				vol = 1.0;
+	/*if(mdc->_dvol<=0.95)*/vol = 0.015+(0.015*mdc->_dvol);
+	//else 				vol = 1.0;
+	volume_hell_sqr(out,mdc,nframes);
 	if(global_ptr->_eq_sensitive){
 		printf("no estamos ecualizando todavia\n"); 
 		for(i;i<nframes;i++){
