@@ -1,9 +1,10 @@
-#ifndef __CALLBACKS_C__
-#define __CALLBACKS_C__
+#ifndef __CALLBACKS_H__
+#define __CALLBACKS_H__
 
 #include <gtk/gtk.h>
+#include <jack/jack.h>
 
-#ifndef bool
+#ifndef bool		//nadie usa el bool, ni es necesario
     #define bool unsigned char
     #define true 1
     #define false 0
@@ -33,6 +34,10 @@ G_MODULE_EXPORT void on_treb_scale_value_changed(GtkAdjustment *t_adjs, GtkRange
 G_MODULE_EXPORT void on_reset_bass_clicked(gpointer r, GtkRadioButton *button);
 G_MODULE_EXPORT void on_reset_mid_clicked(gpointer r, GtkRadioButton *button);
 G_MODULE_EXPORT void on_reset_treb_clicked(gpointer r, GtkRadioButton *button);
+
+G_MODULE_EXPORT void on_volume_value_changed(GtkAdjustment *vol_adjs, GtkRange *range);
+
+
 ///////CALLBACKS-JACK///////
 
 int process (jack_nframes_t nframes, void *arg);

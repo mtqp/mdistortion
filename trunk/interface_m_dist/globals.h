@@ -1,3 +1,5 @@
+#ifndef __GLOBALS_H__
+#define __GLOBALS_H__
 #include <jack/jack.h>
 #include "m_distortion.h"
 #include <stdio.h>
@@ -6,8 +8,7 @@ jack_port_t *input_port;
 jack_port_t *output_left;
 jack_port_t *output_right;
 
-m_distortion *m_dist; 
-
+struct _m_distortion *m_dist; 
 
 typedef struct _globals {
 
@@ -26,5 +27,6 @@ typedef struct _globals {
 
 } globals;
 
-
 globals* global_ptr;
+
+#endif

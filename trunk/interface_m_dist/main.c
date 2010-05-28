@@ -17,8 +17,8 @@
 #include <jack/jack.h>
 #include <gtk/gtk.h>
 
-#define sensitivo true;
-#define no_sensitivo false;
+#define sensitivo 1;
+#define no_sensitivo 0;
 
 /////////////////////////////////////////////
 //-------------CODIGO-MAIN-----------------//
@@ -88,11 +88,11 @@
 		}
 
 		if (jack_connect (client, jack_port_name (output_left), ports[0])) {
-			fprintf (stderr, "PARLANTE IZQ?cannot connect output ports\n");
+			fprintf (stderr, "cannot connect output ports\n");
 		}
 
 		if (jack_connect (client, jack_port_name (output_right), ports[1])){
-			fprintf(stderr, "negativo parlante derecho\n");
+			fprintf(stderr, "cannot connect output ports\n");
 		}
 		free (ports);
 
@@ -102,8 +102,8 @@
 		
 		m_dist = (m_distortion *) malloc(sizeof(m_distortion));
 		init_m_distortion(m_dist);
-		global_ptr->_eq_sensitive = 1;
-
+		global_ptr->_eq_sensitive = sensitivo;
+		
 		///////////////////////////////////////
 		//----inicializar interfaz grafica---//
 		///////////////////////////////////////
@@ -126,18 +126,13 @@
 
 		/* Get main window pointer from UI */
 		window = GTK_WIDGET( gtk_builder_get_object( builder, "m_distortion" ) );
-
 		/* Connect signals */
 		gtk_builder_connect_signals( builder, NULL );
-
 		/* Destroy builder, since we don't need it anymore */
 		g_object_unref( G_OBJECT( builder ) );
-
 		/* Show window. All other widgets are automatically shown by GtkBuilder */
 		gtk_widget_show( window );
-
 		/* Start main loop */
 		gtk_main();
-
 	}
 

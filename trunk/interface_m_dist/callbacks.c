@@ -77,31 +77,31 @@ void on_eq_onoff_toggled (gpointer eqs, GtkToggleButton *b){
 	gtk_widget_set_sensitive((GtkWidget*) eqs, global_ptr->_eq_sensitive);
 //	g_print("eq sensitive == %d\n", global_eq_sensitive);
 }
-/*
-G_MODULE_EXPORT
-static gchar* on_bass_scale_format_value (GtkScale *scale, gdouble   value) {
-	return g_strdup_printf ("-->%0.*g<--", gtk_scale_get_digits (scale), value);
-}
 
-G_MODULE_EXPORT void on_bass_scale_format_value (GtkScale *bass, gpointer eqs){
-	g_print("cambiando valor de bass, se mueve la giladA?\n");
-}*/
 G_MODULE_EXPORT
 void on_bass_scale_value_changed(GtkAdjustment *b_adjs, GtkRange *range ){
 /*	dt = (t_adjs->value);
 	RC = 1.0;
-	alpha = RC / (RC+dt);*/
-	global_ptr->alpha = b_adjs->value;
+	alpha = RC / (RC+dt);
+	global_ptr->alpha = b_adjs->value;*/
+	m_dist->m_eq->lg = b_adjs->value+1.0;
 }
 
 G_MODULE_EXPORT
 void on_mid_scale_value_changed(GtkAdjustment *m_adjs, GtkRange *range ){
-	g_print("mid eq is not working right now == %f\n", m_adjs->value);
+	//g_print("mid eq is not working right now == %f\n", m_adjs->value);
+	m_dist->m_eq->mg = m_adjs->value+1.0;
 }
 
 G_MODULE_EXPORT
 void on_treb_scale_value_changed(GtkAdjustment *t_adjs, GtkRange *range ){
-	g_print("treb eq is not working right now == %f\n", t_adjs->value);
+	//g_print("treb eq is not working right now == %f\n", t_adjs->value);
+	m_dist->m_eq->hg = t_adjs->value+1.0;
+}
+
+G_MODULE_EXPORT
+void on_volume_value_changed(GtkAdjustment *vol_adjs, GtkRange *range){
+	m_dist->_dvol = vol_adjs->value;
 }
 
 G_MODULE_EXPORT
@@ -141,7 +141,7 @@ int process (jack_nframes_t nframes, void *arg)
 
 	memcpy (outL, in, sizeof (jack_default_audio_sample_t) * nframes);
 	memcpy (outR, in, sizeof (jack_default_audio_sample_t) * nframes);
-
+	
 	distortionize(m_dist, outL, sizeof (jack_default_audio_sample_t) * nframes); //la gran magia
 
 	return 0;      
