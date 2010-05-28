@@ -2,8 +2,8 @@
 #define __M_DISTORTIOM_H__
 
 #include <jack/jack.h>
-#include "m_distortion_ch.h"
-
+#include "globals.h"
+#include "m_eq.h"
 /*
 enum name_dists {
 	e_log_rock 			= 0,
@@ -20,27 +20,44 @@ enum name_dists {
 */
 
 typedef struct _m_distortion {
-	m_distortion_channel *_d_ch;
-	unsigned char _d_left;
-	unsigned char _last_dist_active;
+	unsigned char _d_active;
+	unsigned char _last_dist_active;		//para q esta esto!?!?
+	
+	EQSTATE* m_eq;
+		
+	float _dvol;
+	float _dgain;
+	float _variacion_vol;
+	float _variacion_gain;
+	
 	unsigned char _cant_distors;
 	char* _name_dists[10];
 }m_distortion;
 
-
-DISTORTION *distorsion_channel;
 
 void init_m_distortion(m_distortion * md);
 void free_m_distortion(m_distortion *md);
 void distortionize(m_distortion *md, jack_default_audio_sample_t *out, jack_nframes_t nframes);
 void set_m_distortion( m_distortion * md, int n);//name_dists *n/*, unsigned char right*/);
 
-/*
-void vol_up_md (m_distortion *md, speaker sp);
-void vol_down_md (m_distortion *md, speaker sp);
-void gain_up_md (m_distortion *md, speaker sp);
-void gain_down_md (m_distortion *md, speaker sp);
-void reset_gain(m_distortion *md, speaker sp);
-void reset_vol(m_distortion *md, speaker sp);
-*/
+typedef void (DISTORTION)(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes);
+
+DISTORTION log_rock;
+DISTORTION log_rock2;
+DISTORTION hell_sqr;
+DISTORTION psychedelic_if;
+DISTORTION by_60s;
+DISTORTION fuzzy_dark_pow4;
+DISTORTION rare_cuadratic;
+DISTORTION random_day;
+DISTORTION mute;
+DISTORTION by_pass;
+
+DISTORTION * f_dist[10];	
+DISTORTION * distortion_channel;
+
+float actual_gain (m_distortion *mdc);
+void gain_up(m_distortion *mdc);
+void gain_down(m_distortion *mdc);
+
 #endif
