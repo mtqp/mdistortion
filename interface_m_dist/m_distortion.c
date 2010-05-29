@@ -13,6 +13,9 @@ void init_m_distortion(m_distortion * md){
 //	md->_d_ch = (m_distortion_channel *) malloc(sizeof(m_distortion_channel));
 	
 	md->_dvol = 0.0;	//esta si la usamos
+	md->_vctes = (vol_ctes*) malloc(sizeof(vol_ctes));
+	set_vol_ctes(md->_vctes);
+	
 	md->_dgain= gain;	//esto esta al pedo
 	md->_variacion_vol  = var;	//al pedo
 	md->_variacion_gain = var;	//al re pedo
@@ -64,6 +67,7 @@ void init_m_distortion(m_distortion * md){
 void free_m_distortion(m_distortion *md){
 	free (md);
 	free (global_ptr);
+	printf("puede ser q no estemos liberando eq y vol ctes\n");
 	printf("freeing m_distortion exitoso\n");
 }
 
@@ -131,12 +135,13 @@ void log_rock2(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes
 	}
 }
 
+/*
 void hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){//raiz nasty
 //	printf("hell sqrt\n");
 	int i = 0;
 	float vol;
-	/*if(mdc->_dvol<=0.95)*/vol = 0.015+(0.015*mdc->_dvol);
-	//else 				vol = 1.0;
+	if(mdc->_dvol<=0.95)vol = mdc->_vctes->hell_sqr_v+(mdc->_vctes->hell_sqr_v*mdc->_dvol);
+	else 				vol = 1.0;
 	volume_hell_sqr(out,mdc,nframes);
 	if(global_ptr->_eq_sensitive){
 		printf("no estamos ecualizando todavia\n"); 
@@ -148,7 +153,7 @@ void hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_
 			out[i]= vol*(1000.0*sqrt(out[i]));
 		}
 	}
-}
+}*/
 
 void psychedelic_if(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){ //arco tangente
 //	printf("psychedelic if\n");

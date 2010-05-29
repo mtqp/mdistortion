@@ -4,6 +4,7 @@
 #include <jack/jack.h>
 #include "globals.h"
 #include "m_eq.h"
+#include "vol_ctes.h"
 /*
 enum name_dists {
 	e_log_rock 			= 0,
@@ -26,6 +27,8 @@ typedef struct _m_distortion {
 	EQSTATE* m_eq;
 		
 	float _dvol;
+	vol_ctes * _vctes;
+	
 	float _dgain;
 	float _variacion_vol;
 	float _variacion_gain;
@@ -44,7 +47,7 @@ typedef void (DISTORTION)(jack_default_audio_sample_t *out, m_distortion *mdc, j
 
 DISTORTION log_rock;
 DISTORTION log_rock2;
-DISTORTION hell_sqr;
+extern DISTORTION hell_sqr;
 DISTORTION psychedelic_if;
 DISTORTION by_60s;
 DISTORTION fuzzy_dark_pow4;
@@ -56,7 +59,7 @@ DISTORTION by_pass;
 DISTORTION * f_dist[10];	
 DISTORTION * distortion_channel;
 
-extern volume_hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes);
+//extern volume_hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes);
 
 float actual_gain (m_distortion *mdc);
 void gain_up(m_distortion *mdc);
