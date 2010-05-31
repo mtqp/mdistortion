@@ -36,45 +36,47 @@ void set_3band_state(EQSTATE* es, int lowfreq, int highfreq, int mixfreq)
 // knew that anyway :)
 
 float do_3band(EQSTATE* es, float sample){
-  // Locals
+	// Locals
 
-  float  l,m,h;      // Low / Mid / High - Sample Values
+	float  l,m,h;      // Low / Mid / High - Sample Values
 
-  // Filter #1 (lowpass)
+	// Filter #1 (lowpass)
 
-  es->f1p0  += (es->lf * (sample   - es->f1p0)) + vsa;
-  es->f1p1  += (es->lf * (es->f1p0 - es->f1p1));
-  es->f1p2  += (es->lf * (es->f1p1 - es->f1p2));
-  es->f1p3  += (es->lf * (es->f1p2 - es->f1p3));
+	es->f1p0  += (es->lf * (sample   - es->f1p0)) + vsa;
+	es->f1p1  += (es->lf * (es->f1p0 - es->f1p1));
+	es->f1p2  += (es->lf * (es->f1p1 - es->f1p2));
+	//es->f1p3  += (es->lf * (es->f1p2 - es->f1p3));
 
-  l          = es->f1p3;
+	//l          = es->f1p3;
+	l          = es->f1p2;
 
-  // Filter #2 (highpass)
-  
-  es->f2p0  += (es->hf * (sample   - es->f2p0)) + vsa;
-  es->f2p1  += (es->hf * (es->f2p0 - es->f2p1));
-  es->f2p2  += (es->hf * (es->f2p1 - es->f2p2));
-  es->f2p3  += (es->hf * (es->f2p2 - es->f2p3));
+	// Filter #2 (highpass)
 
-  h          = es->sdm3 - es->f2p3;
+	es->f2p0  += (es->hf * (sample   - es->f2p0)) + vsa;
+	es->f2p1  += (es->hf * (es->f2p0 - es->f2p1));
+	es->f2p2  += (es->hf * (es->f2p1 - es->f2p2));
+	//es->f2p3  += (es->hf * (es->f2p2 - es->f2p3));
 
-  // Calculate midrange (signal - (low + high))
+	//h          = es->sdm3 - es->f2p3;
+	h          = es->sdm3 - es->f2p2;
+	
+	// Calculate midrange (signal - (low + high))
 
-  m          = es->sdm3 - (h + l);
+	m          = es->sdm3 - (h + l);
 
-  // Scale, Combine and store
+	// Scale, Combine and store
 
-  l         *= es->lg;
-  m         *= es->mg;
-  h         *= es->hg;
+	l         *= es->lg;
+	m         *= es->mg;
+	h         *= es->hg;
 
-  // Shuffle history buffer 
+	// Shuffle history buffer 
 
-  es->sdm3   = es->sdm2;
-  es->sdm2   = es->sdm1;
-  es->sdm1   = sample;                
+	es->sdm3   = es->sdm2;
+	es->sdm2   = es->sdm1;
+	es->sdm1   = sample;                
 
-  // Return result
+	// Return result
 
-  return(l + m + h);
+	return(l + m + h);
 }

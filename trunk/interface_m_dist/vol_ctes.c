@@ -1,6 +1,7 @@
 #include "vol_ctes.h"
 
 void set_vol_ctes (vol_ctes* v){
+	/*facilita el calculo tenerlas en memoria*/
 	v->log_rock_v 	=  0.250; 
 	v->log_rock2_v	=  0.500;
 	v->hell_sqr_v	=  0.015;
