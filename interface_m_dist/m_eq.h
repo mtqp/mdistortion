@@ -24,30 +24,29 @@ out_sample = do_3band(eq,in_sample)
 #define __EQ3BAND__
 
 typedef struct _EQSTATE {
+
+	float  data[4];
 	// Filter #1 (Low band)
 	float  lf;       // Frequency
 	float  f1p0;     // Poles ...
 	float  f1p1;     
 	float  f1p2;
-	//float  f1p3;
 
 	// Filter #2 (High band)
 	float  hf;       // Frequency
 	float  f2p0;     // Poles ...
 	float  f2p1;
 	float  f2p2;
-	//float  f2p3;
 
-	// Sample history buffer
-	float  sdm1;     // Sample data minus 1
-	float  sdm2;     //                   2
-	float  sdm3;     //                   3
+	// Sample history buffer si en vez de tener 3, tenemos 4...
+	float  shf[4];     // Sample data minus 1
 
 	// Gain Controls
-	float  lg;       // low  gain
-	float  mg;       // mid  gain
-	float  hg;       // high gain
+	float  lg[4];       // low  gain
+	float  mg[4];       // mid  gain
+	float  hg[4];       // high gain
   
+
 	/*float lf;
 	float hf;
 	float lg[4]; con el mismo valor
@@ -66,6 +65,8 @@ history	b	c	d	e	*/
 } EQSTATE;  
 
 void  set_3band_state(EQSTATE* es, int lowfreq, int highfreq, int mixfreq);
+void set_gain(float* ad, float val);
+void set_frecuency(float* ad, float val);
 float do_3band(EQSTATE* es, float sample);
 //extern void asm_equalize(EQSTATE* es, float* out); //no puede usar xmm7 xq ahi esta el valor de vol
 #endif

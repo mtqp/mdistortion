@@ -3,6 +3,7 @@
 section .data
 	hs_cte : dd 1000.0
 	hs_vanterior : dd 1
+
 section .text
 	global hell_sqr
 
@@ -61,27 +62,30 @@ hs_calcvol:
 ;en xmm7 esta el valor de la cte multiplicativa
 ;----------------------------------------------
 no_hs_calcvol:
-	mov ecx,nframes ;contador ciclo
+	mov esi,nframes ;contador ciclo
 	mov ebx,md_ptr
-	mov eax,buf_out	;buf_salida
+	mov edi,buf_out	;buf_salida
 
 ciclo_hs:
-	cmp ecx,0
+	cmp esi,0
 	je fin_hs
 	
-	movdqu	xmm0,[eax]
-	sqrtps	xmm0,xmm0
+	movdqu	xmm0,[edi]
 	
-	;jmp hs_equalize
-	
-hs_equalized:	
+	;jmp fpu_hs_equalize
+
+
+fpu_hs_equalized:	
+
+;	sqrtps	xmm0,xmm0
+
 	mulps 	xmm0,xmm7
-	movdqu	[eax],xmm0
+	movdqu	[edi],xmm0
 	
 	lea ebx,[ebx+16]
-	lea eax,[eax+16]
+	lea edi,[edi+16]
 	
-	sub ecx,4
+	sub esi,4
 	jmp ciclo_hs
 	
 fin_hs:
@@ -92,35 +96,100 @@ fin_hs:
 	pop ebp
 	ret
 
-hs_equalize:
-	;xmm7 intocable, xmm0 tengo la tira levantada, la devuelvo en xmm0 ecualizada
-	;eax, ebx, ecx intocable... en ebx tengo md_ptr
-	mov edx, ebx
-	mov edx,[edx+8]		;//edx = ptr_eq
+fpu_hs_equalize:
+	mov edx, md_ptr
+	mov edx,[edx+8]		;edx = ptr_eq
 	
-	movdqu 	xmm1,xmm0	;xmm0 = l, xmm1 = m, xmm2 = h
-	movdqu 	xmm2,xmm0
+	movdqu [edx],xmm0		;eq->data = xmm0 (se levanta dsp desde fpu)
+	
+	finit
+	;||sample 1||
+	fld dword [edx+16]	;[lf]
+	fld dword [edx+20]	;[p0,lf]
+	fld dword [edx]		;cargo sample1 = s1 [s1,p0,lf]
+	fsub st0,st1		;[s1-p0,p0,lf]
+	fmul st0,st2		;[lf*(s1-p0),p0,lf]	
+	faddp st1,st0		;[P0,lf]
 
-;Filter LOWPASS
-	;baja a memoria xmmI levanta con fpu xmmI y F1, calcula filtro 
-	;baja a memoria L y F1 y sube a xmm L
+	fld dword [edx+24]	;[p1,P0,lf]
+	fldz				;[0,p1,P0,lf]
+	fadd st0,st2		;[P0,p1,P0,lf]
+	fsub st0,st1		;[P0-p1,p1,P0,lf]
+	fmul st0,st3		;[lf*(P0-p1),p1,P0,lf]
+	faddp st1,st0		;[P1,P0,lf]
+	
+	fld dword [edx+28]	;[p2,P1,P0,lf]
+	fldz				;[0,p2,P1,P0,lf]
+	fadd st0,st2		;[P1,p2,P1,P0,lf]
+	fsub st0,st1		;[P1-p2,p2,P1,P0,lf]
+	fmul st0,st4		;[lf*(P1,p2),p2,P1,P0,lf]
+	faddp st1,st0		;[P2,P1,P0,lf]
+	fst dword [edx]		;guardo primer sample
+	
+	;||sample2||
+	fld dword [edx+4]	;[s2,p2,p1,p0,lf]
+	fsub st0,st3		;[s2-p0,p2,p1,p0,lf]
+	fmul st0,st4		;[lf*(s2-p0),p2,p1,p0,lf]
+	faddp st3,st0		;[p2,p1,P0,lf]
+	
+	fldz				;[0,p2,p1,P0,lf]
+	fadd st0,st3		;[P0,p2,p1,P0,lf]
+	fsub st0,st2
+	fmul st0,st4
+	faddp st2,st0		;[p2,P1,P0,lf]
+	
+	fldz				;[0,p2,P1,P0,lf]
+	fadd st0,st1		;[p2,p2,P1,P0,lf]
+	fsub st0,st2
+	fmul st0,st4
+	faddp st1,st0		;[P2,P1,P0,lf]
+	fst dword [edx+4]	;guardo segunda sample
+	
+	;||sample3||
+	fld dword [edx+8]	;[s3,p2,p1,p0,lf]
+	fsub st0,st3		;[s3-p0,p2,p1,p0,lf]
+	fmul st0,st4		;[lf*(s3-p0),p2,p1,p0,lf]
+	faddp st3,st0		;[p2,p1,P0,lf]
+	
+	fldz				;[0,p2,p1,P0,lf]
+	fadd st0,st3		;[P0,p2,p1,P0,lf]
+	fsub st0,st2
+	fmul st0,st4
+	faddp st2,st0		;[p2,P1,P0,lf]
+	
+	fldz				;[0,p2,P1,P0,lf]
+	fadd st0,st1		;[p2,p2,P1,P0,lf]
+	fsub st0,st2
+	fmul st0,st4
+	faddp st1,st0		;[P2,P1,P0,lf]
+	fst dword [edx+8]	;guardo tercer sample
+	
+	;||sample4||
+	fld dword [edx+12]	;[s4,p2,p1,p0,lf]
+	fsub st0,st3		;[s4-p0,p2,p1,p0,lf]
+	fmul st0,st4		;[lf*(s4-p0),p2,p1,p0,lf]
+	faddp st3,st0		;[p2,p1,P0,lf]
+	
+	fldz				;[0,p2,p1,P0,lf]
+	fadd st0,st3		;[P0,p2,p1,P0,lf]
+	fsub st0,st2
+	fmul st0,st4
+	faddp st2,st0		;[p2,P1,P0,lf]
+	
+	fldz				;[0,p2,P1,P0,lf]
+	fadd st0,st1		;[p2,p2,P1,P0,lf]
+	fsub st0,st2
+	fmul st0,st4
+	faddp st1,st0		;[P2,P1,P0,lf]
+	fst dword [edx+12]	;guardo cuarto sample
 
-;Filter HIGHPASS
-	;baja a memoria xmmJ levanta con fpu xmmJ y F2, calcula filtro 
-	;levante SDM3 y lo deja ahi (copia 4 floats iguales)
-	;baja a memoria H y F2 y sube a xmm H
-
-;Filter MIDRANGE
-	;guarda en xmmh el midrange (o viceversa)
-	;recalcula el array history
-
-;Scale, combine, store
-;  xmmi *= es->lg; -->multiplica x un array de 4 valores iguales.
-;  xmmj *= es->mg;
-;  xmmh	*= es->hg;
-
-
-	addps 	xmm0, xmm1
-	addps 	xmm0, xmm2	;return (l+m+h)
-	jmp hs_equalized
+	fstp dword [edx+28]
+	fstp dword [edx+24]
+	fstp dword [edx+20]
+	
+	movdqu	xmm0,[edx]	;xmm0 = data
+	movdqu 	xmm1,[edx+62] ;xmm1 = lg
+	mulps	xmm0,xmm1	;l         *= es->lg;
+	;como faltan los otros filtros no hacemos nada mas
+	jmp fpu_hs_equalized
 

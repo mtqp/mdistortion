@@ -135,14 +135,16 @@ void log_rock2(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes
 	}
 }
 
-/*
-void hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){//raiz nasty
+
+/*void hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){//raiz nasty
 //	printf("hell sqrt\n");
 	int i = 0;
 	float vol;
 	if(mdc->_dvol<=0.95)vol = mdc->_vctes->hell_sqr_v+(mdc->_vctes->hell_sqr_v*mdc->_dvol);
 	else 				vol = 1.0;
-	volume_hell_sqr(out,mdc,nframes);
+
+	FILE *f_out;
+	f_out = fopen("valoressqrt.dat","a+");
 	if(global_ptr->_eq_sensitive){
 		printf("no estamos ecualizando todavia\n"); 
 		for(i;i<nframes;i++){
@@ -151,8 +153,11 @@ void hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_
 	} else {
 		for(i;i<nframes;i++){
 			out[i]= vol*(1000.0*sqrt(out[i]));
+			fprintf(f_out,"%f\n",out[i]);
 		}
-	}
+		
+			fclose(f_out);
+	//}
 }*/
 
 void psychedelic_if(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){ //arco tangente
