@@ -13,20 +13,30 @@ static float vsa = (1.0 / 4294967295.0);   // Very small amount (Denormal Fix)
 
 void set_3band_state(EQSTATE* es, int lowfreq, int highfreq, int mixfreq)
 {
-  // Clear state 
+	// Clear state 
 
-  memset(es,0,sizeof(EQSTATE));
+	memset(es,0,sizeof(EQSTATE));
 
-  // Set Low/Mid/High gains to unity
+	// Set Low/Mid/High gains to unity
 
-  es->lg = 1.0;
-  es->mg = 1.0;
-  es->hg = 1.0;
+	set_gain(es->lg, 1.0);
+	set_gain(es->mg, 1.0);
+	set_gain(es->hg, 1.0);
 
-  // Calculate filter cutoff frequencies
+	// Calculate filter cutoff frequencies
 
-  es->lf = 2 * sin(M_PI * ((double)lowfreq / (double)mixfreq)); 
-  es->hf = 2 * sin(M_PI * ((double)highfreq / (double)mixfreq));
+	es->lf = 2 * sin(M_PI * ((float)lowfreq / (float)mixfreq));
+	es->hf = 2 * sin(M_PI * ((double)highfreq / (double)mixfreq));
+}
+
+void set_gain(float* ad, float val){
+	int i;
+	for (i=0;i<4;i++) ad[i] = val;
+}
+
+void set_frecuency(float* ad, float val){
+	int i;
+	for (i=0;i<4;i++) ad[i] = val;
 }
 
 // - sample can be any range you like :)
@@ -39,7 +49,7 @@ float do_3band(EQSTATE* es, float sample){
 	// Locals
 
 	float  l,m,h;      // Low / Mid / High - Sample Values
-
+/*
 	// Filter #1 (lowpass)
 
 	es->f1p0  += (es->lf * (sample   - es->f1p0)) + vsa;
@@ -77,6 +87,6 @@ float do_3band(EQSTATE* es, float sample){
 	es->sdm1   = sample;                
 
 	// Return result
-
+*/
 	return(l + m + h);
 }
