@@ -1,92 +1,184 @@
 #include <math.h>
-#include <string.h>
+#include <stdlib.h>
 #include "m_eq.h"
 
-static float vsa = (1.0 / 4294967295.0);   // Very small amount (Denormal Fix)
-
-// Recommended frequencies are ...
-//
-//  lowfreq  = 880  Hz
-//  highfreq = 5000 Hz
-//
-// Set mixfreq to whatever rate your system is using (eg 48Khz)
-
-void set_3band_state(EQSTATE* es, int lowfreq, int highfreq, int mixfreq)
+/* Below this would be biquad.c */
+/* Computes a BiQuad filter on a sample */
+smp_type BiQuad(smp_type sample, biquad * b)
 {
-	// Clear state 
+	smp_type result;
 
-	memset(es,0,sizeof(EQSTATE));
+	/* compute result */
+	result = b->a0 * sample + b->a1 * b->x1 + b->a2 * b->x2 -
+	   b->a3 * b->y1 - b->a4 * b->y2;
 
-	// Set Low/Mid/High gains to unity
+	/* shift x1 to x2, sample to x1 */
+	b->x2 = b->x1;
+	b->x1 = sample;
 
-	set_gain(es->lg, 1.0);
-	set_gain(es->mg, 1.0);
-	set_gain(es->hg, 1.0);
+	/* shift y1 to y2, result to y1 */
+	b->y2 = b->y1;
+	b->y1 = result;
 
-	// Calculate filter cutoff frequencies
-
-	es->lf = 2 * sin(M_PI * ((float)lowfreq / (float)mixfreq));
-	es->hf = 2 * sin(M_PI * ((double)highfreq / (double)mixfreq));
+	return result;
 }
 
-void set_gain(float* ad, float val){
-	int i;
-	for (i=0;i<4;i++) ad[i] = val;
-}
+void lpf_reset_eq_params(biquad *bq, smp_type dbGain, smp_type freq, smp_type srate, smp_type bandwidth){
+	smp_type omega, sn, cs, alpha;
+	smp_type a0, a1, a2, b0, b1, b2;
 
-void set_frecuency(float* ad, float val){
-	int i;
-	for (i=0;i<4;i++) ad[i] = val;
-}
-
-// - sample can be any range you like :)
-//
-// Note that the output will depend on the gain settings for each band 
-// (especially the bass) so may require clipping before output, but you 
-// knew that anyway :)
-
-float do_3band(EQSTATE* es, float sample){
-	// Locals
-
-	float  l,m,h;      // Low / Mid / High - Sample Values
-/*
-	// Filter #1 (lowpass)
-
-	es->f1p0  += (es->lf * (sample   - es->f1p0)) + vsa;
-	es->f1p1  += (es->lf * (es->f1p0 - es->f1p1));
-	es->f1p2  += (es->lf * (es->f1p1 - es->f1p2));
-	//es->f1p3  += (es->lf * (es->f1p2 - es->f1p3));
-
-	//l          = es->f1p3;
-	l          = es->f1p2;
-
-	// Filter #2 (highpass)
-
-	es->f2p0  += (es->hf * (sample   - es->f2p0)) + vsa;
-	es->f2p1  += (es->hf * (es->f2p0 - es->f2p1));
-	es->f2p2  += (es->hf * (es->f2p1 - es->f2p2));
-	//es->f2p3  += (es->hf * (es->f2p2 - es->f2p3));
-
-	//h          = es->sdm3 - es->f2p3;
-	h          = es->sdm3 - es->f2p2;
+	/* setup variables */
 	
-	// Calculate midrange (signal - (low + high))
+	omega = 2 * M_PI * freq /srate;
+	sn = sin(omega);
+	cs = cos(omega);
+	alpha = sn * sinh(M_LN2 /2 * bandwidth * omega /sn);
+	
 
-	m          = es->sdm3 - (h + l);
+	   b0 = (1 - cs) /2;
+	   b1 = 1 - cs;
+	   b2 = (1 - cs) /2;
+	   a0 = 1 + alpha;
+	   a1 = -2 * cs;
+	   a2 = 1 - alpha;
 
-	// Scale, Combine and store
+	/* precompute the coefficients */
+	bq->a0 = b0 /a0;
+	bq->a1 = b1 /a0;
+	bq->a2 = b2 /a0;
+	bq->a3 = a1 /a0;
+	bq->a4 = a2 /a0;
 
-	l         *= es->lg;
-	m         *= es->mg;
-	h         *= es->hg;
+	bq->_dbgain = dbGain;
+	bq->_freq = freq;
+	bq->_srate = srate;
+	bq->_bandwidth = bandwidth;
+}
 
-	// Shuffle history buffer 
+void lsh_reset_eq_params(biquad *bq, smp_type dbGain, smp_type freq, smp_type srate){
+	smp_type A, omega, sn, cs, beta;
+	smp_type a0, a1, a2, b0, b1, b2;
 
-	es->sdm3   = es->sdm2;
-	es->sdm2   = es->sdm1;
-	es->sdm1   = sample;                
+	/* setup variables */
+	A = pow(10, dbGain /40);
+	omega = 2 * M_PI * freq /srate;
+	sn = sin(omega);
+	cs = cos(omega);
+	beta = sqrt(A + A);
 
-	// Return result
-*/
-	return(l + m + h);
+		b0 = A * ((A + 1) - (A - 1) * cs + beta * sn);
+	   	b1 = 2 * A * ((A - 1) - (A + 1) * cs);
+	   	b2 = A * ((A + 1) - (A - 1) * cs - beta * sn);
+	   	a0 = (A + 1) + (A - 1) * cs + beta * sn;
+	   	a1 = -2 * ((A - 1) + (A + 1) * cs);
+	   	a2 = (A + 1) + (A - 1) * cs - beta * sn;
+
+	/* precompute the coefficients */
+	bq->a0 = b0 /a0;
+	bq->a1 = b1 /a0;
+	bq->a2 = b2 /a0;
+	bq->a3 = a1 /a0;
+	bq->a4 = a2 /a0;
+}
+
+
+/* sets up a BiQuad Filter */
+biquad *BiQuad_new(int type, smp_type dbGain, smp_type freq,
+smp_type srate, smp_type bandwidth)
+{
+	biquad *b;
+	smp_type A, omega, sn, cs, alpha, beta;
+	smp_type a0, a1, a2, b0, b1, b2;
+
+	b = malloc(sizeof(biquad));
+	if (b == NULL)
+	   return NULL;
+
+	b->_dbgain = dbGain;
+	b->_freq = freq;
+	b->_srate = srate;
+	b->_bandwidth = bandwidth;
+	
+	/* setup variables */
+	A = pow(10, dbGain /40);
+	omega = 2 * M_PI * freq /srate;
+	sn = sin(omega);
+	cs = cos(omega);
+	alpha = sn * sinh(M_LN2 /2 * bandwidth * omega /sn);
+	beta = sqrt(A + A);
+
+	switch (type) {
+	case LPF:
+	   b0 = (1 - cs) /2;
+	   b1 = 1 - cs;
+	   b2 = (1 - cs) /2;
+	   a0 = 1 + alpha;
+	   a1 = -2 * cs;
+	   a2 = 1 - alpha;
+	   break;
+	case HPF:
+	   b0 = (1 + cs) /2;
+	   b1 = -(1 + cs);
+	   b2 = (1 + cs) /2;
+	   a0 = 1 + alpha;
+	   a1 = -2 * cs;
+	   a2 = 1 - alpha;
+	   break;
+	case BPF:
+	   b0 = alpha;
+	   b1 = 0;
+	   b2 = -alpha;
+	   a0 = 1 + alpha;
+	   a1 = -2 * cs;
+	   a2 = 1 - alpha;
+	   break;
+	case NOTCH:
+	   b0 = 1;
+	   b1 = -2 * cs;
+	   b2 = 1;
+	   a0 = 1 + alpha;
+	   a1 = -2 * cs;
+	   a2 = 1 - alpha;
+	   break;
+	case PEQ:
+	   b0 = 1 + (alpha * A);
+	   b1 = -2 * cs;
+	   b2 = 1 - (alpha * A);
+	   a0 = 1 + (alpha /A);
+	   a1 = -2 * cs;
+	   a2 = 1 - (alpha /A);
+	   break;
+	case LSH:
+	   b0 = A * ((A + 1) - (A - 1) * cs + beta * sn);
+	   b1 = 2 * A * ((A - 1) - (A + 1) * cs);
+	   b2 = A * ((A + 1) - (A - 1) * cs - beta * sn);
+	   a0 = (A + 1) + (A - 1) * cs + beta * sn;
+	   a1 = -2 * ((A - 1) + (A + 1) * cs);
+	   a2 = (A + 1) + (A - 1) * cs - beta * sn;
+	   break;
+	case HSH:
+	   b0 = A * ((A + 1) + (A - 1) * cs + beta * sn);
+	   b1 = -2 * A * ((A - 1) + (A + 1) * cs);
+	   b2 = A * ((A + 1) + (A - 1) * cs - beta * sn);
+	   a0 = (A + 1) - (A - 1) * cs + beta * sn;
+	   a1 = 2 * ((A - 1) - (A + 1) * cs);
+	   a2 = (A + 1) - (A - 1) * cs - beta * sn;
+	   break;
+	default:
+	   free(b);
+	   return NULL;
+	}
+
+	/* precompute the coefficients */
+	b->a0 = b0 /a0;
+	b->a1 = b1 /a0;
+	b->a2 = b2 /a0;
+	b->a3 = a1 /a0;
+	b->a4 = a2 /a0;
+
+	/* zero initial samples */
+	b->x1 = b->x2 = 0;
+	b->y1 = b->y2 = 0;
+
+	return b;
 }

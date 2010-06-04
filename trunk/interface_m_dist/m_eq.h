@@ -1,72 +1,66 @@
-/*Simple 3 band equaliser with adjustable low and high frequencies ...
-Fairly fast algo, good quality output (seems to be accoustically transparent with all gains set to 1.0)
-How to use ...
-1. First you need to declare a state for your eq
-EQSTATE eq;
-2. Now initialise the state (we'll assume your output frequency is 48Khz)
+/* Simple implementation of Biquad filters -- Tom St Denis
+*
+* Based on the work
 
-set_3band_state(eq,880,5000,480000);
-Your EQ bands are now as follows (approximatley!)
-low band = 0Hz to 880Hz
-mid band = 880Hz to 5000Hz
-high band = 5000Hz to 24000Hz
+Cookbook formulae for audio EQ biquad filter coefficients
+---------------------------------------------------------
+by Robert Bristow-Johnson, pbjrbj@viconet.com  a.k.a. robert@audioheads.com
 
-3. Set the gains to some values ...
-eq.lg = 1.5; // Boost bass by 50%
-eq.mg = 0.75; // Cut mid by 25%
-eq.hg = 1.0; // Leave high band alone 
+* Available on the web at
 
-4. You can now EQ some samples
-out_sample = do_3band(eq,in_sample)
+http://www.smartelectronix.com/musicdsp/text/filters005.txt
 
-*/
-#ifndef __EQ3BAND__
-#define __EQ3BAND__
+* Enjoy.
+*
+* This work is hereby placed in the public domain for all purposes, whether
+* commercial, free [as in speech] or educational, etc.  Use the code and please
+* give me credit if you wish.
+*
+* Tom St Denis -- http://tomstdenis.home.dhs.org*/
 
-typedef struct _EQSTATE {
+/* this would be biquad.h */
+#ifndef __M_EQ_H__
+#define __M_EQ_H__
 
-	float  data[4];
-	// Filter #1 (Low band)
-	float  lf;       // Frequency
-	float  f1p0;     // Poles ...
-	float  f1p1;     
-	float  f1p2;
+#include <math.h>
+#include <stdlib.h>
 
-	// Filter #2 (High band)
-	float  hf;       // Frequency
-	float  f2p0;     // Poles ...
-	float  f2p1;
-	float  f2p2;
+#ifndef M_LN2
+#define M_LN2         0.69314718055994530942
+#endif
 
-	// Sample history buffer si en vez de tener 3, tenemos 4...
-	float  shf[4];     // Sample data minus 1
+#ifndef M_PI
+#define M_PI            3.14159265358979323846
+#endif
 
-	// Gain Controls
-	float  lg[4];       // low  gain
-	float  mg[4];       // mid  gain
-	float  hg[4];       // high gain
-  
+/* whatever sample type you want */
+typedef float smp_type;
 
-	/*float lf;
-	float hf;
-	float lg[4]; con el mismo valor
-	float mg[4]; con el mismo valor
-	float hg[4]; con el mismo valor
-	float f1[4]; [p0,p1,p2,p3]
-	float f2[4]; [p0,p1,p2,p3]	 son diferentes entre f1 y f2
-	los valores de f1 y de f2 se calculan mediante fpu... 
-	no creo ver como paralelizar
-	
-	float history_buf[4]; --->viene dado de la siguiente forma...
-buffer  a 	b 	c	 d
-history a-3 a-2	a-1	 a
-buffer 	e	d	e	f
-history	b	c	d	e	*/
-} EQSTATE;  
+/* this holds the data required to update samples thru a filter */
+typedef struct {
+	smp_type a0, a1, a2, a3, a4;
+	smp_type x1, x2, y1, y2;
 
-void  set_3band_state(EQSTATE* es, int lowfreq, int highfreq, int mixfreq);
-void set_gain(float* ad, float val);
-void set_frecuency(float* ad, float val);
-float do_3band(EQSTATE* es, float sample);
-//extern void asm_equalize(EQSTATE* es, float* out); //no puede usar xmm7 xq ahi esta el valor de vol
+	smp_type _dbgain, _freq, _srate, _bandwidth;
+}
+biquad;
+
+extern smp_type BiQuad(smp_type sample, biquad * b);
+extern biquad *BiQuad_new(int type, smp_type dbGain, /* gain of filter */
+                         smp_type freq,             /* center frequency */
+                         smp_type srate,            /* sampling rate */
+                         smp_type bandwidth);       /* bandwidth in octaves */
+void lpf_reset_eq_params(biquad *bq, smp_type dbGain, smp_type freq, smp_type srate, smp_type bandwidth);
+void lsh_reset_eq_params(biquad *bq, smp_type dbGain, smp_type freq, smp_type srate);
+/* filter types */
+enum {
+   LPF, /* low pass filter */
+   HPF, /* High pass filter */
+   BPF, /* band pass filter */
+   NOTCH, /* Notch Filter */
+   PEQ, /* Peaking band EQ filter */
+   LSH, /* Low shelf filter */
+   HSH /* High shelf filter */
+};
+
 #endif

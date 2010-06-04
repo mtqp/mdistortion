@@ -21,8 +21,12 @@ void init_m_distortion(m_distortion * md){
 	md->_variacion_gain = var;	//al re pedo
 
 	//////parte de eq//////
-	md->m_eq = (EQSTATE*) malloc(sizeof(EQSTATE));
-	set_3band_state(md->m_eq,880,5000,480000);
+	md->m_eq = BiQuad_new(LPF, 15.0, 800.0, 4096.0,4.0);
+
+/*extern biquad *BiQuad_new(int type, smp_type dbGain, /* gain of filter 
+                         smp_type freq,             /* center frequency 
+                         smp_type srate,            /* sampling rate 
+                         smp_type bandwidth);       /* bandwidth in octaves */
 	
 	global_ptr = (globals*) malloc(sizeof(globals));
 	
@@ -136,29 +140,25 @@ void log_rock2(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes
 }
 
 
-/*void hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){//raiz nasty
+void hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){//raiz nasty
 //	printf("hell sqrt\n");
 	int i = 0;
 	float vol;
 	if(mdc->_dvol<=0.95)vol = mdc->_vctes->hell_sqr_v+(mdc->_vctes->hell_sqr_v*mdc->_dvol);
 	else 				vol = 1.0;
 
-	FILE *f_out;
-	f_out = fopen("valoressqrt.dat","a+");
 	if(global_ptr->_eq_sensitive){
-		printf("no estamos ecualizando todavia\n"); 
+//		printf("no estamos ecualizando todavia\n"); 
 		for(i;i<nframes;i++){
-			out[i]= vol*(1000.0*sqrt(out[i]));
+			//out[i]= vol*(1000.0*sqrt(out[i]));
+			BiQuad(out[i], mdc->m_eq);
 		}
 	} else {
 		for(i;i<nframes;i++){
 			out[i]= vol*(1000.0*sqrt(out[i]));
-			fprintf(f_out,"%f\n",out[i]);
 		}
-		
-			fclose(f_out);
-	//}
-}*/
+	}
+}
 
 void psychedelic_if(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){ //arco tangente
 //	printf("psychedelic if\n");
@@ -262,7 +262,7 @@ void mute(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nf
 
 void by_pass(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 //	printf("by pass\n");
-	FILE * f_out;
+/*	FILE * f_out;
 	f_out = fopen("from_treb_to_bass.dat", "a+");
 	
 	if(global_ptr->_eq_sensitive){
@@ -289,6 +289,7 @@ void by_pass(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t
 	   	}
 	}
 	fclose(f_out);
+*/
 }
 
 /*
