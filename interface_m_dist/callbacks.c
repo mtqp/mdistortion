@@ -80,26 +80,37 @@ void on_eq_onoff_toggled (gpointer eqs, GtkToggleButton *b){
 
 G_MODULE_EXPORT
 void on_bass_scale_value_changed(GtkAdjustment *b_adjs, GtkRange *range ){
+//	g_print("bass eq is not working right now == %f\n", b_adjs->value);
+	float rate = (m_dist->m_eq->_srate * b_adjs->value*10000.0) +4096.0;
+	g_print("srate = %f\n", rate);
+	lsh_reset_eq_params(m_dist->m_eq, m_dist->m_eq->_dbgain, m_dist->m_eq->_freq, rate);
 /*	dt = (t_adjs->value);
 	RC = 1.0;
 	alpha = RC / (RC+dt);
 	global_ptr->alpha = b_adjs->value;*/
 	//m_dist->m_eq->lg = b_adjs->value+1.0;
-	set_gain(m_dist->m_eq->lg,b_adjs->value+1.0);
+	//set_gain(m_dist->m_eq->lg,b_adjs->value+1.0);
 }
 
 G_MODULE_EXPORT
 void on_mid_scale_value_changed(GtkAdjustment *m_adjs, GtkRange *range ){
-	//g_print("mid eq is not working right now == %f\n", m_adjs->value);
+	float freq = 800.0 + (8000.0*m_adjs->value);
+	g_print("freq = %f\n", freq);
+	lsh_reset_eq_params(m_dist->m_eq, m_dist->m_eq->_dbgain, freq, m_dist->m_eq->_srate);
+
+//	g_print("mid eq is not working right now == %f\n", m_adjs->value);
 //	m_dist->m_eq->mg = m_adjs->value+1.0;
-	set_gain(m_dist->m_eq->mg,m_adjs->value+1.0);
+	//set_gain(m_dist->m_eq->mg,m_adjs->value+1.0);
 }
 
 G_MODULE_EXPORT
 void on_treb_scale_value_changed(GtkAdjustment *t_adjs, GtkRange *range ){
-	//g_print("treb eq is not working right now == %f\n", t_adjs->value);
+	float gain = (100000.0*t_adjs->value)+1.0;
+	g_print("gain = %f\n", gain);	
+	lsh_reset_eq_params(m_dist->m_eq, gain, m_dist->m_eq->_freq, m_dist->m_eq->_srate);
+//	g_print("treb eq is not working right now == %f\n", t_adjs->value);
 //	m_dist->m_eq->hg = t_adjs->value+1.0;
-	set_gain(m_dist->m_eq->hg,t_adjs->value+1.0);
+	//set_gain(m_dist->m_eq->hg,t_adjs->value+1.0);
 }
 
 G_MODULE_EXPORT

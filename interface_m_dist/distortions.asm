@@ -70,9 +70,9 @@ ciclo_hs:
 	cmp esi,0
 	je fin_hs
 	
-	movdqu	xmm0,[edi]
-	
-	;jmp fpu_hs_equalize
+	movdqu	xmm0,[edi]	;xmm0 lowpass
+	;movdqu  xmm1,xmm0	;xmm1 highpass
+	jmp fpu_hs_equalize
 
 
 fpu_hs_equalized:	
@@ -102,90 +102,7 @@ fpu_hs_equalize:
 	
 	movdqu [edx],xmm0		;eq->data = xmm0 (se levanta dsp desde fpu)
 	
-	finit
-	;||sample 1||
-	fld dword [edx+16]	;[lf]
-	fld dword [edx+20]	;[p0,lf]
-	fld dword [edx]		;cargo sample1 = s1 [s1,p0,lf]
-	fsub st0,st1		;[s1-p0,p0,lf]
-	fmul st0,st2		;[lf*(s1-p0),p0,lf]	
-	faddp st1,st0		;[P0,lf]
-
-	fld dword [edx+24]	;[p1,P0,lf]
-	fldz				;[0,p1,P0,lf]
-	fadd st0,st2		;[P0,p1,P0,lf]
-	fsub st0,st1		;[P0-p1,p1,P0,lf]
-	fmul st0,st3		;[lf*(P0-p1),p1,P0,lf]
-	faddp st1,st0		;[P1,P0,lf]
 	
-	fld dword [edx+28]	;[p2,P1,P0,lf]
-	fldz				;[0,p2,P1,P0,lf]
-	fadd st0,st2		;[P1,p2,P1,P0,lf]
-	fsub st0,st1		;[P1-p2,p2,P1,P0,lf]
-	fmul st0,st4		;[lf*(P1,p2),p2,P1,P0,lf]
-	faddp st1,st0		;[P2,P1,P0,lf]
-	fst dword [edx]		;guardo primer sample
-	
-	;||sample2||
-	fld dword [edx+4]	;[s2,p2,p1,p0,lf]
-	fsub st0,st3		;[s2-p0,p2,p1,p0,lf]
-	fmul st0,st4		;[lf*(s2-p0),p2,p1,p0,lf]
-	faddp st3,st0		;[p2,p1,P0,lf]
-	
-	fldz				;[0,p2,p1,P0,lf]
-	fadd st0,st3		;[P0,p2,p1,P0,lf]
-	fsub st0,st2
-	fmul st0,st4
-	faddp st2,st0		;[p2,P1,P0,lf]
-	
-	fldz				;[0,p2,P1,P0,lf]
-	fadd st0,st1		;[p2,p2,P1,P0,lf]
-	fsub st0,st2
-	fmul st0,st4
-	faddp st1,st0		;[P2,P1,P0,lf]
-	fst dword [edx+4]	;guardo segunda sample
-	
-	;||sample3||
-	fld dword [edx+8]	;[s3,p2,p1,p0,lf]
-	fsub st0,st3		;[s3-p0,p2,p1,p0,lf]
-	fmul st0,st4		;[lf*(s3-p0),p2,p1,p0,lf]
-	faddp st3,st0		;[p2,p1,P0,lf]
-	
-	fldz				;[0,p2,p1,P0,lf]
-	fadd st0,st3		;[P0,p2,p1,P0,lf]
-	fsub st0,st2
-	fmul st0,st4
-	faddp st2,st0		;[p2,P1,P0,lf]
-	
-	fldz				;[0,p2,P1,P0,lf]
-	fadd st0,st1		;[p2,p2,P1,P0,lf]
-	fsub st0,st2
-	fmul st0,st4
-	faddp st1,st0		;[P2,P1,P0,lf]
-	fst dword [edx+8]	;guardo tercer sample
-	
-	;||sample4||
-	fld dword [edx+12]	;[s4,p2,p1,p0,lf]
-	fsub st0,st3		;[s4-p0,p2,p1,p0,lf]
-	fmul st0,st4		;[lf*(s4-p0),p2,p1,p0,lf]
-	faddp st3,st0		;[p2,p1,P0,lf]
-	
-	fldz				;[0,p2,p1,P0,lf]
-	fadd st0,st3		;[P0,p2,p1,P0,lf]
-	fsub st0,st2
-	fmul st0,st4
-	faddp st2,st0		;[p2,P1,P0,lf]
-	
-	fldz				;[0,p2,P1,P0,lf]
-	fadd st0,st1		;[p2,p2,P1,P0,lf]
-	fsub st0,st2
-	fmul st0,st4
-	faddp st1,st0		;[P2,P1,P0,lf]
-	fst dword [edx+12]	;guardo cuarto sample
-
-	fstp dword [edx+28]
-	fstp dword [edx+24]
-	fstp dword [edx+20]
 	
 	movdqu	xmm0,[edx]	;xmm0 = data
 	movdqu 	xmm1,[edx+62] ;xmm1 = lg

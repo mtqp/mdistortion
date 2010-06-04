@@ -24,7 +24,7 @@ typedef struct _m_distortion {
 	unsigned int _d_active;
 	unsigned int _last_dist_active;		//para q esta esto!?!?
 	
-	EQSTATE* m_eq;
+	biquad* m_eq;
 		
 	float _dvol;
 	vol_ctes * _vctes;
@@ -47,7 +47,7 @@ typedef void (DISTORTION)(jack_default_audio_sample_t *out, m_distortion *mdc, j
 
 DISTORTION log_rock;
 DISTORTION log_rock2;
-extern DISTORTION hell_sqr;
+DISTORTION hell_sqr;
 DISTORTION psychedelic_if;
 DISTORTION by_60s;
 DISTORTION fuzzy_dark_pow4;
