@@ -51,7 +51,7 @@ extern m_equalizer *BiQuad_new(int type, smp_type dbGain, /* gain of filter */
                          smp_type bandwidth);       /* bandwidth in octaves */
 void lpf_reset_eq_params(m_equalizer *bq, smp_type freq, smp_type srate, smp_type bandwidth);
 void hpf_reset_eq_params(m_equalizer *bq, smp_type freq, smp_type srate, smp_type bandwidth);
-
+void bpf_reset_eq_params(m_equalizer *bq, smp_type freq, smp_type srate, smp_type bandwidth);
 /* filter types */
 enum {
    LPF, 	/* Low pass filter */

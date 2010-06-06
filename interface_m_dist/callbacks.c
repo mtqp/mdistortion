@@ -81,20 +81,23 @@ G_MODULE_EXPORT
 void on_bass_scale_value_changed(GtkAdjustment *b_adjs, GtkRange *range ){
 	//g_print("bass eq is not working right now == %f\n", b_adjs->value);
 	float band = (5.0*b_adjs->value)+6.5;
-	g_print("band = %f\n", band);	
+	g_print("lpf band = %f\n", band);	
 	lpf_reset_eq_params(m_dist->m_bass, m_dist->m_bass->_freq, m_dist->m_bass->_srate, band);
 }
 
 G_MODULE_EXPORT
 void on_mid_scale_value_changed(GtkAdjustment *m_adjs, GtkRange *range ){
 	//g_print("mid eq is not working right now == %f\n", m_adjs->value);
+	float band = (4.0*m_adjs->value)+10.5;
+	g_print("bpf band = %f\n", band);	
+	bpf_reset_eq_params(m_dist->m_mid, m_dist->m_mid->_freq, m_dist->m_mid->_srate, band);
 }
 
 G_MODULE_EXPORT
 void on_treb_scale_value_changed(GtkAdjustment *t_adjs, GtkRange *range ){
 	//g_print("treb eq is not working right now == %f\n", t_adjs->value);
 	float band = (4.0*t_adjs->value)+5.5;
-	g_print("band = %f\n", band);	
+	g_print("hpf band = %f\n", band);	
 	hpf_reset_eq_params(m_dist->m_treb, m_dist->m_treb->_freq, m_dist->m_treb->_srate, band);
 }
 

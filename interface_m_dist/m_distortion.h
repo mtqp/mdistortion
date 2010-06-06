@@ -16,6 +16,7 @@ typedef struct _m_distortion {
 	vol_ctes * _vctes;	//si cambio de lugar la estructura aca jodo el ASM
 
 	m_equalizer* m_treb;
+	m_equalizer* m_mid;
 	int _rock_mode_left;	
 		
 	float _dgain;		//no se usa todavia

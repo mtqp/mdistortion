@@ -22,8 +22,9 @@ void init_m_distortion(m_distortion * md){
 	md->_variacion_gain = var;	//al re pedo
 
 	//////parte de eq//////
-	md->m_bass = BiQuad_new(LPF, 15.0, 800.0, 4096.0,4.0);
-	md->m_treb = BiQuad_new(HPF, 4.0, 800.0, 880096.0, 4.0);
+	md->m_bass = BiQuad_new(LPF, 15.0, 800.0, 4096.0,6.5);
+	md->m_treb = BiQuad_new(HPF, 4.0, 2000.0, 880096.0, 5.5);
+	md->m_mid  = BiQuad_new(BPF, 15.0, 5000.0, 20000.0, 10.5); 
 /*extern biquad *BiQuad_new(int type, smp_type dbGain, /* gain of filter 
                          smp_type freq,             /* center frequency 
                          smp_type srate,            /* sampling rate 
@@ -181,8 +182,9 @@ void hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_
 //		printf("no estamos ecualizando todavia\n"); 
 		for(i;i<nframes;i++){
 			//out[i]= vol*(1000.0*sqrt(out[i]));
-			out[i] = BiQuad(out[i], mdc->m_treb);
 			out[i] = BiQuad(out[i], mdc->m_bass);
+			out[i] = BiQuad(out[i], mdc->m_treb);
+			out[i] = BiQuad(out[i], mdc->m_mid);
 			//printf("outi == %f\n", out[i]);
 		}
 	} else {
