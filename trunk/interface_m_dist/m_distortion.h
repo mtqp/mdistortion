@@ -5,26 +5,13 @@
 #include "globals.h"
 #include "m_eq.h"
 #include "vol_ctes.h"
-/*
-enum name_dists {
-	e_log_rock 			= 0,
-	e_log_rock_II	 	= 1,
-	e_hell_sqrt 		= 2,
-	e_psychedelic_if 	= 3,
-	e_by_60s 			= 4,
-	e_fuzzy_dark_pow_IV = 5,
-	e_rare_cuadratic 	= 6,
-	e_random_day 		= 7,
-	e_mute 				= 8,
-	e_by_pass 			= 9,
-};
-*/
 
 typedef struct _m_distortion {
 	unsigned int _d_active;
 	unsigned int _last_dist_active;		//para q esta esto!?!?
 	
-	biquad* m_eq;
+	m_equalizer* m_bass;
+	m_equalizer* m_treb;
 		
 	float _dvol;
 	vol_ctes * _vctes;

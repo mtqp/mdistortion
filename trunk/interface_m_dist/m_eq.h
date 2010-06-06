@@ -18,7 +18,6 @@ http://www.smartelectronix.com/musicdsp/text/filters005.txt
 *
 * Tom St Denis -- http://tomstdenis.home.dhs.org*/
 
-/* this would be biquad.h */
 #ifndef __M_EQ_H__
 #define __M_EQ_H__
 
@@ -26,11 +25,11 @@ http://www.smartelectronix.com/musicdsp/text/filters005.txt
 #include <stdlib.h>
 
 #ifndef M_LN2
-#define M_LN2         0.69314718055994530942
+#define M_LN2	0.69314718055994530942
 #endif
 
 #ifndef M_PI
-#define M_PI            3.14159265358979323846
+#define M_PI	3.14159265358979323846
 #endif
 
 /* whatever sample type you want */
@@ -43,24 +42,25 @@ typedef struct {
 
 	smp_type _dbgain, _freq, _srate, _bandwidth;
 }
-biquad;
+m_equalizer;
 
-extern smp_type BiQuad(smp_type sample, biquad * b);
-extern biquad *BiQuad_new(int type, smp_type dbGain, /* gain of filter */
+extern smp_type 	BiQuad(smp_type sample, m_equalizer * b);
+extern m_equalizer *BiQuad_new(int type, smp_type dbGain, /* gain of filter */
                          smp_type freq,             /* center frequency */
                          smp_type srate,            /* sampling rate */
                          smp_type bandwidth);       /* bandwidth in octaves */
-void lpf_reset_eq_params(biquad *bq, smp_type dbGain, smp_type freq, smp_type srate, smp_type bandwidth);
-void lsh_reset_eq_params(biquad *bq, smp_type dbGain, smp_type freq, smp_type srate);
+void lpf_reset_eq_params(m_equalizer *bq, smp_type freq, smp_type srate, smp_type bandwidth);
+void hpf_reset_eq_params(m_equalizer *bq, smp_type freq, smp_type srate, smp_type bandwidth);
+
 /* filter types */
 enum {
-   LPF, /* low pass filter */
-   HPF, /* High pass filter */
-   BPF, /* band pass filter */
-   NOTCH, /* Notch Filter */
-   PEQ, /* Peaking band EQ filter */
-   LSH, /* Low shelf filter */
-   HSH /* High shelf filter */
+   LPF, 	/* Low pass filter */
+   HPF, 	/* High pass filter */
+   BPF, 	/* Band pass filter */
+   NOTCH, 	/* Notch Filter */
+   PEQ, 	/* Peaking band EQ filter */
+   LSH, 	/* Low shelf filter */
+   HSH 		/* High shelf filter */
 };
 
 #endif

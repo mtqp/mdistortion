@@ -2,9 +2,8 @@
 #include <stdlib.h>
 #include "m_eq.h"
 
-/* Below this would be biquad.c */
 /* Computes a BiQuad filter on a sample */
-smp_type BiQuad(smp_type sample, biquad * b)
+smp_type BiQuad(smp_type sample, m_equalizer * b)
 {
 	smp_type result;
 
@@ -23,18 +22,16 @@ smp_type BiQuad(smp_type sample, biquad * b)
 	return result;
 }
 
-void lpf_reset_eq_params(biquad *bq, smp_type dbGain, smp_type freq, smp_type srate, smp_type bandwidth){
+void lpf_reset_eq_params(m_equalizer *bq, smp_type freq, smp_type srate, smp_type bandwidth){
 	smp_type omega, sn, cs, alpha;
 	smp_type a0, a1, a2, b0, b1, b2;
 
 	/* setup variables */
-	
 	omega = 2 * M_PI * freq /srate;
 	sn = sin(omega);
 	cs = cos(omega);
 	alpha = sn * sinh(M_LN2 /2 * bandwidth * omega /sn);
 	
-
 	   b0 = (1 - cs) /2;
 	   b1 = 1 - cs;
 	   b2 = (1 - cs) /2;
@@ -49,29 +46,27 @@ void lpf_reset_eq_params(biquad *bq, smp_type dbGain, smp_type freq, smp_type sr
 	bq->a3 = a1 /a0;
 	bq->a4 = a2 /a0;
 
-	bq->_dbgain = dbGain;
 	bq->_freq = freq;
 	bq->_srate = srate;
 	bq->_bandwidth = bandwidth;
 }
 
-void lsh_reset_eq_params(biquad *bq, smp_type dbGain, smp_type freq, smp_type srate){
-	smp_type A, omega, sn, cs, beta;
+void hpf_reset_eq_params(m_equalizer *bq, smp_type freq, smp_type srate, smp_type bandwidth){
+	smp_type omega, sn, cs, alpha;
 	smp_type a0, a1, a2, b0, b1, b2;
 
 	/* setup variables */
-	A = pow(10, dbGain /40);
 	omega = 2 * M_PI * freq /srate;
 	sn = sin(omega);
 	cs = cos(omega);
-	beta = sqrt(A + A);
-
-		b0 = A * ((A + 1) - (A - 1) * cs + beta * sn);
-	   	b1 = 2 * A * ((A - 1) - (A + 1) * cs);
-	   	b2 = A * ((A + 1) - (A - 1) * cs - beta * sn);
-	   	a0 = (A + 1) + (A - 1) * cs + beta * sn;
-	   	a1 = -2 * ((A - 1) + (A + 1) * cs);
-	   	a2 = (A + 1) + (A - 1) * cs - beta * sn;
+	alpha = sn * sinh(M_LN2 /2 * bandwidth * omega /sn);
+	
+	   b0 = (1 + cs) /2;
+	   b1 = -(1 + cs);
+	   b2 = (1 + cs) /2;
+	   a0 = 1 + alpha;
+	   a1 = -2 * cs;
+	   a2 = 1 - alpha;
 
 	/* precompute the coefficients */
 	bq->a0 = b0 /a0;
@@ -79,18 +74,21 @@ void lsh_reset_eq_params(biquad *bq, smp_type dbGain, smp_type freq, smp_type sr
 	bq->a2 = b2 /a0;
 	bq->a3 = a1 /a0;
 	bq->a4 = a2 /a0;
+
+	bq->_freq = freq;
+	bq->_srate = srate;
+	bq->_bandwidth = bandwidth;
 }
 
-
 /* sets up a BiQuad Filter */
-biquad *BiQuad_new(int type, smp_type dbGain, smp_type freq,
+m_equalizer *BiQuad_new(int type, smp_type dbGain, smp_type freq,
 smp_type srate, smp_type bandwidth)
 {
-	biquad *b;
+	m_equalizer *b;
 	smp_type A, omega, sn, cs, alpha, beta;
 	smp_type a0, a1, a2, b0, b1, b2;
 
-	b = malloc(sizeof(biquad));
+	b = malloc(sizeof(m_equalizer));
 	if (b == NULL)
 	   return NULL;
 
