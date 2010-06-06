@@ -10,31 +10,30 @@ void init_m_distortion(m_distortion * md){
 	printf("inicializando m_distortion\n");
 	float gain = 1.0;
 	float var = 1.0;
-//	md->_d_ch = (m_distortion_channel *) malloc(sizeof(m_distortion_channel));
 	
-	md->_dvol = 0.0;	//esta si la usamos
+	md->_dvol = 0.0;			//esta si la usamos
 	md->_vctes = (vol_ctes*) malloc(sizeof(vol_ctes));
 	set_vol_ctes(md->_vctes);
 	
-	md->_dgain= gain;	//esto esta al pedo
+	md->_dgain= gain;			//esto esta al pedo
 	md->_variacion_vol  = var;	//al pedo
 	md->_variacion_gain = var;	//al re pedo
 
 	//////parte de eq//////
-	md->m_eq = BiQuad_new(LPF, 15.0, 800.0, 4096.0,4.0);
-
+	md->m_bass = BiQuad_new(LPF, 15.0, 800.0, 4096.0,4.0);
+	//mc->m_treb = BiQuad_new(HPF,);
 /*extern biquad *BiQuad_new(int type, smp_type dbGain, /* gain of filter 
                          smp_type freq,             /* center frequency 
                          smp_type srate,            /* sampling rate 
                          smp_type bandwidth);       /* bandwidth in octaves */
 	
+	///////globals///////
 	global_ptr = (globals*) malloc(sizeof(globals));
 	
 	global_ptr->dt = 0.1;
 	global_ptr->RC = 1.0;
 	global_ptr->alpha = global_ptr->RC / (global_ptr->RC+global_ptr->dt);
 	global_ptr->plot_x = 0;
-
 	global_ptr->_noise_toggled = 0;
 	//////////////////////
 
@@ -80,6 +79,7 @@ void distortionize(m_distortion *md, jack_default_audio_sample_t *out, jack_nfra
 }
 
 void set_m_distortion( m_distortion * md, int dist){//name_dists *dist/*, unsigned char right*/){
+	//OJO QUE ACA NO ESTAMOS VIENDO EL ON ROCK MODE CLICKED TIENE UN MENOS UNO Y HAY Q HACER ALGO...
 	md->_d_active = dist;
 	distortion_channel = f_dist[md->_d_active];
 }
@@ -151,7 +151,7 @@ void hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_
 //		printf("no estamos ecualizando todavia\n"); 
 		for(i;i<nframes;i++){
 			//out[i]= vol*(1000.0*sqrt(out[i]));
-			BiQuad(out[i], mdc->m_eq);
+			out[i] = BiQuad(out[i], mdc->m_bass);
 		}
 	} else {
 		for(i;i<nframes;i++){
