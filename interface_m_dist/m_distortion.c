@@ -25,10 +25,6 @@ void init_m_distortion(m_distortion * md){
 	md->m_bass = BiQuad_new(LPF, 15.0, 800.0, 4096.0,6.5);
 	md->m_treb = BiQuad_new(HPF, 4.0, 2000.0, 880096.0, 5.5);
 	md->m_mid  = BiQuad_new(BPF, 15.0, 5000.0, 20000.0, 10.5); 
-/*extern biquad *BiQuad_new(int type, smp_type dbGain, /* gain of filter 
-                         smp_type freq,             /* center frequency 
-                         smp_type srate,            /* sampling rate 
-                         smp_type bandwidth);       /* bandwidth in octaves */
 	
 	///////globals///////
 	global_ptr = (globals*) malloc(sizeof(globals));
@@ -72,9 +68,12 @@ void init_m_distortion(m_distortion * md){
 }
 
 void free_m_distortion(m_distortion *md){
+	free(md->_vctes);
+	free(md->m_bass);
+	free(md->m_mid);
+	free(md->m_treb);
 	free (md);
 	free (global_ptr);
-	printf("puede ser q no estemos liberando eq y vol ctes\n");
 	printf("freeing m_distortion exitoso\n");
 }
 
@@ -82,7 +81,7 @@ void distortionize(m_distortion *md, jack_default_audio_sample_t *out, jack_nfra
 	distortion_channel(out, md, nframes);
 }
 
-void set_m_distortion( m_distortion * md, int dist){//name_dists *dist/*, unsigned char right*/){
+void set_m_distortion( m_distortion * md, int dist){
 	//OJO QUE ACA NO ESTAMOS VIENDO EL ON ROCK MODE CLICKED TIENE UN MENOS UNO Y HAY Q HACER ALGO...
 	printf("FUNCIONA MAL ARREGLAR INMEDIATAMENTE\n");
 	if(dist == -1){
