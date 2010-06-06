@@ -6,6 +6,8 @@
 #include <math.h>
 #include <string.h>
 
+#include "enum_dist.h"
+
 void init_m_distortion(m_distortion * md){
 	printf("inicializando m_distortion\n");
 	float gain = 1.0;
@@ -21,7 +23,7 @@ void init_m_distortion(m_distortion * md){
 
 	//////parte de eq//////
 	md->m_bass = BiQuad_new(LPF, 15.0, 800.0, 4096.0,4.0);
-	//mc->m_treb = BiQuad_new(HPF,);
+	md->m_treb = BiQuad_new(HPF, 4.0, 800.0, 880096.0, 4.0);
 /*extern biquad *BiQuad_new(int type, smp_type dbGain, /* gain of filter 
                          smp_type freq,             /* center frequency 
                          smp_type srate,            /* sampling rate 
@@ -37,9 +39,10 @@ void init_m_distortion(m_distortion * md){
 	global_ptr->_noise_toggled = 0;
 	//////////////////////
 
-	md->_d_active = 2;			
+	md->_d_active = e_hell_sqrt;			
 	md->_last_dist_active = md->_d_active;
 	md->_cant_distors 	= 10;
+	md->_rock_mode_left = 0;
 	
 	md->_name_dists[0] = "log_rock";
 	md->_name_dists[1] = "log_rockII";
@@ -80,7 +83,34 @@ void distortionize(m_distortion *md, jack_default_audio_sample_t *out, jack_nfra
 
 void set_m_distortion( m_distortion * md, int dist){//name_dists *dist/*, unsigned char right*/){
 	//OJO QUE ACA NO ESTAMOS VIENDO EL ON ROCK MODE CLICKED TIENE UN MENOS UNO Y HAY Q HACER ALGO...
-	md->_d_active = dist;
+	printf("FUNCIONA MAL ARREGLAR INMEDIATAMENTE\n");
+	if(dist == -1){
+		md->_d_active = md->_last_dist_active;
+		md->_rock_mode_left = 0;
+		//printf("-1 dactive == %d\n", md->_d_active);
+	}
+	else {
+		if((dist >= e_random_day) && (md->_rock_mode_left == 1)){
+			//printf("B\n");
+			md->_d_active = dist;
+		}
+		if((dist >= e_random_day) && (md->_rock_mode_left == 0)){
+			//printf("A\n");
+			//printf("LDA == %d\n",md->_last_dist_active);
+			md->_last_dist_active = md->_d_active;
+			//printf("NEWLDA == %d\n",md->_last_dist_active);
+			md->_d_active = dist;
+			md->_rock_mode_left = 1;
+		}
+		if(dist < e_random_day){
+			//printf("C\n");
+			md->_last_dist_active = md->_d_active;
+			md->_d_active = dist;
+		}
+		//printf("rock mode == %d\n", md->_rock_mode_left);
+		//printf("dactive == %d\n", md->_d_active);
+		//printf("LAST dactive == %d\n\n\n", md->_last_dist_active);
+	}
 	distortion_channel = f_dist[md->_d_active];
 }
 
@@ -151,7 +181,9 @@ void hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_
 //		printf("no estamos ecualizando todavia\n"); 
 		for(i;i<nframes;i++){
 			//out[i]= vol*(1000.0*sqrt(out[i]));
+			out[i] = BiQuad(out[i], mdc->m_treb);
 			out[i] = BiQuad(out[i], mdc->m_bass);
+			//printf("outi == %f\n", out[i]);
 		}
 	} else {
 		for(i;i<nframes;i++){

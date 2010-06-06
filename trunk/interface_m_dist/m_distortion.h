@@ -7,18 +7,20 @@
 #include "vol_ctes.h"
 
 typedef struct _m_distortion {
-	unsigned int _d_active;
-	unsigned int _last_dist_active;		//para q esta esto!?!?
+	int _d_active;
+	int _last_dist_active;
 	
 	m_equalizer* m_bass;
-	m_equalizer* m_treb;
 		
-	float _dvol;
-	vol_ctes * _vctes;
-	
-	float _dgain;
-	float _variacion_vol;
-	float _variacion_gain;
+	float _dvol;		//se usa
+	vol_ctes * _vctes;	//si cambio de lugar la estructura aca jodo el ASM
+
+	m_equalizer* m_treb;
+	int _rock_mode_left;	
+		
+	float _dgain;		//no se usa todavia
+	float _variacion_vol;//tmp se usa todavia
+	float _variacion_gain;//tmp se usa todavia
 	
 	unsigned int _cant_distors;
 	char* _name_dists[10];

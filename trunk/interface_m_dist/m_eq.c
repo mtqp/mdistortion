@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "m_eq.h"
 
 /* Computes a BiQuad filter on a sample */
