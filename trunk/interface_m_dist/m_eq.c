@@ -81,6 +81,36 @@ void hpf_reset_eq_params(m_equalizer *bq, smp_type freq, smp_type srate, smp_typ
 	bq->_bandwidth = bandwidth;
 }
 
+void bpf_reset_eq_params(m_equalizer *bq, smp_type freq, smp_type srate, smp_type bandwidth){
+	smp_type omega, sn, cs, alpha;
+	smp_type a0, a1, a2, b0, b1, b2;
+
+	/* setup variables */
+	omega = 2 * M_PI * freq /srate;
+	sn = sin(omega);
+	cs = cos(omega);
+	alpha = sn * sinh(M_LN2 /2 * bandwidth * omega /sn);
+	
+	   b0 = alpha;
+	   b1 = 0;
+	   b2 = -alpha;
+	   a0 = 1 + alpha;
+	   a1 = -2 * cs;
+	   a2 = 1 - alpha;
+
+	/* precompute the coefficients */
+	bq->a0 = b0 /a0;
+	bq->a1 = b1 /a0;
+	bq->a2 = b2 /a0;
+	bq->a3 = a1 /a0;
+	bq->a4 = a2 /a0;
+
+	bq->_freq = freq;
+	bq->_srate = srate;
+	bq->_bandwidth = bandwidth;
+}
+
+
 /* sets up a BiQuad Filter */
 m_equalizer *BiQuad_new(int type, smp_type dbGain, smp_type freq,
 smp_type srate, smp_type bandwidth)
