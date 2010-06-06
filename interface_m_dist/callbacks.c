@@ -74,6 +74,7 @@ void on_eq_onoff_toggled (gpointer eqs, GtkToggleButton *b){
 	if(global_ptr->_eq_sensitive)	global_ptr->_eq_sensitive = 0;
 	else							global_ptr->_eq_sensitive = 1;
 	gtk_widget_set_sensitive((GtkWidget*) eqs, global_ptr->_eq_sensitive);
+	g_print("eq_sensitive = %d\n",global_ptr->_eq_sensitive);
 }
 
 G_MODULE_EXPORT
@@ -86,16 +87,15 @@ void on_bass_scale_value_changed(GtkAdjustment *b_adjs, GtkRange *range ){
 
 G_MODULE_EXPORT
 void on_mid_scale_value_changed(GtkAdjustment *m_adjs, GtkRange *range ){
-	g_print("mid eq is not working right now == %f\n", m_adjs->value);
-	//m_dist->m_eq->mg = m_adjs->value+1.0;
-	//set_gain(m_dist->m_eq->mg,m_adjs->value+1.0);
+	//g_print("mid eq is not working right now == %f\n", m_adjs->value);
 }
 
 G_MODULE_EXPORT
 void on_treb_scale_value_changed(GtkAdjustment *t_adjs, GtkRange *range ){
-	g_print("treb eq is not working right now == %f\n", t_adjs->value);
-	//m_dist->m_eq->hg = t_adjs->value+1.0;
-	//set_gain(m_dist->m_eq->hg,t_adjs->value+1.0);
+	//g_print("treb eq is not working right now == %f\n", t_adjs->value);
+	float band = (4.0*t_adjs->value)+5.5;
+	g_print("band = %f\n", band);	
+	hpf_reset_eq_params(m_dist->m_treb, m_dist->m_treb->_freq, m_dist->m_treb->_srate, band);
 }
 
 G_MODULE_EXPORT
