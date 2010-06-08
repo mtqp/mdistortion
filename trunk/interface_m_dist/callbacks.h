@@ -13,7 +13,8 @@
 ///////CALLBACKS-GTK///////
 
 G_MODULE_EXPORT bool on_quit_clicked( GtkButton *button, gpointer   data );
-G_MODULE_EXPORT bool on_info_clicked(GtkButton *button, gpointer data);
+G_MODULE_EXPORT bool on_info_clicked(GtkButton *button, gpointer data);//las dos hacen lo mismo, quizas se pueden unificar, pensar
+G_MODULE_EXPORT bool on_help_about_clicked(GtkButton *button, gpointer data);
 G_MODULE_EXPORT bool on_m_distortion_destroy (GtkObject *object, gpointer user_data);
 G_MODULE_EXPORT void on_rock_mode_clicked (gpointer distors, GtkRadioButton *button);
 G_MODULE_EXPORT void on_random_mode_clicked ( gpointer distors,GtkRadioButton *button);
