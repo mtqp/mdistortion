@@ -904,6 +904,7 @@ audio-volume-medium</property>
                             <property name="image">lespaul</property>
                             <property name="relief">none</property>
                             <property name="image_position">top</property>
+                            <signal name="clicked" handler="on_info_clicked"/>
                           </object>
                           <packing>
                             <property name="fill">False</property>
@@ -979,7 +980,7 @@ audio-volume-medium</property>
     <property name="visible">True</property>
     <property name="pixbuf">g_lespaul.png</property>
   </object>
-  <object class="GtkMessageDialog" id="windows_info">
+  <object class="GtkMessageDialog" id="info_m_distortion">
     <property name="border_width">5</property>
     <property name="type_hint">normal</property>
     <property name="skip_taskbar_hint">True</property>

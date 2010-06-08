@@ -23,6 +23,33 @@ G_MODULE_EXPORT bool  on_quit_clicked( GtkButton *button, gpointer   data ){
     return false;
 }
 
+G_MODULE_EXPORT bool on_info_clicked(GtkButton *button, gpointer data){
+	//llama a un nuevo archivo de glade x lo pronto, dsp lo arreglamos en el mismo archivo
+	GtkBuilder *builder;
+	GtkWidget  *window;
+	GError     *error = NULL;
+
+	/* Create new GtkBuilder object */
+	builder = gtk_builder_new();
+
+	// Load UI from file. If error occurs, report it and quit application.
+	if( ! gtk_builder_add_from_file( builder, "info_m_distortion.glade", &error ) ){
+		g_warning( "%s", error->message );
+		g_free( error );
+		//g_print("couldnt create windows at all\n");
+		return( 0 );
+	}
+
+	/* Get main window pointer from UI */
+	window = GTK_WIDGET( gtk_builder_get_object( builder, "info_m_distortion" ) );
+	/* Connect signals */
+	gtk_builder_connect_signals( builder, NULL );
+	/* Destroy builder, since we don't need it anymore */
+	g_object_unref( G_OBJECT( builder ) );
+	/* Show window. All other widgets are automatically shown by GtkBuilder */
+	gtk_widget_show( window );
+}
+
 //////////MODES////////////
 G_MODULE_EXPORT void on_rock_mode_clicked (gpointer distors, GtkRadioButton *button){
 	gtk_widget_set_sensitive((GtkWidget*) distors, true);//sensitivo);
