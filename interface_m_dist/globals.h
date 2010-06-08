@@ -14,7 +14,7 @@ typedef struct _globals {
 
 	int _eq_sensitive; 
 	int _noise_toggled;
-
+	
 	float dt;
 	float RC;
 	float alpha;
