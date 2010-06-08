@@ -3,6 +3,7 @@
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
   <object class="GtkWindow" id="info_m_distortion">
+    <property name="type">popup</property>
     <child>
       <object class="GtkFrame" id="info">
         <property name="visible">True</property>
@@ -11,29 +12,42 @@
         <child>
           <object class="GtkAlignment" id="alignment1">
             <property name="visible">True</property>
-            <property name="left_padding">12</property>
+            <property name="top_padding">10</property>
+            <property name="bottom_padding">10</property>
+            <property name="left_padding">10</property>
+            <property name="right_padding">10</property>
             <child>
-              <object class="GtkVBox" id="vbox1">
+              <object class="GtkHBox" id="hbox1">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkLabel" id="label1">
+                  <object class="GtkLabel" id="mdinf">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">m distortion shall rock till the end of times</property>
+                    <property name="label" translatable="yes">Objetivo:
+	"Optimizaci&#xF3;n de se&#xF1;ales con instrucciones SIMD".
+
+Lenguajes:
+	C.
+	Assembler IA-32.
+
+Dise&#xF1;ado por Mariano Edgardo De Sousa Bispo.
+Estudiante de Ciencias de la Computaci&#xF3;n de 
+FCEN de la UBA.
+L.U.: 389/08.
+
+						 Buenos Aires, Argentina,
+									       2010.</property>
+                    <property name="wrap">True</property>
                   </object>
                   <packing>
                     <property name="position">0</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkHBox" id="hbox1">
+                  <object class="GtkButton" id="g_info">
+                    <property name="label" translatable="yes">button</property>
                     <property name="visible">True</property>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
                   </object>
                   <packing>
                     <property name="position">1</property>
