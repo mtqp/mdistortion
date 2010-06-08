@@ -3,7 +3,11 @@
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
   <object class="GtkWindow" id="info_m_distortion">
-    <property name="type">popup</property>
+    <property name="title" translatable="yes">info_m_distortion</property>
+    <property name="resizable">False</property>
+    <property name="window_position">mouse</property>
+    <property name="icon">g_stratocaster.png</property>
+    <property name="opacity">0.91999999955296519</property>
     <child>
       <object class="GtkFrame" id="info">
         <property name="visible">True</property>
@@ -14,8 +18,7 @@
             <property name="visible">True</property>
             <property name="top_padding">10</property>
             <property name="bottom_padding">10</property>
-            <property name="left_padding">10</property>
-            <property name="right_padding">10</property>
+            <property name="left_padding">22</property>
             <child>
               <object class="GtkHBox" id="hbox1">
                 <property name="visible">True</property>
@@ -43,13 +46,14 @@ L.U.: 389/08.
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="g_info">
-                    <property name="label" translatable="yes">button</property>
+                  <object class="GtkImage" id="image1">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
+                    <property name="yalign">0.40999999642372131</property>
+                    <property name="pixbuf">g_info.png</property>
                   </object>
                   <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
