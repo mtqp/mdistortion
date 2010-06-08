@@ -50,7 +50,7 @@ G_MODULE_EXPORT bool on_info_clicked(GtkButton *button, gpointer data){
 	gtk_widget_show( window );
 }
 
-G_MODULE_EXPORT bool on_help_about_clicked(GtkButton *button, gpointer data){
+G_MODULE_EXPORT bool on_save_clicked(GtkButton *button, gpointer data){
 	//llama a un nuevo archivo de glade x lo pronto, dsp lo arreglamos en el mismo archivo
 	GtkBuilder *builder;
 	GtkWidget  *window;
@@ -60,7 +60,7 @@ G_MODULE_EXPORT bool on_help_about_clicked(GtkButton *button, gpointer data){
 	builder = gtk_builder_new();
 
 	// Load UI from file. If error occurs, report it and quit application.
-	if( ! gtk_builder_add_from_file( builder, "help_m_distortion.glade", &error ) ){
+	if( ! gtk_builder_add_from_file( builder, "save_m_distortion.glade", &error ) ){
 		g_warning( "%s", error->message );
 		g_free( error );
 		//g_print("couldnt create windows at all\n");
@@ -68,7 +68,7 @@ G_MODULE_EXPORT bool on_help_about_clicked(GtkButton *button, gpointer data){
 	}
 
 	/* Get main window pointer from UI */
-	window = GTK_WIDGET( gtk_builder_get_object( builder, "help_m_distortion" ) );
+	window = GTK_WIDGET( gtk_builder_get_object( builder, "save_m_distortion" ) );
 	/* Connect signals */
 	gtk_builder_connect_signals( builder, NULL );
 	/* Destroy builder, since we don't need it anymore */
