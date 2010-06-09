@@ -81,21 +81,25 @@ G_MODULE_EXPORT bool on_save_clicked(GtkButton *button, gpointer data){
 G_MODULE_EXPORT void on_rock_mode_clicked (gpointer distors, GtkRadioButton *button){
 	gtk_widget_set_sensitive((GtkWidget*) distors, true);//sensitivo);
 	set_m_distortion(m_dist, -1);
+//	printf("rock mode clicked\n");
 }
 
 G_MODULE_EXPORT void on_random_mode_clicked ( gpointer distors,GtkRadioButton *button){
 	gtk_widget_set_sensitive((GtkWidget*) distors, false);//no_sensitivo);
 	set_m_distortion(m_dist,e_random_day);		//quizas es mejor hacer un enum de los numeros para q se entienda mas!
+//	printf("random mode clicked\n");
 }
 
 G_MODULE_EXPORT void on_mute_mode_clicked ( gpointer distors,GtkRadioButton *button){
 	gtk_widget_set_sensitive((GtkWidget*) distors, false);//no_sensitivo);
 	set_m_distortion(m_dist, e_mute);
+//	printf("mute mode clicked\n");
 }
 
 G_MODULE_EXPORT void on_by_pass_mode_clicked ( gpointer distors, GtkRadioButton *button){
 	gtk_widget_set_sensitive((GtkWidget*) distors, false);//no_sensitivo);
 	set_m_distortion(m_dist, e_by_pass);
+//	printf("by pass mode clicked\n");
 }
 
 //////////////DISTORSIONES/////////////////
@@ -133,26 +137,23 @@ void on_eq_onoff_toggled (gpointer eqs, GtkToggleButton *b){
 
 G_MODULE_EXPORT
 void on_bass_scale_value_changed(GtkAdjustment *b_adjs, GtkRange *range ){
-	//g_print("bass eq is not working right now == %f\n", b_adjs->value);
 	float band = (5.0*b_adjs->value)+6.5;
 	g_print("lpf band = %f\n", band);	
-	lpf_reset_eq_params(m_dist->m_bass, m_dist->m_bass->_freq, m_dist->m_bass->_srate, band);
+	reset_eq_params(m_dist->m_bass, band, LPF);
 }
 
 G_MODULE_EXPORT
 void on_mid_scale_value_changed(GtkAdjustment *m_adjs, GtkRange *range ){
-	//g_print("mid eq is not working right now == %f\n", m_adjs->value);
 	float band = (4.0*m_adjs->value)+10.5;
 	g_print("bpf band = %f\n", band);	
-	bpf_reset_eq_params(m_dist->m_mid, m_dist->m_mid->_freq, m_dist->m_mid->_srate, band);
+	reset_eq_params(m_dist->m_mid, band, BPF);
 }
 
 G_MODULE_EXPORT
 void on_treb_scale_value_changed(GtkAdjustment *t_adjs, GtkRange *range ){
-	//g_print("treb eq is not working right now == %f\n", t_adjs->value);
 	float band = (4.0*t_adjs->value)+5.5;
 	g_print("hpf band = %f\n", band);	
-	hpf_reset_eq_params(m_dist->m_treb, m_dist->m_treb->_freq, m_dist->m_treb->_srate, band);
+	reset_eq_params(m_dist->m_treb, band, HPF);
 }
 
 G_MODULE_EXPORT

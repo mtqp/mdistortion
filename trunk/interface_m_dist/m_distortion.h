@@ -17,13 +17,15 @@ typedef struct _m_distortion {
 
 	m_equalizer* m_treb;
 	m_equalizer* m_mid;
+	
+	///cosas q no se usan/////
 	int _rock_mode_left;	
-		
 	float _dgain;		//no se usa todavia
 	float _variacion_vol;//tmp se usa todavia
 	float _variacion_gain;//tmp se usa todavia
-	
 	unsigned int _cant_distors;
+	//////////////////////////
+
 	char* _name_dists[10];
 }m_distortion;
 
@@ -31,7 +33,7 @@ typedef struct _m_distortion {
 void init_m_distortion(m_distortion * md);
 void free_m_distortion(m_distortion *md);
 void distortionize(m_distortion *md, jack_default_audio_sample_t *out, jack_nframes_t nframes);
-void set_m_distortion( m_distortion * md, int n);//name_dists *n/*, unsigned char right*/);
+void set_m_distortion( m_distortion * md, int distor);
 
 typedef void (DISTORTION)(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes);
 
@@ -50,9 +52,5 @@ DISTORTION * f_dist[10];
 DISTORTION * distortion_channel;
 
 //extern volume_hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes);
-
-float actual_gain (m_distortion *mdc);
-void gain_up(m_distortion *mdc);
-void gain_down(m_distortion *mdc);
 
 #endif

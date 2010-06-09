@@ -32,26 +32,19 @@ http://www.smartelectronix.com/musicdsp/text/filters005.txt
 #define M_PI	3.14159265358979323846
 #endif
 
-/* whatever sample type you want */
-typedef float smp_type;
-
-/* this holds the data required to update samples thru a filter */
 typedef struct {
-	smp_type a0, a1, a2, a3, a4;
-	smp_type x1, x2, y1, y2;
+	float a0, a1, a2, a3, a4;
+	float x1, x2, y1, y2;
+	float _dbgain, _freq, _srate, _bandwidth;
+} m_equalizer;
 
-	smp_type _dbgain, _freq, _srate, _bandwidth;
-}
-m_equalizer;
+float equalize_sample(float sample, m_equalizer * b);
+m_equalizer *EQ_new(int type, float dbGain, /* gain of filter */
+                         float freq,             /* center frequency */
+                         float srate,            /* sampling rate */
+                         float bandwidth);       /* bandwidth in octaves */
+void reset_eq_params(m_equalizer *bq, float bandwidth, int filter_type);
 
-extern smp_type 	BiQuad(smp_type sample, m_equalizer * b);
-extern m_equalizer *BiQuad_new(int type, smp_type dbGain, /* gain of filter */
-                         smp_type freq,             /* center frequency */
-                         smp_type srate,            /* sampling rate */
-                         smp_type bandwidth);       /* bandwidth in octaves */
-void lpf_reset_eq_params(m_equalizer *bq, smp_type freq, smp_type srate, smp_type bandwidth);
-void hpf_reset_eq_params(m_equalizer *bq, smp_type freq, smp_type srate, smp_type bandwidth);
-void bpf_reset_eq_params(m_equalizer *bq, smp_type freq, smp_type srate, smp_type bandwidth);
 /* filter types */
 enum {
    LPF, 	/* Low pass filter */

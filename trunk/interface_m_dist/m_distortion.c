@@ -10,36 +10,37 @@
 
 void init_m_distortion(m_distortion * md){
 	printf("inicializando m_distortion\n");
-	float gain = 1.0;
-	float var = 1.0;
-	
+
+	/////VOLUMEN////
 	md->_dvol = 0.0;			//esta si la usamos
 	md->_vctes = (vol_ctes*) malloc(sizeof(vol_ctes));
 	set_vol_ctes(md->_vctes);
-	
+
+	////NO SE USA///
+	float gain = 1.0;
+	float var = 1.0;
 	md->_dgain= gain;			//esto esta al pedo
 	md->_variacion_vol  = var;	//al pedo
 	md->_variacion_gain = var;	//al re pedo
-
-	//////parte de eq//////
-	md->m_bass = BiQuad_new(LPF, 15.0, 800.0, 4096.0,6.5);
-	md->m_treb = BiQuad_new(HPF, 4.0, 2000.0, 880096.0, 5.5);
-	md->m_mid  = BiQuad_new(BPF, 15.0, 5000.0, 20000.0, 10.5); 
-	
-	///////globals///////
-	global_ptr = (globals*) malloc(sizeof(globals));
-	
-	global_ptr->dt = 0.1;
-	global_ptr->RC = 1.0;
-	global_ptr->alpha = global_ptr->RC / (global_ptr->RC+global_ptr->dt);
-	global_ptr->plot_x = 0;
-	global_ptr->_noise_toggled = 0;
-	//////////////////////
-
-	md->_d_active = e_hell_sqrt;			
-	md->_last_dist_active = md->_d_active;
 	md->_cant_distors 	= 10;
 	md->_rock_mode_left = 0;
+
+	//////EQ//////
+	md->m_bass = EQ_new(LPF, 15.0, 800.0, 4096.0,6.5);
+	md->m_treb = EQ_new(HPF, 4.0, 2000.0, 880096.0, 5.5);
+	md->m_mid  = EQ_new(BPF, 15.0, 5000.0, 20000.0, 10.5); 
+	
+	///////GLOBALS///////
+	global_ptr = (globals*) malloc(sizeof(globals));
+	global_ptr->plot_x = 0;
+	global_ptr->_noise_toggled = 0;
+	global_ptr->_eq_sensitive = sensitivo;
+
+
+	/////DISTORTIONS/////
+	md->_d_active = e_hell_sqrt;			
+	md->_last_dist_active = md->_d_active;
+
 	
 	md->_name_dists[0] = "log_rock";
 	md->_name_dists[1] = "log_rockII";
@@ -84,33 +85,21 @@ void distortionize(m_distortion *md, jack_default_audio_sample_t *out, jack_nfra
 void set_m_distortion( m_distortion * md, int dist){
 	//OJO QUE ACA NO ESTAMOS VIENDO EL ON ROCK MODE CLICKED TIENE UN MENOS UNO Y HAY Q HACER ALGO...
 	printf("FUNCIONA MAL ARREGLAR INMEDIATAMENTE\n");
-	if(dist == -1){
-		md->_d_active = md->_last_dist_active;
-		md->_rock_mode_left = 0;
-		//printf("-1 dactive == %d\n", md->_d_active);
-	}
-	else {
-		if((dist >= e_random_day) && (md->_rock_mode_left == 1)){
-			//printf("B\n");
-			md->_d_active = dist;
-		}
-		if((dist >= e_random_day) && (md->_rock_mode_left == 0)){
-			//printf("A\n");
-			//printf("LDA == %d\n",md->_last_dist_active);
+	if(dist==e_random_day || dist==e_mute || dist==e_by_pass){
+		printf("A, dist==%d\n",dist);
+		md->_d_active = dist;
+	} else {
+		if(dist==-1){
+			printf("B, dist==%d\n",dist);
+			md->_d_active = md->_last_dist_active;
+		} else {
+			printf("C, dist==%d\n",dist);
 			md->_last_dist_active = md->_d_active;
-			//printf("NEWLDA == %d\n",md->_last_dist_active);
-			md->_d_active = dist;
-			md->_rock_mode_left = 1;
+			md->_d_active = dist;		
 		}
-		if(dist < e_random_day){
-			//printf("C\n");
-			md->_last_dist_active = md->_d_active;
-			md->_d_active = dist;
-		}
-		//printf("rock mode == %d\n", md->_rock_mode_left);
-		//printf("dactive == %d\n", md->_d_active);
-		//printf("LAST dactive == %d\n\n\n", md->_last_dist_active);
 	}
+	printf("dactive == %d\n", md->_d_active);
+	printf("LAST dactive == %d\n\n\n", md->_last_dist_active);
 	distortion_channel = f_dist[md->_d_active];
 }
 
@@ -130,9 +119,8 @@ void gain_down(m_distortion *mdc){		//notar q no hay problema, el metodo distor 
 /////////////////////////////////////////////////////
 ///----------------DISTORSIONES-------------------///
 /////////////////////////////////////////////////////
-///LAS CTES SE ENCARGAN DE ESTABILIZAR TODOS EN MISMO VOLUMENES, Y CON DISTORS COPADAS
 
-void log_rock(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){//logaritmic rock //seno hace mas agudo// cos mas grave
+void log_rock(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 	int i = 0;
 	float vol; 
 	if(mdc->_dvol<=0.95)vol = 0.25+(0.25*mdc->_dvol);
@@ -140,11 +128,11 @@ void log_rock(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_
 	if(global_ptr->_eq_sensitive){
 		printf("no estamos ecualizando todavia\n");
 		for(i;i<nframes;i++){
-			out[i]=vol*(sin(cos(log(sin(log(out[i])))))); /// ENTRA CON EL VOL MAX Q TIENE
+			out[i]=vol*(sin(cos(log(sin(log(out[i]))))));
 		}
 	} else {
 		for(i;i<nframes;i++){
-			out[i]=vol*sin(cos(log(sin(log(out[i]))))); /// ENTRA CON EL VOL MAX Q TIENE
+			out[i]=vol*sin(cos(log(sin(log(out[i])))));
 		}
 	}
 }
@@ -158,13 +146,11 @@ void log_rock2(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes
 	if(global_ptr->_eq_sensitive){
 		printf("no estamos ecualizando todavia\n");
 		for(i;i<nframes;i++){
-			out[i]= vol*cos(tan(tan(log((out[i])))));//todavia se puede poner un poquito ams fuerte pero nada mas
-			//tan lo hace mas grave sintbm, pero menos q tan ///-sen mas grave todavia
+			out[i]= vol*cos(tan(tan(log((out[i])))));
 		}
 	} else {
 		for(i;i<nframes;i++){
-			out[i]= vol*cos(tan(tan(log((out[i])))));//todavia se puede poner un poquito ams fuerte pero nada mas
-			//tan lo hace mas grave sintbm, pero menos q tan ///-sen mas grave todavia
+			out[i]= vol*cos(tan(tan(log((out[i])))));
 		}
 	}
 }
@@ -180,10 +166,10 @@ void hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_
 	if(global_ptr->_eq_sensitive){
 //		printf("no estamos ecualizando todavia\n"); 
 		for(i;i<nframes;i++){
+			out[i] = equalize_sample(out[i], mdc->m_bass);
+			out[i] = equalize_sample(out[i], mdc->m_treb);
+			out[i] = equalize_sample(out[i], mdc->m_mid);
 			//out[i]= vol*(1000.0*sqrt(out[i]));
-			out[i] = BiQuad(out[i], mdc->m_bass);
-			out[i] = BiQuad(out[i], mdc->m_treb);
-			out[i] = BiQuad(out[i], mdc->m_mid);
 			//printf("outi == %f\n", out[i]);
 		}
 	} else {
@@ -193,7 +179,7 @@ void hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_
 	}
 }
 
-void psychedelic_if(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){ //arco tangente
+void psychedelic_if(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 //	printf("psychedelic if\n");
 	int i = 0;
 	if(global_ptr->_eq_sensitive){
@@ -242,11 +228,11 @@ void fuzzy_dark_pow4(jack_default_audio_sample_t *out, m_distortion *mdc, jack_n
 	if(global_ptr->_eq_sensitive){
 		printf("no estamos ecualizando todavia\n");
 		for(i;i<nframes;i++){
-			out[i]= vol*(100000000.0*(-pow(out[i],4))); //mas bien mutea la guitarra
+			out[i]= vol*(100000000.0*(-pow(out[i],4)));
 		}
 	} else {
 		for(i;i<nframes;i++){
-			out[i]= vol*(100000000.0*(-pow(out[i],4))); //mas bien mutea la guitarra
+			out[i]= vol*(100000000.0*(-pow(out[i],4)));
 		}
 	}
 }
@@ -283,14 +269,14 @@ void random_day(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframe
 void mute(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 //	printf("mute\n");
 	int i=0;
-	FILE *f_out;
-	f_out = fopen("by_pass.dat","a+");
+//	FILE *f_out;
+//	f_out = fopen("by_pass.dat","a+");
 	for(i;i<nframes;i++){
-		//out[i] = 0.0;
-		fprintf(f_out,"%d %f\n",global_ptr->plot_by_pass,out[i]);
-		global_ptr->plot_by_pass++;
+		out[i] = 0.0;
+//		fprintf(f_out,"%d %f\n",global_ptr->plot_by_pass,out[i]);
+//		global_ptr->plot_by_pass++;
 	}
-	fclose(f_out);
+//	fclose(f_out);
 }
 
 void by_pass(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
@@ -325,101 +311,3 @@ void by_pass(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t
 */
 }
 
-/*
-void vol_up_md (m_distortion *md, speaker sp){
-	if (md->_master_ch == master_on){		//esto quizas es redundante ya q master es un bool
-		volume_up(md->_d_ch);
-
-		printf("setting volume for both channels\n");
-	} else {
-		if(sp){
-			volume_up(md->__d_ch);
-		} else {
-			volume_up(md->_s_right);
-		}
-	}
-}
-
-void vol_down_md (m_distortion *md, speaker sp){
-	if (md->_master_ch){		//x ser  redundante ya q master es un bool no agrego comparacion
-		volume_down(md->_s_left);
-		volume_down(md->_s_right);
-		printf("setting volume for both channels\n");
-	} else {
-		if(sp){
-			volume_down(md->_s_left);
-		} else {
-			volume_down(md->_s_right);
-		}
-	}
-}
-
-void gain_up_md (m_distortion *md, speaker sp){
-	if (md->_master_ch){
-		gain_up(md->_s_left);
-		gain_up(md->_s_right);
-		printf("setting gain for both channels\n");
-	} else {
-		if(sp){
-			gain_up(md->_s_left);
-		} else {
-			gain_up(md->_s_right);
-		}
-	}
-}
-
-void gain_down_md (m_distortion *md, speaker sp){
-	if (md->_master_ch){
-		gain_down(md->_s_left);
-		gain_down(md->_s_right);
-		printf("setting gain for both channels\n");
-	} else {
-		if(sp){
-			gain_down(md->_s_left);
-		} else {
-			gain_down(md->_s_right);
-		}
-	}
-}
-
-void reset_gain(m_distortion *md, speaker sp){
-	if (md->_master_ch){
-		md->_s_left->_dgain = 1.0;
-		md->_s_right->_dgain = 1.0;
-	} else {
-		if (sp == speaker_izq){
-			md->_s_left->_dgain = 1.0;
-		} else {
-			md->_s_right->_dgain = 1.0;		
-		}
-	}
-}
-
-void reset_vol(m_distortion *md, speaker sp){	
-	if (md->_master_ch){
-		md->_s_left->_dvol = 1.0;
-		md->_s_right->_dvol = 1.0;
-	} else {
-		if (sp == speaker_izq){
-			md->_s_left->_dvol = 1.0;
-		} else {
-			md->_s_right->_dvol = 1.0;		
-		}
-	}
-}*/
-
-
-
-/*
-void change_master (m_distortion *md){
-	if(md->_master_ch){
-		printf("setting to master off\n");
-		md->_master_ch = master_off;
-	} else {
-		printf("setting to master on\n");
-		md->_master_ch = master_on;
-		set_m_distortion(md,md->_d_left,0);			//el cero esta de mas, xq va a setear la distor izquierda
-	}
-
-}
-*/
