@@ -4,9 +4,8 @@
 #include "m_eq.h"
 
 /* Computes a BiQuad filter on a sample */
-smp_type BiQuad(smp_type sample, m_equalizer * b)
-{
-	smp_type result;
+float equalize_sample(float sample, m_equalizer * b){
+	float result;
 
 	/* compute result */
 	result = b->a0 * sample + b->a1 * b->x1 + b->a2 * b->x2 -
@@ -23,101 +22,11 @@ smp_type BiQuad(smp_type sample, m_equalizer * b)
 	return result;
 }
 
-void lpf_reset_eq_params(m_equalizer *bq, smp_type freq, smp_type srate, smp_type bandwidth){
-	smp_type omega, sn, cs, alpha;
-	smp_type a0, a1, a2, b0, b1, b2;
-
-	/* setup variables */
-	omega = 2 * M_PI * freq /srate;
-	sn = sin(omega);
-	cs = cos(omega);
-	alpha = sn * sinh(M_LN2 /2 * bandwidth * omega /sn);
-	
-	   b0 = (1 - cs) /2;
-	   b1 = 1 - cs;
-	   b2 = (1 - cs) /2;
-	   a0 = 1 + alpha;
-	   a1 = -2 * cs;
-	   a2 = 1 - alpha;
-
-	/* precompute the coefficients */
-	bq->a0 = b0 /a0;
-	bq->a1 = b1 /a0;
-	bq->a2 = b2 /a0;
-	bq->a3 = a1 /a0;
-	bq->a4 = a2 /a0;
-
-	bq->_freq = freq;
-	bq->_srate = srate;
-	bq->_bandwidth = bandwidth;
-}
-
-void hpf_reset_eq_params(m_equalizer *bq, smp_type freq, smp_type srate, smp_type bandwidth){
-	smp_type omega, sn, cs, alpha;
-	smp_type a0, a1, a2, b0, b1, b2;
-
-	/* setup variables */
-	omega = 2 * M_PI * freq /srate;
-	sn = sin(omega);
-	cs = cos(omega);
-	alpha = sn * sinh(M_LN2 /2 * bandwidth * omega /sn);
-	
-	   b0 = (1 + cs) /2;
-	   b1 = -(1 + cs);
-	   b2 = (1 + cs) /2;
-	   a0 = 1 + alpha;
-	   a1 = -2 * cs;
-	   a2 = 1 - alpha;
-
-	/* precompute the coefficients */
-	bq->a0 = b0 /a0;
-	bq->a1 = b1 /a0;
-	bq->a2 = b2 /a0;
-	bq->a3 = a1 /a0;
-	bq->a4 = a2 /a0;
-
-	bq->_freq = freq;
-	bq->_srate = srate;
-	bq->_bandwidth = bandwidth;
-}
-
-void bpf_reset_eq_params(m_equalizer *bq, smp_type freq, smp_type srate, smp_type bandwidth){
-	smp_type omega, sn, cs, alpha;
-	smp_type a0, a1, a2, b0, b1, b2;
-
-	/* setup variables */
-	omega = 2 * M_PI * freq /srate;
-	sn = sin(omega);
-	cs = cos(omega);
-	alpha = sn * sinh(M_LN2 /2 * bandwidth * omega /sn);
-	
-	   b0 = alpha;
-	   b1 = 0;
-	   b2 = -alpha;
-	   a0 = 1 + alpha;
-	   a1 = -2 * cs;
-	   a2 = 1 - alpha;
-
-	/* precompute the coefficients */
-	bq->a0 = b0 /a0;
-	bq->a1 = b1 /a0;
-	bq->a2 = b2 /a0;
-	bq->a3 = a1 /a0;
-	bq->a4 = a2 /a0;
-
-	bq->_freq = freq;
-	bq->_srate = srate;
-	bq->_bandwidth = bandwidth;
-}
-
-
 /* sets up a BiQuad Filter */
-m_equalizer *BiQuad_new(int type, smp_type dbGain, smp_type freq,
-smp_type srate, smp_type bandwidth)
-{
+m_equalizer *EQ_new(int type, float dbGain, float freq, float srate, float bandwidth){
 	m_equalizer *b;
-	smp_type A, omega, sn, cs, alpha, beta;
-	smp_type a0, a1, a2, b0, b1, b2;
+	float A, omega, sn, cs, alpha, beta;
+	float a0, a1, a2, b0, b1, b2;
 
 	b = malloc(sizeof(m_equalizer));
 	if (b == NULL)
@@ -211,3 +120,51 @@ smp_type srate, smp_type bandwidth)
 
 	return b;
 }
+
+void reset_eq_params(m_equalizer *bq, float bandwidth, int filter_type){
+	float omega, sn, cs, alpha;
+	float a0, a1, a2, b0, b1, b2;
+
+	/* setup variables */
+	omega = 2 * M_PI * bq->_freq / bq->_srate;
+	sn = sin(omega);
+	cs = cos(omega);
+	alpha = sn * sinh(M_LN2 /2 * bandwidth * omega /sn);
+
+	switch(filter_type){
+		case LPF:
+			b0 = (1 - cs) /2;
+			b1 = 1 - cs;
+			b2 = (1 - cs) /2;
+			a0 = 1 + alpha;
+			a1 = -2 * cs;
+			a2 = 1 - alpha;
+			break;
+		case HPF:
+			b0 = (1 + cs) /2;
+			b1 = -(1 + cs);
+			b2 = (1 + cs) /2;
+			a0 = 1 + alpha;
+			a1 = -2 * cs;
+			a2 = 1 - alpha;
+			break;
+		case BPF:
+			b0 = alpha;
+			b1 = 0;
+			b2 = -alpha;
+			a0 = 1 + alpha;
+			a1 = -2 * cs;
+			a2 = 1 - alpha;
+			break;
+	}
+
+	/* precompute the coefficients */
+	bq->a0 = b0 /a0;
+	bq->a1 = b1 /a0;
+	bq->a2 = b2 /a0;
+	bq->a3 = a1 /a0;
+	bq->a4 = a2 /a0;
+
+	bq->_bandwidth = bandwidth;
+}
+
