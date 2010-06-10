@@ -7,7 +7,7 @@
 #include "vol_ctes.h"
 
 typedef struct _m_distortion {
-	int _d_active;
+	//int _d_active;//YA CAGUE EL ASM, HAY Q REAHACERLO
 	int _last_dist_active;
 	
 	m_equalizer* m_bass;

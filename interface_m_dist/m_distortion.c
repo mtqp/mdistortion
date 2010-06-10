@@ -37,9 +37,8 @@ void init_m_distortion(m_distortion * md){
 	global_ptr->_eq_sensitive = sensitivo;
 
 
-	/////DISTORTIONS/////
-	md->_d_active = e_hell_sqrt;			
-	md->_last_dist_active = md->_d_active;
+	/////DISTORTIONS////
+	md->_last_dist_active = e_hell_sqrt;
 
 	
 	md->_name_dists[0] = "log_rock";
@@ -64,7 +63,7 @@ void init_m_distortion(m_distortion * md){
 	f_dist[8] = &mute;
 	f_dist[9] = &by_pass;
 
-	distortion_channel  = f_dist[md->_d_active]; 
+	distortion_channel  = f_dist[md->_last_dist_active]; 
 	printf("\n\nm_distortion inicializada\n\n");
 }
 
@@ -83,24 +82,16 @@ void distortionize(m_distortion *md, jack_default_audio_sample_t *out, jack_nfra
 }
 
 void set_m_distortion( m_distortion * md, int dist){
-	//OJO QUE ACA NO ESTAMOS VIENDO EL ON ROCK MODE CLICKED TIENE UN MENOS UNO Y HAY Q HACER ALGO...
-	printf("FUNCIONA MAL ARREGLAR INMEDIATAMENTE\n");
-	if(dist==e_random_day || dist==e_mute || dist==e_by_pass){
-		printf("A, dist==%d\n",dist);
-		md->_d_active = dist;
+	int cambia_modo = dist==e_random_day || dist==e_mute || dist==e_by_pass;
+	if(dist==-1){
+		dist = md->_last_dist_active;
 	} else {
-		if(dist==-1){
-			printf("B, dist==%d\n",dist);
-			md->_d_active = md->_last_dist_active;
-		} else {
-			printf("C, dist==%d\n",dist);
-			md->_last_dist_active = md->_d_active;
-			md->_d_active = dist;		
+		if(!cambia_modo){
+			md->_last_dist_active = dist;
 		}
 	}
-	printf("dactive == %d\n", md->_d_active);
-	printf("LAST dactive == %d\n\n\n", md->_last_dist_active);
-	distortion_channel = f_dist[md->_d_active];
+
+	distortion_channel = f_dist[dist];
 }
 
 float actual_gain (m_distortion *mdc){
