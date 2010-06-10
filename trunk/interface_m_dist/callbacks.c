@@ -80,26 +80,24 @@ G_MODULE_EXPORT bool on_save_clicked(GtkButton *button, gpointer data){
 //////////MODES////////////
 G_MODULE_EXPORT void on_rock_mode_clicked (gpointer distors, GtkRadioButton *button){
 	gtk_widget_set_sensitive((GtkWidget*) distors, true);//sensitivo);
-	set_m_distortion(m_dist, -1);
-//	printf("rock mode clicked\n");
+	if(GTK_TOGGLE_BUTTON(button)->active){
+		set_m_distortion(m_dist, -1);
+	}
 }
 
 G_MODULE_EXPORT void on_random_mode_clicked ( gpointer distors,GtkRadioButton *button){
 	gtk_widget_set_sensitive((GtkWidget*) distors, false);//no_sensitivo);
-	set_m_distortion(m_dist,e_random_day);		//quizas es mejor hacer un enum de los numeros para q se entienda mas!
-//	printf("random mode clicked\n");
+	set_m_distortion(m_dist,e_random_day);
 }
 
 G_MODULE_EXPORT void on_mute_mode_clicked ( gpointer distors,GtkRadioButton *button){
 	gtk_widget_set_sensitive((GtkWidget*) distors, false);//no_sensitivo);
 	set_m_distortion(m_dist, e_mute);
-//	printf("mute mode clicked\n");
 }
 
 G_MODULE_EXPORT void on_by_pass_mode_clicked ( gpointer distors, GtkRadioButton *button){
 	gtk_widget_set_sensitive((GtkWidget*) distors, false);//no_sensitivo);
 	set_m_distortion(m_dist, e_by_pass);
-//	printf("by pass mode clicked\n");
 }
 
 //////////////DISTORSIONES/////////////////
