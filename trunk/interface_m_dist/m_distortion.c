@@ -19,9 +19,9 @@ void init_m_distortion(m_distortion * md){
 	////NO SE USA///
 	float gain = 1.0;
 	float var = 1.0;
-	md->_dgain= gain;			//esto esta al pedo
-	md->_variacion_vol  = var;	//al pedo
-	md->_variacion_gain = var;	//al re pedo
+	md->_dgain= gain;			//
+	md->_variacion_vol  = var;	//
+	md->_variacion_gain = var;	//
 	md->_cant_distors 	= 10;
 	md->_rock_mode_left = 0;
 
@@ -40,7 +40,6 @@ void init_m_distortion(m_distortion * md){
 	/////DISTORTIONS////
 	md->_last_dist_active = e_hell_sqrt;
 
-	
 	md->_name_dists[0] = "log_rock";
 	md->_name_dists[1] = "log_rockII";
 	md->_name_dists[2] = "hell sqr";

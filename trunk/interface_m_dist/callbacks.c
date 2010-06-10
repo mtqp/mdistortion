@@ -130,27 +130,27 @@ void on_eq_onoff_toggled (gpointer eqs, GtkToggleButton *b){
 	if(global_ptr->_eq_sensitive)	global_ptr->_eq_sensitive = 0;
 	else							global_ptr->_eq_sensitive = 1;
 	gtk_widget_set_sensitive((GtkWidget*) eqs, global_ptr->_eq_sensitive);
-	g_print("eq_sensitive = %d\n",global_ptr->_eq_sensitive);
+//	g_print("eq_sensitive = %d\n",global_ptr->_eq_sensitive);
 }
 
 G_MODULE_EXPORT
 void on_bass_scale_value_changed(GtkAdjustment *b_adjs, GtkRange *range ){
 	float band = (5.0*b_adjs->value)+6.5;
-	g_print("lpf band = %f\n", band);	
+//	g_print("lpf band = %f\n", band);	
 	reset_eq_params(m_dist->m_bass, band, LPF);
 }
 
 G_MODULE_EXPORT
 void on_mid_scale_value_changed(GtkAdjustment *m_adjs, GtkRange *range ){
 	float band = (4.0*m_adjs->value)+10.5;
-	g_print("bpf band = %f\n", band);	
+//	g_print("bpf band = %f\n", band);	
 	reset_eq_params(m_dist->m_mid, band, BPF);
 }
 
 G_MODULE_EXPORT
 void on_treb_scale_value_changed(GtkAdjustment *t_adjs, GtkRange *range ){
 	float band = (4.0*t_adjs->value)+5.5;
-	g_print("hpf band = %f\n", band);	
+//	g_print("hpf band = %f\n", band);	
 	reset_eq_params(m_dist->m_treb, band, HPF);
 }
 
