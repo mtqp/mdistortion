@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "m_eq.h"
 
-/* Computes a BiQuad filter on a sample */
+/* Computes a EQ filter on a sample */
 float equalize_sample(float sample, m_equalizer * b){
 	float result;
 
@@ -22,7 +22,7 @@ float equalize_sample(float sample, m_equalizer * b){
 	return result;
 }
 
-/* sets up a BiQuad Filter */
+/* sets up a EQ Filter */
 m_equalizer *EQ_new(int type, float dbGain, float freq, float srate, float bandwidth){
 	m_equalizer *b;
 	float A, omega, sn, cs, alpha, beta;
