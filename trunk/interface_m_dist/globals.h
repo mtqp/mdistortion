@@ -1,11 +1,12 @@
 #ifndef __GLOBALS_H__
 #define __GLOBALS_H__
 #include <jack/jack.h>
-#include "m_distortion.h"
 #include <stdio.h>
+#include "m_distortion.h"
 
-#define sensitivo 1;
-#define no_sensitivo 0;
+#define sensitivo 1
+#define no_sensitivo 0
+#define back_to_rock_mode -1
 
 jack_port_t *input_port;
 jack_port_t *output_left;

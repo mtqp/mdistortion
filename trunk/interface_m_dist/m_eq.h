@@ -23,6 +23,7 @@ http://www.smartelectronix.com/musicdsp/text/filters005.txt
 
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #ifndef M_LN2
 #define M_LN2	0.69314718055994530942
@@ -39,7 +40,7 @@ typedef struct {
 } m_equalizer;
 
 float equalize_sample(float sample, m_equalizer * b);
-m_equalizer *EQ_new(int type, float dbGain, /* gain of filter */
+m_equalizer *band_EQ_new(int type, float dbGain, /* gain of filter */
                          float freq,             /* center frequency */
                          float srate,            /* sampling rate */
                          float bandwidth);       /* bandwidth in octaves */

@@ -11,7 +11,8 @@ enum {
 	e_rare_cuadratic,
 	e_random_day,
 	e_mute,
-	e_by_pass
+	e_by_pass,
+	e_delay		//esta extra, quizas ni siquiera vaya...
 };
 
 #endif

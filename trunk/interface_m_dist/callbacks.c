@@ -1,13 +1,6 @@
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-
-#include <gtk/gtk.h>
-#include <jack/jack.h>
 
 #include "callbacks.h"
-#include "globals.h"
-#include "enum_dist.h"
+
 ////////////////////////////////////////////
 //---------CALLBACKS-INTERFAZ-------------//
 ////////////////////////////////////////////
@@ -19,84 +12,42 @@ G_MODULE_EXPORT bool on_m_distortion_destroy (GtkObject *object, gpointer user_d
 
 G_MODULE_EXPORT bool  on_quit_clicked( GtkButton *button, gpointer   data ){
     gtk_main_quit ();
-    free_m_distortion(m_dist);
+    /*free_m_distortion(m_dist);
+    jack_shutdown(input_port);
+    jack_shutdown(output_left);
+    jack_shutdown(output_right);*/
+    printf("SIN LIBERAR NADA\n");
     return false;
 }
 
 G_MODULE_EXPORT bool on_info_clicked(GtkButton *button, gpointer data){
-	//llama a un nuevo archivo de glade x lo pronto, dsp lo arreglamos en el mismo archivo
-	GtkBuilder *builder;
-	GtkWidget  *window;
-	GError     *error = NULL;
-
-	/* Create new GtkBuilder object */
-	builder = gtk_builder_new();
-
-	// Load UI from file. If error occurs, report it and quit application.
-	if( ! gtk_builder_add_from_file( builder, "info_m_distortion.glade", &error ) ){
-		g_warning( "%s", error->message );
-		g_free( error );
-		//g_print("couldnt create windows at all\n");
-		return( 0 );
-	}
-
-	/* Get main window pointer from UI */
-	window = GTK_WIDGET( gtk_builder_get_object( builder, "info_m_distortion" ) );
-	/* Connect signals */
-	gtk_builder_connect_signals( builder, NULL );
-	/* Destroy builder, since we don't need it anymore */
-	g_object_unref( G_OBJECT( builder ) );
-	/* Show window. All other widgets are automatically shown by GtkBuilder */
-	gtk_widget_show( window );
+	open_window("info_m_distortion.glade");
 }
 
 G_MODULE_EXPORT bool on_save_clicked(GtkButton *button, gpointer data){
-	//llama a un nuevo archivo de glade x lo pronto, dsp lo arreglamos en el mismo archivo
-	GtkBuilder *builder;
-	GtkWidget  *window;
-	GError     *error = NULL;
-
-	/* Create new GtkBuilder object */
-	builder = gtk_builder_new();
-
-	// Load UI from file. If error occurs, report it and quit application.
-	if( ! gtk_builder_add_from_file( builder, "save_m_distortion.glade", &error ) ){
-		g_warning( "%s", error->message );
-		g_free( error );
-		//g_print("couldnt create windows at all\n");
-		return( 0 );
-	}
-
-	/* Get main window pointer from UI */
-	window = GTK_WIDGET( gtk_builder_get_object( builder, "save_m_distortion" ) );
-	/* Connect signals */
-	gtk_builder_connect_signals( builder, NULL );
-	/* Destroy builder, since we don't need it anymore */
-	g_object_unref( G_OBJECT( builder ) );
-	/* Show window. All other widgets are automatically shown by GtkBuilder */
-	gtk_widget_show( window );
+	open_window("save_m_distortion.glade");
 }
 
 //////////MODES////////////
 G_MODULE_EXPORT void on_rock_mode_clicked (gpointer distors, GtkRadioButton *button){
-	gtk_widget_set_sensitive((GtkWidget*) distors, true);//sensitivo);
+	gtk_widget_set_sensitive((GtkWidget*) distors, sensitivo);
 	if(GTK_TOGGLE_BUTTON(button)->active){
-		set_m_distortion(m_dist, -1);
+		set_m_distortion(m_dist, back_to_rock_mode);
 	}
 }
 
 G_MODULE_EXPORT void on_random_mode_clicked ( gpointer distors,GtkRadioButton *button){
-	gtk_widget_set_sensitive((GtkWidget*) distors, false);//no_sensitivo);
+	gtk_widget_set_sensitive((GtkWidget*) distors, no_sensitivo);
 	set_m_distortion(m_dist,e_random_day);
 }
 
 G_MODULE_EXPORT void on_mute_mode_clicked ( gpointer distors,GtkRadioButton *button){
-	gtk_widget_set_sensitive((GtkWidget*) distors, false);//no_sensitivo);
+	gtk_widget_set_sensitive((GtkWidget*) distors, no_sensitivo);
 	set_m_distortion(m_dist, e_mute);
 }
 
 G_MODULE_EXPORT void on_by_pass_mode_clicked ( gpointer distors, GtkRadioButton *button){
-	gtk_widget_set_sensitive((GtkWidget*) distors, false);//no_sensitivo);
+	gtk_widget_set_sensitive((GtkWidget*) distors, no_sensitivo);
 	set_m_distortion(m_dist, e_by_pass);
 }
 
@@ -178,8 +129,14 @@ void on_reset_treb_clicked(gpointer reset, GtkRadioButton *button){
 
 G_MODULE_EXPORT
 void on_noise_toggled(gpointer p, GtkToggleButton *button){
-	if(global_ptr->_noise_toggled) 	global_ptr->_noise_toggled = 0;
-	else					 		global_ptr->_noise_toggled = 1;						
+	if(global_ptr->_noise_toggled) {
+		global_ptr->_noise_toggled = 0;	//esto no puede ser un nuemero HACER UN DEFINE LOCOOOO}
+		set_m_distortion(m_dist,-1);
+	}
+	else {
+		set_m_distortion(m_dist,e_delay);
+		global_ptr->_noise_toggled = 1;
+	}
 	g_print("noise reduction still not working, toggled button value == %d\n", global_ptr->_noise_toggled);
 }
 

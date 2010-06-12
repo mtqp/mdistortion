@@ -23,7 +23,6 @@
 /////////////////////////////////////////////
  
 	int main (int argc, char *argv[]) {
-		printf("exito al entrar al main\n");
 		jack_client_t *client;
 		const char **ports;
 		unsigned long buf_size = 4096;

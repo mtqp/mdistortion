@@ -1,34 +1,18 @@
+
 #include "m_distortion.h"
 
-#include <jack/jack.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
-
-#include "enum_dist.h"
-
 void init_m_distortion(m_distortion * md){
-	printf("inicializando m_distortion\n");
+	printf("\nInit M_DISTORTION\n");
 
 	/////VOLUMEN////
-	md->_dvol = 0.0;			//esta si la usamos
-	md->_vctes = (vol_ctes*) malloc(sizeof(vol_ctes));
-	set_vol_ctes(md->_vctes);
+	md->_dvol = 0.0;
+	vol_new(md->_vctes);
 
-	////NO SE USA///
-	float gain = 1.0;
-	float var = 1.0;
-	md->_dgain= gain;			//
-	md->_variacion_vol  = var;	//
-	md->_variacion_gain = var;	//
-	md->_cant_distors 	= 10;
-	md->_rock_mode_left = 0;
+	/////DELAY/////
+	delay_new(md->delay,4096);
 
 	//////EQ//////
-	md->m_bass = EQ_new(LPF, 15.0, 800.0, 4096.0,6.5);
-	md->m_treb = EQ_new(HPF, 4.0, 2000.0, 880096.0, 5.5);
-	md->m_mid  = EQ_new(BPF, 15.0, 5000.0, 20000.0, 10.5); 
+	eq_new(md);
 	
 	///////GLOBALS///////
 	global_ptr = (globals*) malloc(sizeof(globals));
@@ -40,30 +24,33 @@ void init_m_distortion(m_distortion * md){
 	/////DISTORTIONS////
 	md->_last_dist_active = e_hell_sqrt;
 
-	md->_name_dists[0] = "log_rock";
-	md->_name_dists[1] = "log_rockII";
-	md->_name_dists[2] = "hell sqr";
-	md->_name_dists[3] = "psychedelic_if";
-	md->_name_dists[4] = "by_60s";
-	md->_name_dists[5] = "fuzzy_dark_pow4";
-	md->_name_dists[6] = "rare_cuadratic";
-	md->_name_dists[7] = "random_day";
-	md->_name_dists[8] = "mute";
-	md->_name_dists[9] = "by_pass";
+	md->_name_dists[e_log_rock] 		 = "log_rock";
+	md->_name_dists[e_log_rock_II] 		 = "log_rockII";
+	md->_name_dists[e_hell_sqrt] 		 = "hell sqr";
+	md->_name_dists[e_psychedelic_if] 	 = "psychedelic_if";
+	md->_name_dists[e_by_60s] 			 = "by_60s";
+	md->_name_dists[e_fuzzy_dark_pow_IV] = "fuzzy_dark_pow4";
+	md->_name_dists[e_rare_cuadratic] 	 = "rare_cuadratic";
+	md->_name_dists[e_random_day] 		 = "random_day";
+	md->_name_dists[e_mute] 			 = "mute";
+	md->_name_dists[e_by_pass] 			 = "by_pass";
+	md->_name_dists[e_delay]			 = "delay";
 	
-	f_dist[0] = &log_rock;
-	f_dist[1] = &log_rock2;
-	f_dist[2] = &hell_sqr;
-	f_dist[3] = &psychedelic_if;
-	f_dist[4] = &by_60s;
-	f_dist[5] = &fuzzy_dark_pow4;
-	f_dist[6] = &rare_cuadratic;
-	f_dist[7] = &random_day;	
-	f_dist[8] = &mute;
-	f_dist[9] = &by_pass;
+	f_dist[e_log_rock] 			= &log_rock;
+	f_dist[e_log_rock_II] 		= &log_rock2;
+	f_dist[e_hell_sqrt] 		= &hell_sqr;
+	f_dist[e_psychedelic_if]	= &psychedelic_if;
+	f_dist[e_by_60s] 			= &by_60s;
+	f_dist[e_fuzzy_dark_pow_IV] = &fuzzy_dark_pow4;
+	f_dist[e_rare_cuadratic] 	= &rare_cuadratic;
+	f_dist[e_random_day] 		= &random_day;	
+	f_dist[e_mute] 				= &mute;
+	f_dist[e_by_pass] 			= &by_pass;
+	f_dist[e_delay]				= &delay;
+	printf("	Distortions Effects Set\n");
 
 	distortion_channel  = f_dist[md->_last_dist_active]; 
-	printf("\n\nm_distortion inicializada\n\n");
+	printf("M_DISTORTION initialized\n\n");
 }
 
 void free_m_distortion(m_distortion *md){
@@ -73,7 +60,18 @@ void free_m_distortion(m_distortion *md){
 	free(md->m_treb);
 	free (md);
 	free (global_ptr);
-	printf("freeing m_distortion exitoso\n");
+	//falta freerear el delay ahora...
+	printf("Freeing M_DISTORTION succesfull\n");
+}
+
+void eq_new(m_distortion* md){
+	md->m_bass = band_EQ_new(LPF, 15.0, 800.0, 4096.0,6.5);
+	md->m_treb = band_EQ_new(HPF, 4.0, 2000.0, 880096.0, 5.5);
+	md->m_mid  = band_EQ_new(BPF, 15.0, 5000.0, 20000.0, 10.5); 
+	if((md->m_bass==NULL) || (md->m_treb==NULL) || (md->m_mid == NULL)) 
+		printf("Couldn't Set EQ\n");
+	else
+		printf("	EQ Set\n");
 }
 
 void distortionize(m_distortion *md, jack_default_audio_sample_t *out, jack_nframes_t nframes){
@@ -82,28 +80,13 @@ void distortionize(m_distortion *md, jack_default_audio_sample_t *out, jack_nfra
 
 void set_m_distortion( m_distortion * md, int dist){
 	int cambia_modo = dist==e_random_day || dist==e_mute || dist==e_by_pass;
-	if(dist==-1){
+	if(dist==back_to_rock_mode)	
 		dist = md->_last_dist_active;
-	} else {
-		if(!cambia_modo){
+	else 
+		if(!cambia_modo)	
 			md->_last_dist_active = dist;
-		}
-	}
 
 	distortion_channel = f_dist[dist];
-}
-
-float actual_gain (m_distortion *mdc){
-	return mdc->_dgain;
-}
-
-void gain_up(m_distortion *mdc){
-	mdc->_dgain -= mdc-> _variacion_gain;	///if no alcanzo el max, ver como corregir eso
-}
-
-
-void gain_down(m_distortion *mdc){		//notar q no hay problema, el metodo distor se encarga de elevar⁴ este parametro tanto como en volumen
-	mdc->_dgain += mdc ->_variacion_gain;
 }
 
 /////////////////////////////////////////////////////
@@ -152,7 +135,6 @@ void hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_
 	float vol;
 	if(mdc->_dvol<=0.95)vol = mdc->_vctes->hell_sqr_v+(mdc->_vctes->hell_sqr_v*mdc->_dvol);
 	else 				vol = 1.0;
-
 	if(global_ptr->_eq_sensitive){
 //		printf("no estamos ecualizando todavia\n"); 
 		for(i;i<nframes;i++){
@@ -172,14 +154,16 @@ void hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_
 void psychedelic_if(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 //	printf("psychedelic if\n");
 	int i = 0;
+	float vol; 
+	vol = 1.0+mdc->_dvol;
+
 	if(global_ptr->_eq_sensitive){
 		printf("no estamos ecualizando todavia\n");
-//no funciona esa forma de volumen aca
 		for(i;i<nframes;i++){
 			if(i < nframes/3) {
-				out[i] = /*vol*/((log(out[i])*10000.0)/5);
+				out[i] = vol*((log(out[i])*10000.0)/5);
 			} else {
-				out[i] = /*vol*/(sin(log(sin(out[i]))));
+				out[i] = vol*(sin(log(sin(out[i]))));
 			}
 		}
 	} else {
@@ -195,16 +179,18 @@ void psychedelic_if(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nf
 
 void by_60s(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 //	printf("by 60s\n");
+	float vol; 
+	vol = 1.0+mdc->_dvol;
+
 	int i = 0;
 	if(global_ptr->_eq_sensitive){
 		printf("no estamos ecualizando todavia\n");
-		//multiplicar x una constante le baja el volumen y la ganancia.
 		for(i;i<nframes;i++){
-			out[i]= (100.0 * out[i]); ///funciona de volumen-ganancia, fijarse q se puede hacer
+			out[i]= vol*(100.0 * out[i]);
 		}
 	} else {
 		for(i;i<nframes;i++){
-			out[i]= (100.0 * out[i]); ///funciona de volumen-ganancia, fijarse q se puede hacer
+			out[i]= vol*(100.0 * out[i]);
 		}
 	}
 }
@@ -230,14 +216,15 @@ void fuzzy_dark_pow4(jack_default_audio_sample_t *out, m_distortion *mdc, jack_n
 void rare_cuadratic(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){ //cuadratica RARISIMA
 //	printf("rare cuadratic\n");
 	int i = 0;
+	float vol = 1.0+mdc->_dvol;
 	if(global_ptr->_eq_sensitive){
 		printf("no estamos ecualizando todavia\n");
 		for(i;i<nframes;i++){
-			out[i]= /*vol**/(11000.0*(pow(out[i],2)));
+			out[i]= vol*(11000.0*(pow(out[i],2)));
 		}
 	} else {
 		for(i;i<nframes;i++){
-			out[i]= (11000.0*(pow(out[i],2)));
+			out[i]= vol*(11000.0*(pow(out[i],2)));
 		}
 	}
 }
@@ -255,6 +242,17 @@ void random_day(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframe
 	if(mod2 == 5)			fuzzy_dark_pow4(out,mdc,nframes);
 	if(mod2 == 6)			rare_cuadratic(out,mdc,nframes);
 }	
+
+void delay(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
+	int i=0;
+	float old_smp;
+	for(i;i<nframes;i++){
+		old_smp = out[i];
+		out[i] += mdc->delay->delay_buf[i];
+		mdc->delay->delay_buf[i] = old_smp;
+	}
+	
+}
 
 void mute(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 //	printf("mute\n");

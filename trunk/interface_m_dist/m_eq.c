@@ -1,6 +1,4 @@
-#include <math.h>
-#include <stdlib.h>
-#include <stdio.h>
+
 #include "m_eq.h"
 
 /* Computes a EQ filter on a sample */
@@ -23,7 +21,7 @@ float equalize_sample(float sample, m_equalizer * b){
 }
 
 /* sets up a EQ Filter */
-m_equalizer *EQ_new(int type, float dbGain, float freq, float srate, float bandwidth){
+m_equalizer *band_EQ_new(int type, float dbGain, float freq, float srate, float bandwidth){
 	m_equalizer *b;
 	float A, omega, sn, cs, alpha, beta;
 	float a0, a1, a2, b0, b1, b2;
