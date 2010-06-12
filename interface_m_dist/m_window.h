@@ -1,27 +1,12 @@
+#ifndef __M_WINDOW_H__
+#define __M_WINDOW_H__
+
 #include <gtk/gtk.h>
+#include <stdlib.h>
 
-void open_window(char* text){
-	GtkBuilder *builder;
-	GtkWidget  *window;
-	GError     *error = NULL;
+#define window_save 1
+#define window_info 0
 
-	/* Create new GtkBuilder object */
-	builder = gtk_builder_new();
+void open_window(int window_name);
 
-	// Load UI from file. If error occurs, report it and quit application.
-	if( ! gtk_builder_add_from_file( builder, text, &error ) ){
-		g_warning( "%s", error->message );
-		g_free( error );
-		//g_print("couldnt create windows at all\n");
-		exit(-1);
-	}
-
-	/* Get main window pointer from UI */
-	window = GTK_WIDGET( gtk_builder_get_object( builder, " " ) );
-	/* Connect signals */
-	gtk_builder_connect_signals( builder, NULL );
-	/* Destroy builder, since we don't need it anymore */
-	g_object_unref( G_OBJECT( builder ) );
-	/* Show window. All other widgets are automatically shown by GtkBuilder */
-	gtk_widget_show( window );
-}
+#endif

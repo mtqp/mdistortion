@@ -5,12 +5,12 @@
 //---------CALLBACKS-INTERFAZ-------------//
 ////////////////////////////////////////////
 
-G_MODULE_EXPORT bool on_m_distortion_destroy (GtkObject *object, gpointer user_data){
+G_MODULE_EXPORT int on_m_distortion_destroy (GtkObject *object, gpointer user_data){
     gtk_main_quit();
 	return false;	
 }
 
-G_MODULE_EXPORT bool  on_quit_clicked( GtkButton *button, gpointer   data ){
+G_MODULE_EXPORT int on_quit_clicked( GtkButton *button, gpointer   data ){
     gtk_main_quit ();
     /*free_m_distortion(m_dist);
     jack_shutdown(input_port);
@@ -20,12 +20,12 @@ G_MODULE_EXPORT bool  on_quit_clicked( GtkButton *button, gpointer   data ){
     return false;
 }
 
-G_MODULE_EXPORT bool on_info_clicked(GtkButton *button, gpointer data){
-	open_window("info_m_distortion.glade");
+G_MODULE_EXPORT int on_info_clicked(GtkButton *button, gpointer data){
+	open_window(window_info);
 }
 
-G_MODULE_EXPORT bool on_save_clicked(GtkButton *button, gpointer data){
-	open_window("save_m_distortion.glade");
+G_MODULE_EXPORT int on_save_clicked(GtkButton *button, gpointer data){
+	open_window(window_save);
 }
 
 //////////MODES////////////
