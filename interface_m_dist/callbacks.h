@@ -3,12 +3,13 @@
 
 #include <gtk/gtk.h>
 #include <jack/jack.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
 
-#ifndef bool		//nadie usa el bool, ni es necesario
-    #define bool unsigned char
-    #define true 1
-    #define false 0
-#endif
+#include "globals.h"
+#include "enum_dist.h"
+#include "m_window.h"
 
 ///////CALLBACKS-GTK///////
 
