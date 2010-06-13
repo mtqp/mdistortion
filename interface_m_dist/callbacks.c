@@ -7,16 +7,17 @@
 
 G_MODULE_EXPORT int on_m_distortion_destroy (GtkObject *object, gpointer user_data){
     gtk_main_quit();
+	printf("ON M DISTORTION DESTROY SIN LIBERAR NADA PAPA\n");
 	return false;	
 }
-
+//ES LA MISMA FUNCION, NO TIENE SENTIDO Q ESTE DOS VECES, MANDARLAS JUNTAS
 G_MODULE_EXPORT int on_quit_clicked( GtkButton *button, gpointer   data ){
     gtk_main_quit ();
     /*free_m_distortion(m_dist);
     jack_shutdown(input_port);
     jack_shutdown(output_left);
     jack_shutdown(output_right);*/
-    printf("SIN LIBERAR NADA\n");
+    printf("ON QUIT CLICKED SIN LIBERAR NADA\n");
     return false;
 }
 
@@ -125,21 +126,33 @@ void on_reset_treb_clicked(gpointer reset, GtkRadioButton *button){
 	gtk_adjustment_set_value(reset,0.0);
 } 
 
-////////////NOISE-RED///////////////////////
+////////////DELAY & CHORUS///////////////////////
 
 G_MODULE_EXPORT
 void on_delay_toggled(gpointer p, GtkToggleButton *button){
-	if(global_ptr->_noise_toggled) {
-		global_ptr->_noise_toggled = 0;	//esto no puede ser un nuemero HACER UN DEFINE LOCOOOO}
+	if(global_ptr->_delay_toggled == def_toggled) {
+		global_ptr->_delay_toggled = not_def_toggled;
 		set_m_distortion(m_dist,back_to_rock_mode);
 	}
 	else {
 		set_m_distortion(m_dist,e_delay);
-		global_ptr->_noise_toggled = 1;
+		global_ptr->_delay_toggled = def_toggled;
 	}
-	g_print("noise reduction still not working, toggled button value == %d\n", global_ptr->_noise_toggled);
+	g_print("delay in progress, toggled button value == %d\n", global_ptr->_delay_toggled);
 }
 
+G_MODULE_EXPORT 
+void on_chorus_toggled(gpointer p, GtkToggleButton *button){
+	if(global_ptr->_chorus_toggled == def_toggled) {
+		global_ptr->_chorus_toggled = not_def_toggled;	
+		set_m_distortion(m_dist,back_to_rock_mode);
+	}
+	else {
+		set_m_distortion(m_dist,e_delay);
+		global_ptr->_chorus_toggled = def_toggled;
+	}
+	g_print("chorus in progress, toggled button value == %d\n", global_ptr->_chorus_toggled);
+}
 
 ////////////////////////////////////////////
 //-----------CALLBACKS-JACK---------------//

@@ -222,13 +222,32 @@
                                         <property name="visible">True</property>
                                         <property name="left_padding">12</property>
                                         <child>
-                                          <object class="GtkToggleButton" id="delay">
-                                            <property name="label" translatable="yes">Delay</property>
+                                          <object class="GtkHBox" id="hbox8">
                                             <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">True</property>
-                                            <property name="yalign">0.49000000953674316</property>
-                                            <signal name="toggled" handler="on_delay_toggled"/>
+                                            <child>
+                                              <object class="GtkToggleButton" id="delay">
+                                                <property name="label" translatable="yes">Delay</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">True</property>
+                                                <signal name="toggled" handler="on_delay_toggled"/>
+                                              </object>
+                                              <packing>
+                                                <property name="position">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkToggleButton" id="chorus">
+                                                <property name="label" translatable="yes">Chorus</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">True</property>
+                                                <signal name="toggled" handler="on_chorus_toggled"/>
+                                              </object>
+                                              <packing>
+                                                <property name="position">1</property>
+                                              </packing>
+                                            </child>
                                           </object>
                                         </child>
                                       </object>

@@ -9,17 +9,20 @@ void init_m_distortion(m_distortion * md){
 	vol_new(md->_vctes);
 
 	/////DELAY/////
-	md->m_dist_delay = delay_new(4096);
+	md->_delay = delay_new(262144);	//really big buffer for long delays
+	
+	////CHORUS////
+	md->_chorus = chorus_new(4096); //four small buffers for chorus
 
 	//////EQ//////
 	eq_new(md);
 	
 	///////GLOBALS///////
 	global_ptr = (globals*) malloc(sizeof(globals));
-	global_ptr->plot_x = 0;
-	global_ptr->_noise_toggled = 0;
-	global_ptr->_eq_sensitive = sensitivo;
-
+	global_ptr->_chorus_toggled = not_def_toggled;
+	global_ptr->_delay_toggled 	= not_def_toggled;
+	global_ptr->_eq_sensitive   = sensitivo;
+	global_ptr->plot_x = 0;		//es muy posible q no se necesite mas
 
 	/////DISTORTIONS////
 	md->_last_dist_active = e_hell_sqrt;
@@ -99,7 +102,7 @@ void log_rock(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_
 	if(mdc->_dvol<=0.95)vol = 0.25+(0.25*mdc->_dvol);
 	else 				vol = 1.0;
 	if(global_ptr->_eq_sensitive){
-		printf("no estamos ecualizando todavia\n");
+		printf("En C no nos alcanza el REAL-TIME para ecualizar\n");
 		for(i;i<nframes;i++){
 			out[i]=vol*(sin(cos(log(sin(log(out[i]))))));
 		}
@@ -117,7 +120,7 @@ void log_rock2(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes
 	if(mdc->_dvol<=0.95)vol = 0.5+(0.5*mdc->_dvol);
 	else 				vol = 1.0;
 	if(global_ptr->_eq_sensitive){
-		printf("no estamos ecualizando todavia\n");
+		printf("En C no nos alcanza el REAL-TIME para ecualizar\n");
 		for(i;i<nframes;i++){
 			out[i]= vol*cos(tan(tan(log((out[i])))));
 		}
@@ -158,7 +161,7 @@ void psychedelic_if(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nf
 	vol = 1.0+mdc->_dvol;
 
 	if(global_ptr->_eq_sensitive){
-		printf("no estamos ecualizando todavia\n");
+		printf("En C no nos alcanza el REAL-TIME para ecualizar\n");
 		for(i;i<nframes;i++){
 			if(i < nframes/3) {
 				out[i] = vol*((log(out[i])*10000.0)/5);
@@ -184,7 +187,7 @@ void by_60s(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t 
 
 	int i = 0;
 	if(global_ptr->_eq_sensitive){
-		printf("no estamos ecualizando todavia\n");
+		printf("En C no nos alcanza el REAL-TIME para ecualizar\n");
 		for(i;i<nframes;i++){
 			out[i]= vol*(100.0 * out[i]);
 		}
@@ -202,7 +205,7 @@ void fuzzy_dark_pow4(jack_default_audio_sample_t *out, m_distortion *mdc, jack_n
 	if(mdc->_dvol<=0.95)vol = 0.0125+(0.0125*mdc->_dvol);//funciona de ganancia tbm un poco estaria bueno q cuando el volumen este al palo
 	else 				vol = 1.0;	   					//el valor de vol sea 1 y asi no influya
 	if(global_ptr->_eq_sensitive){
-		printf("no estamos ecualizando todavia\n");
+		printf("En C no nos alcanza el REAL-TIME para ecualizar\n");
 		for(i;i<nframes;i++){
 			out[i]= vol*(100000000.0*(-pow(out[i],4)));
 		}
@@ -218,7 +221,7 @@ void rare_cuadratic(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nf
 	int i = 0;
 	float vol = 1.0+mdc->_dvol;
 	if(global_ptr->_eq_sensitive){
-		printf("no estamos ecualizando todavia\n");
+		printf("En C no nos alcanza el REAL-TIME para ecualizar\n");
 		for(i;i<nframes;i++){
 			out[i]= vol*(11000.0*(pow(out[i],2)));
 		}
@@ -248,24 +251,24 @@ void delay(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t n
 	float old_smp;
 	float vol; 
 	vol = 1.0+mdc->_dvol;
-
+/*
 	for(i;i<nframes;i++){
 	//	out[i] *= vol*100.0;
 		old_smp = out[i];
-		out[i] += mdc->m_dist_delay->delay_buf[i];
-		mdc->m_dist_delay->delay_buf[i] = old_smp;
+		out[i] += mdc->_delay->delay_buf[i];
+		mdc->_delay->delay_buf[i] = old_smp;
 		old_smp = out[i];
-		out[i] += mdc->m_dist_delay->delay_buf_2_orden[i];
-		mdc->m_dist_delay->delay_buf_2_orden[i] = old_smp;	
+		out[i] += mdc->_delay->delay_buf_2_orden[i];
+		mdc->_delay->delay_buf_2_orden[i] = old_smp;	
 		old_smp = out[i];
-		out[i] += mdc->m_dist_delay->big_delay[mdc->m_dist_delay->actual_big_delay];
-		mdc->m_dist_delay->big_delay[mdc->m_dist_delay->actual_big_delay] = old_smp;
+		out[i] += mdc->_delay->big_delay[mdc->_delay->actual_big_delay];
+		mdc->_delay->big_delay[mdc->_delay->actual_big_delay] = old_smp;
 		
-		mdc->m_dist_delay->actual_big_delay++;
-		if(mdc->m_dist_delay->actual_big_delay == mdc->m_dist_delay->big_delay_size){	
-			mdc->m_dist_delay->actual_big_delay = 0;
+		mdc->_delay->actual_big_delay++;
+		if(mdc->_delay->actual_big_delay == mdc->_delay->big_delay_size){	
+			mdc->_delay->actual_big_delay = 0;
 		}
-	}
+	}*/
 }
 
 void mute(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
@@ -273,23 +276,23 @@ void mute(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nf
 	float old_smp;
 /*	printf("delay process\n");
 	printf("mdist pointer = %d\n", (int) mdc);
-	printf("mdelay pointer = %d\n", (int) mdc->m_dist_delay);
-	printf("delay_buf==%d\n",(int) mdc->m_dist_delay->delay_buf);*/
+	printf("mdelay pointer = %d\n", (int) mdc->_delay);
+	printf("delay_buf==%d\n",(int) mdc->_delay->delay_buf);
 	for(i;i<nframes;i++){
 		old_smp = out[i];
-		out[i] += mdc->m_dist_delay->delay_buf[i];
-		mdc->m_dist_delay->delay_buf[i] = old_smp;
+		out[i] += mdc->_delay->delay_buf[i];
+		mdc->_delay->delay_buf[i] = old_smp;
 		old_smp = out[i];
-		out[i] += mdc->m_dist_delay->delay_buf_2_orden[i];
-		mdc->m_dist_delay->delay_buf_2_orden[i] = old_smp;		
+		out[i] += mdc->_delay->delay_buf_2_orden[i];
+		mdc->_delay->delay_buf_2_orden[i] = old_smp;		
 		old_smp = out[i];
-		out[i] += mdc->m_dist_delay->delay_buf_3_orden[i];
-		mdc->m_dist_delay->delay_buf_3_orden[i] = old_smp;		
+		out[i] += mdc->_delay->delay_buf_3_orden[i];
+		mdc->_delay->delay_buf_3_orden[i] = old_smp;		
 		old_smp = out[i];
-		out[i] += mdc->m_dist_delay->delay_buf_4_orden[i];
-		mdc->m_dist_delay->delay_buf_4_orden[i] = old_smp;		
+		out[i] += mdc->_delay->delay_buf_4_orden[i];
+		mdc->_delay->delay_buf_4_orden[i] = old_smp;		
 		out[i] /= 2;
-	}
+	}*/
 	/*
 //	printf("mute\n");
 	int i=0;
