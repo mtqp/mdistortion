@@ -9,7 +9,7 @@ void init_m_distortion(m_distortion * md){
 	vol_new(md->_vctes);
 
 	/////DELAY/////
-	delay_new(md->delay,4096);
+	md->m_dist_delay = delay_new(4096);
 
 	//////EQ//////
 	eq_new(md);
@@ -246,15 +246,51 @@ void random_day(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframe
 void delay(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 	int i=0;
 	float old_smp;
+	float vol; 
+	vol = 1.0+mdc->_dvol;
+
 	for(i;i<nframes;i++){
+	//	out[i] *= vol*100.0;
 		old_smp = out[i];
-		out[i] += mdc->delay->delay_buf[i];
-		mdc->delay->delay_buf[i] = old_smp;
+		out[i] += mdc->m_dist_delay->delay_buf[i];
+		mdc->m_dist_delay->delay_buf[i] = old_smp;
+		old_smp = out[i];
+		out[i] += mdc->m_dist_delay->delay_buf_2_orden[i];
+		mdc->m_dist_delay->delay_buf_2_orden[i] = old_smp;	
+		old_smp = out[i];
+		out[i] += mdc->m_dist_delay->big_delay[mdc->m_dist_delay->actual_big_delay];
+		mdc->m_dist_delay->big_delay[mdc->m_dist_delay->actual_big_delay] = old_smp;
+		
+		mdc->m_dist_delay->actual_big_delay++;
+		if(mdc->m_dist_delay->actual_big_delay == mdc->m_dist_delay->big_delay_size){	
+			mdc->m_dist_delay->actual_big_delay = 0;
+		}
 	}
-	
 }
 
 void mute(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
+	int i=0;
+	float old_smp;
+/*	printf("delay process\n");
+	printf("mdist pointer = %d\n", (int) mdc);
+	printf("mdelay pointer = %d\n", (int) mdc->m_dist_delay);
+	printf("delay_buf==%d\n",(int) mdc->m_dist_delay->delay_buf);*/
+	for(i;i<nframes;i++){
+		old_smp = out[i];
+		out[i] += mdc->m_dist_delay->delay_buf[i];
+		mdc->m_dist_delay->delay_buf[i] = old_smp;
+		old_smp = out[i];
+		out[i] += mdc->m_dist_delay->delay_buf_2_orden[i];
+		mdc->m_dist_delay->delay_buf_2_orden[i] = old_smp;		
+		old_smp = out[i];
+		out[i] += mdc->m_dist_delay->delay_buf_3_orden[i];
+		mdc->m_dist_delay->delay_buf_3_orden[i] = old_smp;		
+		old_smp = out[i];
+		out[i] += mdc->m_dist_delay->delay_buf_4_orden[i];
+		mdc->m_dist_delay->delay_buf_4_orden[i] = old_smp;		
+		out[i] /= 2;
+	}
+	/*
 //	printf("mute\n");
 	int i=0;
 //	FILE *f_out;
@@ -264,7 +300,7 @@ void mute(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nf
 //		fprintf(f_out,"%d %f\n",global_ptr->plot_by_pass,out[i]);
 //		global_ptr->plot_by_pass++;
 	}
-//	fclose(f_out);
+//	fclose(f_out);*/
 }
 
 void by_pass(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
