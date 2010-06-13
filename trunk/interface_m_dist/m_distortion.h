@@ -9,8 +9,9 @@
 
 #include "globals.h"
 #include "m_eq.h"
-#include "vol_ctes.h"
+#include "m_chorus.h"
 #include "m_delay.h"
+#include "vol_ctes.h"
 #include "enum_dist.h"
 
 typedef struct _m_distortion {
@@ -24,7 +25,9 @@ typedef struct _m_distortion {
 	m_equalizer* m_treb;
 	m_equalizer* m_mid;
 	
-	m_delay* m_dist_delay;
+	m_delay*  _delay;
+	m_chorus* _chorus;
+	
 	
 	char* _name_dists[11];	//cambio xq le agregue el delay ojo ahiii
 }m_distortion;

@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 typedef struct _m_chorus {
-	int chr_size;
+	int    chr_size;
 	float* chr_buf1;
 	float* chr_buf2;
 	float* chr_buf3;

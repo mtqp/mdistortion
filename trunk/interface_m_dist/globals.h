@@ -6,6 +6,8 @@
 
 #define sensitivo 1
 #define no_sensitivo 0
+#define def_toggled 1
+#define not_def_toggled 0
 #define back_to_rock_mode -1
 
 jack_port_t *input_port;
@@ -16,7 +18,8 @@ struct _m_distortion *m_dist;
 
 typedef struct _globals {
 	int _eq_sensitive; 
-	int _noise_toggled;
+	int _chorus_toggled;
+	int _delay_toggled;
 
 	//FILE *f_out;
 	int plot_x;

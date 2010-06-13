@@ -1,5 +1,5 @@
 
-#include "chorus.h"
+#include "m_chorus.h"
 
 m_chorus* chorus_new(int size){
 	m_chorus* c = (m_chorus*) malloc(sizeof(m_chorus));
@@ -14,7 +14,7 @@ m_chorus* chorus_new(int size){
 		c->chr_buf3 = (float*) malloc(c->chr_size*sizeof(float));
 		c->chr_buf4 = (float*) malloc(c->chr_size*sizeof(float));
 		
-		if((c->chr_buf1 == NULL) || (c->chr_buf2 == NULL) || (c->chr_buf3 == NULL) || (c->chr_buf4 == NULL)) {
+		if((c->chr_buf1 == NULL) || (c->chr_buf2 == NULL) || (c->chr_buf3 == NULL) || (c->chr_buf4 == NULL)){
 			printf("Couldn't malloc Buffer Chorus Structure\n");
 			return NULL;
 		} else {
@@ -26,9 +26,8 @@ m_chorus* chorus_new(int size){
 				c->chr_buf3[i] = 0.0;
 				c->chr_buf4[i] = 0.0;
 			}
-			return d;
+			return c;
 		}
-						
 	}
 }
 
