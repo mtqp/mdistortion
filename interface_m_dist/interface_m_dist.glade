@@ -222,21 +222,21 @@
                                         <property name="visible">True</property>
                                         <property name="left_padding">12</property>
                                         <child>
-                                          <object class="GtkToggleButton" id="noise">
-                                            <property name="label" translatable="yes">Noise</property>
+                                          <object class="GtkToggleButton" id="delay">
+                                            <property name="label" translatable="yes">Delay</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
                                             <property name="yalign">0.49000000953674316</property>
-                                            <signal name="toggled" handler="on_noise_toggled"/>
+                                            <signal name="toggled" handler="on_delay_toggled"/>
                                           </object>
                                         </child>
                                       </object>
                                     </child>
                                     <child type="label">
-                                      <object class="GtkLabel" id="filte">
+                                      <object class="GtkLabel" id="exeffect">
                                         <property name="visible">True</property>
-                                        <property name="label" translatable="yes">&lt;b&gt;Filter&lt;/b&gt;</property>
+                                        <property name="label" translatable="yes">&lt;b&gt;Extra Effect&lt;/b&gt;</property>
                                         <property name="use_markup">True</property>
                                       </object>
                                     </child>

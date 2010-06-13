@@ -24,7 +24,7 @@ typedef struct _m_distortion {
 	m_equalizer* m_treb;
 	m_equalizer* m_mid;
 	
-	m_delay* delay;
+	m_delay* m_dist_delay;
 	
 	char* _name_dists[11];	//cambio xq le agregue el delay ojo ahiii
 }m_distortion;

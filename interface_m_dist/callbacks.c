@@ -128,10 +128,10 @@ void on_reset_treb_clicked(gpointer reset, GtkRadioButton *button){
 ////////////NOISE-RED///////////////////////
 
 G_MODULE_EXPORT
-void on_noise_toggled(gpointer p, GtkToggleButton *button){
+void on_delay_toggled(gpointer p, GtkToggleButton *button){
 	if(global_ptr->_noise_toggled) {
 		global_ptr->_noise_toggled = 0;	//esto no puede ser un nuemero HACER UN DEFINE LOCOOOO}
-		set_m_distortion(m_dist,-1);
+		set_m_distortion(m_dist,back_to_rock_mode);
 	}
 	else {
 		set_m_distortion(m_dist,e_delay);
