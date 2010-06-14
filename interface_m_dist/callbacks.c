@@ -141,28 +141,30 @@ void on_delay_toggled(/*gpointer p*/GtkWindow *delay_window, GtkToggleButton *bu
 	g_print("delay in progress, toggled button value == %d\n", global_ptr->_delay_toggled);
 */
 
+//gtk_window_set_deletable ()	ESTO LE BORRA LA X PARA CERRARLO, PUEDE SER UTIL
+
+
 	if(global_ptr->_delay_toggled == not_def_toggled){
 		open_sub_window("m_delay");
 		global_ptr->_delay_toggled = def_toggled;
 	} else {
 		printf("deberias intentar cerrar la ventana champ\n");
+		//gtk_window_set_destroy_with_parent(delay_window,1);
 		global_ptr->_delay_toggled = not_def_toggled;
 	}
-
-
 }
 
 G_MODULE_EXPORT 
 void on_chorus_toggled(gpointer p, GtkToggleButton *button){
-	if(global_ptr->_chorus_toggled == def_toggled) {
-		global_ptr->_chorus_toggled = not_def_toggled;	
-		set_m_distortion(m_dist,back_to_rock_mode);
+	if(global_ptr->_chorus_toggled == not_def_toggled) {
+		open_sub_window("m_chorus");
+		global_ptr->_chorus_toggled = def_toggled;	
 	}
 	else {
-		set_m_distortion(m_dist,e_delay);
-		global_ptr->_chorus_toggled = def_toggled;
+		printf("deberias intentar cerrar la ventana champ\n");
+		//set_m_distortion(m_dist,e_delay);
+		global_ptr->_chorus_toggled = not_def_toggled;
 	}
-	g_print("chorus in progress, toggled button value == %d\n", global_ptr->_chorus_toggled);
 }
 
 ////////////////////////////////////////////
