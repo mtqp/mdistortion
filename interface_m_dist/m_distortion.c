@@ -19,8 +19,8 @@ void init_m_distortion(m_distortion * md){
 	
 	///////GLOBALS///////
 	global_ptr = (globals*) malloc(sizeof(globals));
-	global_ptr->_chorus_toggled = not_def_toggled;
-	global_ptr->_delay_toggled 	= not_def_toggled;
+	//global_ptr->_chorus_toggled = not_def_toggled;
+	//global_ptr->_delay_toggled 	= not_def_toggled;
 	global_ptr->_eq_sensitive   = sensitivo;
 	global_ptr->plot_x = 0;		//es muy posible q no se necesite mas
 

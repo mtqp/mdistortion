@@ -18,8 +18,8 @@ struct _m_distortion *m_dist;
 
 typedef struct _globals {
 	int _eq_sensitive; 
-	int _chorus_toggled;
-	int _delay_toggled;
+	//int _chorus_toggled;
+	//int _delay_toggled;
 
 	//FILE *f_out;
 	int plot_x;

@@ -4,6 +4,6 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
 
-void open_sub_window(char* window);
+GtkWindow* open_sub_window(char* window);
 
 #endif
