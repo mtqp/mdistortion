@@ -9,8 +9,8 @@ void init_m_distortion(m_distortion * md){
 	vol_new(md->_vctes);
 
 	/////DELAY/////
-	md->_delay = delay_new(262144);	//really big buffer for long delays
-	
+	//md->_delay = delay_new(262144);	//really big buffer for long delays
+	md->_delay = delay_new(65536);
 	////CHORUS////
 	md->_chorus = chorus_new(4096); //four small buffers for chorus
 
@@ -248,51 +248,50 @@ void random_day(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframe
 
 void delay(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 	int i=0;
-	float old_smp;
+	float smp;
 	float vol; 
 	vol = 1.0+mdc->_dvol;
-/*
+
 	for(i;i<nframes;i++){
 	//	out[i] *= vol*100.0;
-		old_smp = out[i];
-		out[i] += mdc->_delay->delay_buf[i];
-		mdc->_delay->delay_buf[i] = old_smp;
-		old_smp = out[i];
-		out[i] += mdc->_delay->delay_buf_2_orden[i];
-		mdc->_delay->delay_buf_2_orden[i] = old_smp;	
-		old_smp = out[i];
-		out[i] += mdc->_delay->big_delay[mdc->_delay->actual_big_delay];
-		mdc->_delay->big_delay[mdc->_delay->actual_big_delay] = old_smp;
-		
-		mdc->_delay->actual_big_delay++;
-		if(mdc->_delay->actual_big_delay == mdc->_delay->big_delay_size){	
-			mdc->_delay->actual_big_delay = 0;
+	//	old_smp = out[i];
+	//	out[i] += mdc->_delay->delay_buf[i];
+	//	mdc->_delay->delay_buf[i] = old_smp;
+		smp = out[i];
+		out[i] += mdc->_delay->dl_buf1[mdc->_delay->dl_sub_i];
+		mdc->_delay->dl_buf1[mdc->_delay->dl_sub_i] = smp;
+		smp = out[i];
+		out[i] += mdc->_delay->dl_buf2[mdc->_delay->dl_sub_i];
+		mdc->_delay->dl_buf2[mdc->_delay->dl_sub_i] = smp/2;
+		smp = out[i];
+		out[i] += mdc->_delay->dl_buf3[mdc->_delay->dl_sub_i];
+		mdc->_delay->dl_buf3[mdc->_delay->dl_sub_i] = smp/2;
+
+		mdc->_delay->dl_sub_i++;
+		if(mdc->_delay->dl_sub_i == mdc->_delay->dl_size){	
+			mdc->_delay->dl_sub_i = 0;
 		}
-	}*/
+	}
 }
 
 void mute(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 	int i=0;
-	float old_smp;
-/*	printf("delay process\n");
-	printf("mdist pointer = %d\n", (int) mdc);
-	printf("mdelay pointer = %d\n", (int) mdc->_delay);
-	printf("delay_buf==%d\n",(int) mdc->_delay->delay_buf);
+	float smp;
+		
 	for(i;i<nframes;i++){
-		old_smp = out[i];
-		out[i] += mdc->_delay->delay_buf[i];
-		mdc->_delay->delay_buf[i] = old_smp;
-		old_smp = out[i];
-		out[i] += mdc->_delay->delay_buf_2_orden[i];
-		mdc->_delay->delay_buf_2_orden[i] = old_smp;		
-		old_smp = out[i];
-		out[i] += mdc->_delay->delay_buf_3_orden[i];
-		mdc->_delay->delay_buf_3_orden[i] = old_smp;		
-		old_smp = out[i];
-		out[i] += mdc->_delay->delay_buf_4_orden[i];
-		mdc->_delay->delay_buf_4_orden[i] = old_smp;		
-		out[i] /= 2;
-	}*/
+		smp = out[i];
+		out[i] += mdc->_chorus->chr_buf1[i];
+		mdc->_chorus->chr_buf1[i] = smp;
+		smp = out[i];
+		out[i] += mdc->_chorus->chr_buf2[i];
+		mdc->_chorus->chr_buf2[i] = smp;	//VA A ESTAR MULTIPLICADO X CTES EENTRE 0 Y UNO Q REGULARAN LA CANTIDAD DE EFECTO
+		smp = out[i];
+		out[i] += mdc->_chorus->chr_buf3[i];
+		mdc->_chorus->chr_buf3[i] = smp;
+		smp = out[i];
+		out[i] += mdc->_chorus->chr_buf4[i];
+		mdc->_chorus->chr_buf4[i] = smp;
+	}
 	/*
 //	printf("mute\n");
 	int i=0;

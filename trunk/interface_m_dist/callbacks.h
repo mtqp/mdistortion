@@ -43,7 +43,7 @@ G_MODULE_EXPORT void on_reset_mid_clicked(gpointer r, GtkRadioButton *button);
 G_MODULE_EXPORT void on_reset_treb_clicked(gpointer r, GtkRadioButton *button);
 
 G_MODULE_EXPORT void on_volume_value_changed(GtkAdjustment *vol_adjs, GtkRange *range);
-G_MODULE_EXPORT void on_delay_toggled(gpointer p, GtkToggleButton *button);
+G_MODULE_EXPORT void on_delay_toggled(/*gpointer p*/GtkWindow *delay_w, GtkToggleButton *button);
 G_MODULE_EXPORT void on_chorus_toggled(gpointer p, GtkToggleButton *button);
 
 ///////CALLBACKS-JACK///////

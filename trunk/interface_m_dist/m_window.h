@@ -4,9 +4,6 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
 
-#define window_save 1
-#define window_info 0
-
-void open_window(int window_name);
+void open_sub_window(char* window);
 
 #endif

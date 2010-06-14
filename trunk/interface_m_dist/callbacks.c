@@ -22,11 +22,11 @@ G_MODULE_EXPORT int on_quit_clicked( GtkButton *button, gpointer   data ){
 }
 
 G_MODULE_EXPORT int on_info_clicked(GtkButton *button, gpointer data){
-	open_window(window_info);
+	open_sub_window("info_m_distortion");
 }
 
 G_MODULE_EXPORT int on_save_clicked(GtkButton *button, gpointer data){
-	open_window(window_save);
+	open_sub_window("save_m_distortion");
 }
 
 //////////MODES////////////
@@ -129,8 +129,8 @@ void on_reset_treb_clicked(gpointer reset, GtkRadioButton *button){
 ////////////DELAY & CHORUS///////////////////////
 
 G_MODULE_EXPORT
-void on_delay_toggled(gpointer p, GtkToggleButton *button){
-	if(global_ptr->_delay_toggled == def_toggled) {
+void on_delay_toggled(/*gpointer p*/GtkWindow *delay_window, GtkToggleButton *button){
+/*	if(global_ptr->_delay_toggled == def_toggled) {
 		global_ptr->_delay_toggled = not_def_toggled;
 		set_m_distortion(m_dist,back_to_rock_mode);
 	}
@@ -139,6 +139,17 @@ void on_delay_toggled(gpointer p, GtkToggleButton *button){
 		global_ptr->_delay_toggled = def_toggled;
 	}
 	g_print("delay in progress, toggled button value == %d\n", global_ptr->_delay_toggled);
+*/
+
+	if(global_ptr->_delay_toggled == not_def_toggled){
+		open_sub_window("m_delay");
+		global_ptr->_delay_toggled = def_toggled;
+	} else {
+		printf("deberias intentar cerrar la ventana champ\n");
+		global_ptr->_delay_toggled = not_def_toggled;
+	}
+
+
 }
 
 G_MODULE_EXPORT 
