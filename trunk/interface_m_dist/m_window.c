@@ -3,7 +3,7 @@
 
 //ESTA MAS Q CLARO Q PASANDOLE EL STRING Q TIENE Q ABRIR DIRECTAMENTE PODRIA HACERLO CON ALGUN STRCAT O ALGO ASI
 
-void open_sub_window(char* sub_window){
+GtkWindow* open_sub_window(char* sub_window){
 	GtkBuilder *builder;
 	GtkWidget  *window;
 	GError     *error = NULL;
@@ -29,6 +29,7 @@ void open_sub_window(char* sub_window){
 	g_object_unref( G_OBJECT( builder ) );
 	/* Show window. All other widgets are automatically shown by GtkBuilder */
 	gtk_widget_show( window );
+	return window;
 }
 
 

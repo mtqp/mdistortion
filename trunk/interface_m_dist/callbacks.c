@@ -22,11 +22,11 @@ G_MODULE_EXPORT int on_quit_clicked( GtkButton *button, gpointer   data ){
 }
 
 G_MODULE_EXPORT int on_info_clicked(GtkButton *button, gpointer data){
-	open_sub_window("info_m_distortion");
+	/*global_ptr->_info_w = */open_sub_window("info_m_distortion");
 }
 
 G_MODULE_EXPORT int on_save_clicked(GtkButton *button, gpointer data){
-	open_sub_window("save_m_distortion");
+	/*global_ptr->_save_w = */open_sub_window("save_m_distortion");
 }
 
 //////////MODES////////////
@@ -130,40 +130,26 @@ void on_reset_treb_clicked(gpointer reset, GtkRadioButton *button){
 
 G_MODULE_EXPORT
 void on_delay_toggled(/*gpointer p*/GtkWindow *delay_window, GtkToggleButton *button){
-/*	if(global_ptr->_delay_toggled == def_toggled) {
-		global_ptr->_delay_toggled = not_def_toggled;
-		set_m_distortion(m_dist,back_to_rock_mode);
-	}
-	else {
-		set_m_distortion(m_dist,e_delay);
-		global_ptr->_delay_toggled = def_toggled;
-	}
-	g_print("delay in progress, toggled button value == %d\n", global_ptr->_delay_toggled);
-*/
+	static GtkWindow* dl_w;
 
-//gtk_window_set_deletable ()	ESTO LE BORRA LA X PARA CERRARLO, PUEDE SER UTIL
-
-
-	if(global_ptr->_delay_toggled == not_def_toggled){
-		open_sub_window("m_delay");
-		global_ptr->_delay_toggled = def_toggled;
+	if(button->active){
+		dl_w = open_sub_window("m_delay");
 	} else {
-		printf("deberias intentar cerrar la ventana champ\n");
-		//gtk_window_set_destroy_with_parent(delay_window,1);
-		global_ptr->_delay_toggled = not_def_toggled;
+		//printf("deberias intentar cerrar la ventana champ\n");
+		gtk_widget_destroy((GtkWidget*)dl_w);
 	}
 }
 
 G_MODULE_EXPORT 
-void on_chorus_toggled(gpointer p, GtkToggleButton *button){
-	if(global_ptr->_chorus_toggled == not_def_toggled) {
-		open_sub_window("m_chorus");
-		global_ptr->_chorus_toggled = def_toggled;	
+void on_chorus_toggled(GtkWindow* chorus_window, GtkToggleButton *button){
+	//NO ANDA ESTA NO SE XQ
+	static GtkWindow* ch_w;
+	if(button->active) {
+		ch_w = open_sub_window("m_chorus");
 	}
 	else {
-		printf("deberias intentar cerrar la ventana champ\n");
 		//set_m_distortion(m_dist,e_delay);
-		global_ptr->_chorus_toggled = not_def_toggled;
+		gtk_widget_destroy((GtkWidget*)ch_w);
 	}
 }
 
