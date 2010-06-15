@@ -236,12 +236,12 @@
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkToggleButton" id="chorus">
-                                                <property name="label" translatable="yes">Chorus</property>
+                                              <object class="GtkToggleButton" id="hall">
+                                                <property name="label" translatable="yes">Hall</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">True</property>
-                                                <signal name="toggled" handler="on_chorus_toggled" object="eq_onoff"/>
+                                                <signal name="toggled" handler="on_hall_toggled" object="eq_onoff"/>
                                               </object>
                                               <packing>
                                                 <property name="position">1</property>
@@ -1123,7 +1123,7 @@ audio-volume-medium</property>
       </object>
     </child>
   </object>
-  <object class="GtkWindow" id="m_chorus">
+  <object class="GtkWindow" id="m_hall">
     <property name="type">popup</property>
     <property name="default_width">80</property>
     <property name="default_height">250</property>
@@ -1155,12 +1155,12 @@ audio-volume-medium</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkToggleButton" id="chonoff">
+                      <object class="GtkToggleButton" id="hlonoff">
                         <property name="label" translatable="yes">On/Off</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <signal name="toggled" handler="on_ch_onoff_toggled" object="chintensity"/>
+                        <signal name="toggled" handler="on_hl_onoff_toggled" object="chintensity"/>
                       </object>
                       <packing>
                         <property name="position">1</property>
@@ -1191,11 +1191,11 @@ audio-volume-medium</property>
                         <property name="visible">True</property>
                         <property name="left_padding">12</property>
                         <child>
-                          <object class="GtkVScale" id="chscale">
+                          <object class="GtkVScale" id="hlscale">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="orientation">vertical</property>
-                            <property name="adjustment">chorus_intensity</property>
+                            <property name="adjustment">hall_intensity</property>
                             <property name="inverted">True</property>
                             <property name="digits">2</property>
                             <property name="draw_value">False</property>
@@ -1204,7 +1204,7 @@ audio-volume-medium</property>
                       </object>
                     </child>
                     <child type="label">
-                      <object class="GtkLabel" id="chlab">
+                      <object class="GtkLabel" id="hllab">
                         <property name="visible">True</property>
                         <property name="yalign">0.4699999988079071</property>
                         <property name="label" translatable="yes">&lt;b&gt;intensity&lt;/b&gt;</property>
@@ -1221,9 +1221,10 @@ audio-volume-medium</property>
           </object>
         </child>
         <child type="label">
-          <object class="GtkLabel" id="mch">
+          <object class="GtkLabel" id="mhl">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;b&gt;m_chorus&lt;/b&gt;</property>
+            <property name="yalign">0.47999998927116394</property>
+            <property name="label" translatable="yes">&lt;b&gt;m_hall&lt;/b&gt;</property>
             <property name="use_markup">True</property>
           </object>
         </child>
@@ -1338,7 +1339,7 @@ L.U.: 389/08.
     <property name="page_increment">0.01</property>
     <property name="page_size">0.01</property>
   </object>
-  <object class="GtkAdjustment" id="chorus_intensity">
+  <object class="GtkAdjustment" id="hall_intensity">
     <property name="lower">-1</property>
     <property name="upper">1</property>
     <property name="step_increment">0.01</property>

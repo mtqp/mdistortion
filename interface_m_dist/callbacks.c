@@ -126,7 +126,7 @@ void on_reset_treb_clicked(gpointer reset, GtkRadioButton *button){
 	gtk_adjustment_set_value(reset,0.0);
 } 
 
-////////////DELAY & CHORUS///////////////////////
+////////////DELAY & HALL///////////////////////
 
 G_MODULE_EXPORT
 void on_delay_toggled(/*gpointer p*/GtkWindow *delay_window, GtkToggleButton *button){
@@ -150,23 +150,23 @@ void on_dl_onoff_toggled(GtkContainer* sets, GtkToggleButton *on_offb){
 
 
 G_MODULE_EXPORT 
-void on_chorus_toggled(GtkToggleButton *eq, GtkToggleButton *button){
+void on_hall_toggled(GtkToggleButton *eq, GtkToggleButton *button){
 	static GtkWindow* ch_w;
 	static int prev_eq_active = 0;//x las dudas lo seteo, pensar si no se jode...
 	if(button->active) {
-		ch_w = open_sub_window("m_chorus");
+		ch_w = open_sub_window("m_hall");
 		prev_eq_active = eq->active;
 		gtk_toggle_button_set_active(eq,0);	//eso es falso!
 	}
 	else {
-		//set_m_distortion(m_dist,e_delay);
+		//set_m_distortion(m_dist,e_delay);  no existe mas delay papa
 		gtk_widget_destroy((GtkWidget*)ch_w);
 		gtk_toggle_button_set_active(eq,prev_eq_active);
 	}
 }
 
 G_MODULE_EXPORT 
-void on_ch_onoff_toggled(GtkContainer* intensity, GtkToggleButton *on_offb){
+void on_hl_onoff_toggled(GtkContainer* intensity, GtkToggleButton *on_offb){
 	if(on_offb->active)
 		gtk_widget_set_sensitive((GtkWidget*) intensity, sensitivo);		
 	else

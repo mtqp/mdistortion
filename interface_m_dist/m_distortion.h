@@ -9,10 +9,11 @@
 
 #include "globals.h"
 #include "m_eq.h"
-#include "m_chorus.h"
+#include "m_hall.h"
 #include "m_delay.h"
 #include "vol_ctes.h"
 #include "enum_dist.h"
+#include "enum_effects.h"
 
 typedef struct _m_distortion {
 	//YA CAGUE EL ASM, HAY Q REAHACERLO
@@ -25,11 +26,11 @@ typedef struct _m_distortion {
 	m_equalizer* m_treb;
 	m_equalizer* m_mid;
 	
-	m_delay*  _delay;
-	m_chorus* _chorus;
+	m_delay*  	_delay;
+	m_hall* 	_hall;
 	
-	
-	char* _name_dists[11];	//cambio xq le agregue el delay ojo ahiii
+	char* _name_dists[10];	//cambio xq le agregue el delay ojo ahiii
+	char* _name_effects[4];
 }m_distortion;
 
 
@@ -38,6 +39,8 @@ void free_m_distortion(m_distortion *md);
 void distortionize(m_distortion *md, jack_default_audio_sample_t *out, jack_nframes_t nframes);
 void set_m_distortion( m_distortion * md, int distor);
 void eq_new(m_distortion* md);
+
+//extern volume_hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes);
 
 typedef void (DISTORTION)(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes);
 
@@ -51,11 +54,22 @@ DISTORTION rare_cuadratic;
 DISTORTION random_day;
 DISTORTION mute;
 DISTORTION by_pass;
-DISTORTION delay;
 
-DISTORTION * f_dist[11];	
+DISTORTION * f_dist[10];	
 DISTORTION * distortion_channel;
 
-//extern volume_hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes);
+typedef float (EFFECT) (m_distortion *md, float sample, int i);
+
+EFFECT equalizer_func;
+EFFECT delay_func;
+EFFECT hall_func;
+EFFECT volume_func;
+EFFECT dummy_func;
+
+EFFECT * f_effect[5];
+EFFECT * equalizer_effect;
+EFFECT * delay_effect;
+EFFECT * hall_effect;
+EFFECT * volume_effect;
 
 #endif
