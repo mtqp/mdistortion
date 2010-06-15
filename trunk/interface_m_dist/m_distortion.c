@@ -11,15 +11,15 @@ void init_m_distortion(m_distortion * md){
 	/////DELAY/////
 	md->_delay = delay_new(262144);	//really big buffer for long delays q no baje hasta mucho mas q 65536
 	//md->_delay = delay_new(65536);//siempre es multiplo de 4096, xq ese es el buffer de jack, no olvidarse!
-	////CHORUS////
-	md->_chorus = chorus_new(4096); //four small buffers for chorus
+	/////HALL//////
+	md->_hall = hall_new(4096); //four small buffers for hall
 
 	//////EQ//////
 	eq_new(md);
 	
 	///////GLOBALS///////
 	global_ptr = (globals*) malloc(sizeof(globals));
-	//global_ptr->_chorus_toggled = not_def_toggled;
+	//global_ptr->_hall_toggled = not_def_toggled;
 	//global_ptr->_delay_toggled 	= not_def_toggled;
 	global_ptr->_eq_sensitive   = sensitivo;
 	global_ptr->plot_x = 0;		//es muy posible q no se necesite mas
@@ -37,8 +37,7 @@ void init_m_distortion(m_distortion * md){
 	md->_name_dists[e_random_day] 		 = "random_day";
 	md->_name_dists[e_mute] 			 = "mute";
 	md->_name_dists[e_by_pass] 			 = "by_pass";
-	md->_name_dists[e_delay]			 = "delay";
-	
+		
 	f_dist[e_log_rock] 			= &log_rock;
 	f_dist[e_log_rock_II] 		= &log_rock2;
 	f_dist[e_hell_sqrt] 		= &hell_sqr;
@@ -49,8 +48,21 @@ void init_m_distortion(m_distortion * md){
 	f_dist[e_random_day] 		= &random_day;	
 	f_dist[e_mute] 				= &mute;
 	f_dist[e_by_pass] 			= &by_pass;
-	f_dist[e_delay]				= &delay;
 	printf("	Distortions Effects Set\n");
+
+	md->_name_effects[e_equalizer] 	= "equalizer_func"; //ME PREGUNTO PARA Q SE USA ESTO!!
+	md->_name_effects[e_delay]		= "delay_func";
+	md->_name_effects[e_hall] 		= "hall_func";
+	md->_name_effects[e_volume]		= "volume_func";
+	md->_name_effects[e_dummy] 		= "dummy_func";
+	
+	f_effect[e_equalizer]	= &equalizer_func;
+	f_effect[e_delay]		= &delay_func;
+	f_effect[e_hall]		= &hall_func;
+	f_effect[e_volume]		= &volume_func;
+	f_effect[e_dummy]		= &dummy_func;
+	printf("seteee en hall efecct a la hall func!!\n");
+	hall_effect = f_effect[e_hall];		///ES NEGRADA DSP ARREGLARLO!!!!!!!!!!!!!
 
 	distortion_channel  = f_dist[md->_last_dist_active]; 
 	printf("M_DISTORTION initialized\n\n");
@@ -246,40 +258,12 @@ void random_day(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframe
 	if(mod2 == 6)			rare_cuadratic(out,mdc,nframes);
 }	
 
-void delay(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
-	int i=0;
-	float smp;
-	float vol; 
-	vol = 1.0+mdc->_dvol;
-/*
-	for(i;i<nframes;i++){
-	//	out[i] *= vol*100.0;
-	//	old_smp = out[i];
-	//	out[i] += mdc->_delay->delay_buf[i];
-	//	mdc->_delay->delay_buf[i] = old_smp;
-		smp = out[i];
-		out[i] += mdc->_delay->dl_buf1[mdc->_delay->dl_sub_i];
-		mdc->_delay->dl_buf1[mdc->_delay->dl_sub_i] = smp;
-		smp = out[i];
-		out[i] += mdc->_delay->dl_buf2[mdc->_delay->dl_sub_i];
-		mdc->_delay->dl_buf2[mdc->_delay->dl_sub_i] = smp/2;
-		smp = out[i];
-		out[i] += mdc->_delay->dl_buf3[mdc->_delay->dl_sub_i];
-		mdc->_delay->dl_buf3[mdc->_delay->dl_sub_i] = smp/2;
-
-		mdc->_delay->dl_sub_i++;
-		if(mdc->_delay->dl_sub_i == mdc->_delay->dl_size){	
-			mdc->_delay->dl_sub_i = 0;
-		}
-	}*/
-}
-
 void mute(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 	int i=0;
 	float smp;
 		
 	for(i;i<nframes;i++){
-		smp = out[i];
+		/*smp = out[i];
 		out[i] += mdc->_chorus->chr_buf1[i];
 		mdc->_chorus->chr_buf1[i] = smp;
 		smp = out[i];
@@ -290,19 +274,9 @@ void mute(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nf
 		mdc->_chorus->chr_buf3[i] = smp;
 		smp = out[i];
 		out[i] += mdc->_chorus->chr_buf4[i];
-		mdc->_chorus->chr_buf4[i] = smp;
+		mdc->_chorus->chr_buf4[i] = smp;*/
+		out[i] = hall_effect(mdc,out[i],i);
 	}
-	/*
-//	printf("mute\n");
-	int i=0;
-//	FILE *f_out;
-//	f_out = fopen("by_pass.dat","a+");
-	for(i;i<nframes;i++){
-		out[i] = 0.0;
-//		fprintf(f_out,"%d %f\n",global_ptr->plot_by_pass,out[i]);
-//		global_ptr->plot_by_pass++;
-	}
-//	fclose(f_out);*/
 }
 
 void by_pass(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
@@ -335,5 +309,41 @@ void by_pass(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t
 	}
 	fclose(f_out);
 */
+}
+
+/////////////////////////////////////////////////////
+///------------------EFFECTOS---------------------///
+/////////////////////////////////////////////////////
+
+float equalizer_func(m_distortion *md, float smp, int i){
+	return 0.0;
+}
+
+float delay_func(m_distortion *md, float smp, int i){
+	return 0.0;
+}
+
+float hall_func(m_distortion *md, float smp, int i){
+	float save_smp = smp;
+	smp += md->_hall->hll_buf1[i];
+	md->_hall->hll_buf1[i] = md->_hall->hll_coef1*save_smp;
+	save_smp = smp;
+	smp += md->_hall->hll_buf2[i];
+	md->_hall->hll_buf2[i] = md->_hall->hll_coef2*save_smp;	//VA A ESTAR MULTIPLICADO X CTES EENTRE 0 Y UNO Q REGULARAN LA CANTIDAD DE EFECTO
+	save_smp = smp;
+	smp += md->_hall->hll_buf3[i];
+	md->_hall->hll_buf3[i] = md->_hall->hll_coef3*save_smp;
+	save_smp = smp;
+	smp += md->_hall->hll_buf4[i];
+	md->_hall->hll_buf4[i] = md->_hall->hll_coef4*save_smp;
+	return smp;
+}
+
+float volume_func(m_distortion *md, float smp, int i){
+	return 0.0;//no creo poder tenerla en una funcion sepada xq las ctes son diferentes... ahh claro sisisi si puedo, para eso tengo la struct ctes!
+}
+
+float dummy_func(m_distortion *md, float smp, int i){
+	return 0.0;
 }
 

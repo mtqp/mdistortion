@@ -10,6 +10,8 @@ m_delay* delay_new (int size){
 	else {
 		d->dl_size = size;
 		d->dl_sub_i= 0;
+		d->dl_cant_bufs_active = 4;
+		d->dl_speed = size/2;	//puedo crecer 32 veces para arriva y 32 para abajo creo...
 		d->dl_buf1 = (float*) malloc(d->dl_size*sizeof(float));
 		d->dl_buf2 = (float*) malloc(d->dl_size*sizeof(float));
 		d->dl_buf3 = (float*) malloc(d->dl_size*sizeof(float));
