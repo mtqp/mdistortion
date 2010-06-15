@@ -46,6 +46,9 @@ G_MODULE_EXPORT void on_volume_value_changed(GtkAdjustment *vol_adjs, GtkRange *
 G_MODULE_EXPORT void on_delay_toggled(/*gpointer p*/GtkWindow *delay_w, GtkToggleButton *button);
 G_MODULE_EXPORT void on_chorus_toggled(GtkWindow *ch_w, GtkToggleButton *button);
 
+G_MODULE_EXPORT void on_dl_onoff_toggled(GtkContainer* sets, GtkToggleButton *on_offb);
+
+
 ///////CALLBACKS-JACK///////
 
 int process (jack_nframes_t nframes, void *arg);

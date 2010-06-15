@@ -140,6 +140,14 @@ void on_delay_toggled(/*gpointer p*/GtkWindow *delay_window, GtkToggleButton *bu
 	}
 }
 
+G_MODULE_EXPORT void on_dl_onoff_toggled(GtkContainer* sets, GtkToggleButton *on_offb){
+	if(on_offb->active)
+		gtk_widget_set_sensitive((GtkWidget*) sets, no_sensitivo);
+	else
+		gtk_widget_set_sensitive((GtkWidget*) sets, sensitivo);
+}
+
+
 G_MODULE_EXPORT 
 void on_chorus_toggled(GtkWindow* chorus_window, GtkToggleButton *button){
 	//NO ANDA ESTA NO SE XQ
