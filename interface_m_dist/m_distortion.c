@@ -9,8 +9,8 @@ void init_m_distortion(m_distortion * md){
 	vol_new(md->_vctes);
 
 	/////DELAY/////
-	md->_delay = delay_new(262144);	//really big buffer for long delays q no baje hasta mucho mas q 65536
-	//md->_delay = delay_new(65536);//siempre es multiplo de 4096, xq ese es el buffer de jack, no olvidarse!
+	//md->_delay = delay_new(262144);	//really big buffer for long delays q no baje hasta mucho mas q 65536
+	md->_delay = delay_new(65536);//siempre es multiplo de 4096, xq ese es el buffer de jack, no olvidarse!
 	/////HALL//////
 	md->_hall = hall_new(4096); //four small buffers for hall
 
@@ -61,8 +61,10 @@ void init_m_distortion(m_distortion * md){
 	f_effect[e_hall]		= &hall_func;
 	f_effect[e_volume]		= &volume_func;
 	f_effect[e_dummy]		= &dummy_func;
-	printf("seteee en hall efecct a la hall func!!\n");
+	printf("seteee en hall efecct a la hall func Y DELAAAAAY!!\n");
 	hall_effect = f_effect[e_hall];		///ES NEGRADA DSP ARREGLARLO!!!!!!!!!!!!!
+	delay_effect = f_effect[e_delay];
+
 
 	distortion_channel  = f_dist[md->_last_dist_active]; 
 	printf("M_DISTORTION initialized\n\n");
@@ -263,19 +265,8 @@ void mute(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nf
 	float smp;
 		
 	for(i;i<nframes;i++){
-		/*smp = out[i];
-		out[i] += mdc->_chorus->chr_buf1[i];
-		mdc->_chorus->chr_buf1[i] = smp;
-		smp = out[i];
-		out[i] += mdc->_chorus->chr_buf2[i];
-		mdc->_chorus->chr_buf2[i] = smp;	//VA A ESTAR MULTIPLICADO X CTES EENTRE 0 Y UNO Q REGULARAN LA CANTIDAD DE EFECTO
-		smp = out[i];
-		out[i] += mdc->_chorus->chr_buf3[i];
-		mdc->_chorus->chr_buf3[i] = smp;
-		smp = out[i];
-		out[i] += mdc->_chorus->chr_buf4[i];
-		mdc->_chorus->chr_buf4[i] = smp;*/
-		out[i] = hall_effect(mdc,out[i],i);
+		//out[i] = hall_effect(mdc,out[i],i);
+		out[i] = delay_effect(mdc,out[i],i);
 	}
 }
 
@@ -316,11 +307,28 @@ void by_pass(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t
 /////////////////////////////////////////////////////
 
 float equalizer_func(m_distortion *md, float smp, int i){
-	return 0.0;
+	smp = equalize_sample(smp, md->m_bass);
+	smp = equalize_sample(smp, md->m_treb);
+	smp = equalize_sample(smp, md->m_mid);
 }
 
 float delay_func(m_distortion *md, float smp, int i){
-	return 0.0;
+	float old_smp = smp;
+	smp += md->_delay->dl_buf1[md->_delay->dl_sub_i];
+	md->_delay->dl_buf1[md->_delay->dl_sub_i] = old_smp;
+	old_smp = smp;
+	smp += md->_delay->dl_buf2[md->_delay->dl_sub_i];
+	md->_delay->dl_buf2[md->_delay->dl_sub_i] = old_smp/1.5;
+	old_smp = smp;
+	smp += md->_delay->dl_buf3[md->_delay->dl_sub_i];
+	md->_delay->dl_buf3[md->_delay->dl_sub_i] = old_smp/1.5;
+
+	md->_delay->dl_sub_i++;
+	if(md->_delay->dl_sub_i == md->_delay->dl_size){	
+		md->_delay->dl_sub_i = 0;
+	}
+	
+	return smp;
 }
 
 float hall_func(m_distortion *md, float smp, int i){
@@ -344,6 +352,6 @@ float volume_func(m_distortion *md, float smp, int i){
 }
 
 float dummy_func(m_distortion *md, float smp, int i){
-	return 0.0;
+	return smp;
 }
 
