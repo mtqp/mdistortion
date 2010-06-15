@@ -649,111 +649,155 @@
                                 <property name="visible">True</property>
                                 <property name="orientation">vertical</property>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkFrame" id="sin_effectos">
+                                    <property name="visible">True</property>
+                                    <property name="label_xalign">0</property>
+                                    <property name="shadow_type">none</property>
+                                    <child>
+                                      <object class="GtkAlignment" id="alignment13">
+                                        <property name="visible">True</property>
+                                        <property name="left_padding">12</property>
+                                        <child>
+                                          <object class="GtkRadioButton" id="hell_sqrt">
+                                            <property name="label" translatable="yes">hell_sqrt</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="yalign">0.54000002145767212</property>
+                                            <property name="active">True</property>
+                                            <property name="draw_indicator">True</property>
+                                            <signal name="clicked" handler="on_hell_sqrt_clicked"/>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child type="label">
+                                      <object class="GtkLabel" id="no_ef">
+                                        <property name="visible">True</property>
+                                        <property name="label" translatable="yes">&lt;b&gt;No Effects&lt;/b&gt;</property>
+                                        <property name="use_markup">True</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="position">0</property>
+                                  </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkVBox" id="dist">
+                                  <object class="GtkFrame" id="con_efectos">
                                     <property name="visible">True</property>
-                                    <property name="orientation">vertical</property>
+                                    <property name="label_xalign">0</property>
+                                    <property name="shadow_type">none</property>
                                     <child>
-                                      <object class="GtkRadioButton" id="log_rock">
-                                        <property name="label" translatable="yes">log_rock</property>
+                                      <object class="GtkAlignment" id="alignment14">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="draw_indicator">True</property>
-                                        <property name="group">hell_sqrt</property>
-                                        <signal name="clicked" handler="on_log_rock_clicked"/>
+                                        <property name="left_padding">12</property>
+                                        <child>
+                                          <object class="GtkVBox" id="vbox13">
+                                            <property name="visible">True</property>
+                                            <property name="orientation">vertical</property>
+                                            <child>
+                                              <object class="GtkRadioButton" id="log_rock">
+                                                <property name="label" translatable="yes">log_rock</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">False</property>
+                                                <property name="active">True</property>
+                                                <property name="draw_indicator">True</property>
+                                                <property name="group">hell_sqrt</property>
+                                                <signal name="clicked" handler="on_log_rock_clicked"/>
+                                              </object>
+                                              <packing>
+                                                <property name="position">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkRadioButton" id="log_rock_II">
+                                                <property name="label" translatable="yes">log_rock_II</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">False</property>
+                                                <property name="xalign">0.50999999046325684</property>
+                                                <property name="active">True</property>
+                                                <property name="draw_indicator">True</property>
+                                                <property name="group">hell_sqrt</property>
+                                                <signal name="clicked" handler="on_log_rock_II_clicked"/>
+                                              </object>
+                                              <packing>
+                                                <property name="position">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkRadioButton" id="psychedelic_if">
+                                                <property name="label" translatable="yes">psychedelic_if</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">False</property>
+                                                <property name="active">True</property>
+                                                <property name="draw_indicator">True</property>
+                                                <property name="group">hell_sqrt</property>
+                                                <signal name="clicked" handler="on_psychedelic_if_clicked"/>
+                                              </object>
+                                              <packing>
+                                                <property name="position">2</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkRadioButton" id="by_60s">
+                                                <property name="label" translatable="yes">by_60s</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">False</property>
+                                                <property name="active">True</property>
+                                                <property name="draw_indicator">True</property>
+                                                <property name="group">hell_sqrt</property>
+                                                <signal name="clicked" handler="on_by_60s_clicked"/>
+                                              </object>
+                                              <packing>
+                                                <property name="position">3</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkRadioButton" id="fuzzy_dark_pow_IV">
+                                                <property name="label" translatable="yes">fuzzy_dark_pow_IV</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">False</property>
+                                                <property name="active">True</property>
+                                                <property name="draw_indicator">True</property>
+                                                <property name="group">hell_sqrt</property>
+                                                <signal name="clicked" handler="on_fuzzy_dark_pow_IV_clicked"/>
+                                              </object>
+                                              <packing>
+                                                <property name="position">4</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkRadioButton" id="rare_cuadratic">
+                                                <property name="label" translatable="yes">rare_cuadratic</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">False</property>
+                                                <property name="relief">half</property>
+                                                <property name="active">True</property>
+                                                <property name="draw_indicator">True</property>
+                                                <property name="group">hell_sqrt</property>
+                                                <signal name="clicked" handler="on_rare_cuadratic_clicked"/>
+                                              </object>
+                                              <packing>
+                                                <property name="position">5</property>
+                                              </packing>
+                                            </child>
+                                          </object>
+                                        </child>
                                       </object>
-                                      <packing>
-                                        <property name="position">0</property>
-                                      </packing>
                                     </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="log_rock_II">
-                                        <property name="label" translatable="yes">log_rock_II</property>
+                                    <child type="label">
+                                      <object class="GtkLabel" id="si_ef">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="relief">none</property>
-                                        <property name="draw_indicator">True</property>
-                                        <property name="group">hell_sqrt</property>
-                                        <signal name="clicked" handler="on_log_rock_II_clicked"/>
+                                        <property name="label" translatable="yes">&lt;b&gt;Yes Effects&lt;/b&gt;</property>
+                                        <property name="use_markup">True</property>
                                       </object>
-                                      <packing>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="hell_sqrt">
-                                        <property name="label" translatable="yes">hell_sqrt</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="active">True</property>
-                                        <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="on_hell_sqrt_clicked"/>
-                                      </object>
-                                      <packing>
-                                        <property name="position">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="psychedelic_if">
-                                        <property name="label" translatable="yes">psychedelic_if</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="draw_indicator">True</property>
-                                        <property name="group">hell_sqrt</property>
-                                        <signal name="clicked" handler="on_psychedelic_if_clicked"/>
-                                      </object>
-                                      <packing>
-                                        <property name="position">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="by_60s">
-                                        <property name="label" translatable="yes">by_60's</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="draw_indicator">True</property>
-                                        <property name="group">hell_sqrt</property>
-                                        <signal name="clicked" handler="on_by_60s_clicked"/>
-                                      </object>
-                                      <packing>
-                                        <property name="position">4</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="fuzzy_dark_pow_IV">
-                                        <property name="label" translatable="yes">fuzzy_dark_pow_IV</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="draw_indicator">True</property>
-                                        <property name="group">hell_sqrt</property>
-                                        <signal name="clicked" handler="on_fuzzy_dark_pow_IV_clicked"/>
-                                      </object>
-                                      <packing>
-                                        <property name="position">5</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="rare_cuadratic">
-                                        <property name="label" translatable="yes">rare_cuadratic</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="relief">none</property>
-                                        <property name="draw_indicator">True</property>
-                                        <property name="group">hell_sqrt</property>
-                                        <signal name="clicked" handler="on_rare_cuadratic_clicked"/>
-                                      </object>
-                                      <packing>
-                                        <property name="position">6</property>
-                                      </packing>
                                     </child>
                                   </object>
                                   <packing>

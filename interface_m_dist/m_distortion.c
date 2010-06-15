@@ -62,8 +62,8 @@ void init_m_distortion(m_distortion * md){
 	f_effect[e_volume]		= &volume_func;
 	f_effect[e_dummy]		= &dummy_func;
 	printf("seteee en hall efecct a la hall func Y DELAAAAAY!!\n");
-	hall_effect = f_effect[e_hall];		///ES NEGRADA DSP ARREGLARLO!!!!!!!!!!!!!
-	delay_effect = f_effect[e_delay];
+	hall_effect = f_effect[e_dummy];		///ES NEGRADA DSP ARREGLARLO!!!!!!!!!!!!!
+	delay_effect = f_effect[e_dummy];		//para ver si no influye!
 
 
 	distortion_channel  = f_dist[md->_last_dist_active]; 
@@ -122,6 +122,8 @@ void log_rock(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_
 		}
 	} else {
 		for(i;i<nframes;i++){
+			out[i] = delay_effect(mdc,out[i],i);
+			out[i] = hall_effect(mdc,out[i],i);
 			out[i]=vol*sin(cos(log(sin(log(out[i])))));
 		}
 	}
@@ -140,6 +142,8 @@ void log_rock2(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes
 		}
 	} else {
 		for(i;i<nframes;i++){
+			out[i] = delay_effect(mdc,out[i],i);
+			out[i] = hall_effect(mdc,out[i],i);
 			out[i]= vol*cos(tan(tan(log((out[i])))));
 		}
 	}
@@ -163,7 +167,8 @@ void hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_
 		}
 	} else {
 		for(i;i<nframes;i++){
-			out[i]= vol*(1000.0*sqrt(out[i]));
+			out[i] = hall_effect(mdc,out[i],i);
+			out[i]= vol*(1000.0*sqrt(out[i])); //delay no funciona aqui! xq o es nan o cero
 		}
 	}
 }
@@ -186,8 +191,12 @@ void psychedelic_if(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nf
 	} else {
 		for(i;i<nframes;i++){
 			if(i < nframes/3) {
+				out[i] = delay_effect(mdc,out[i],i);
+				out[i] = hall_effect(mdc,out[i],i);
 				out[i] = (log(out[i])*10000.0)/5;
 			} else {
+				out[i] = delay_effect(mdc,out[i],i);
+				out[i] = hall_effect(mdc,out[i],i);
 				out[i] = sin(log(sin(out[i])));
 			}
 		}
@@ -208,6 +217,8 @@ void by_60s(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t 
 	} else {
 		for(i;i<nframes;i++){
 			out[i]= vol*(100.0 * out[i]);
+			out[i] = delay_effect(mdc,out[i],i);
+			out[i] = hall_effect(mdc,out[i],i);
 		}
 	}
 }
@@ -226,6 +237,8 @@ void fuzzy_dark_pow4(jack_default_audio_sample_t *out, m_distortion *mdc, jack_n
 	} else {
 		for(i;i<nframes;i++){
 			out[i]= vol*(100000000.0*(-pow(out[i],4)));
+			out[i] = delay_effect(mdc,out[i],i);
+			out[i] = hall_effect(mdc,out[i],i);
 		}
 	}
 }
@@ -241,6 +254,8 @@ void rare_cuadratic(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nf
 		}
 	} else {
 		for(i;i<nframes;i++){
+			out[i] = delay_effect(mdc,out[i],i);
+			out[i] = hall_effect(mdc,out[i],i);
 			out[i]= vol*(11000.0*(pow(out[i],2)));
 		}
 	}
@@ -265,7 +280,7 @@ void mute(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nf
 	float smp;
 		
 	for(i;i<nframes;i++){
-		out[i] = equalizer_func(mdc,out[i],i);
+		//out[i] = equalizer_func(mdc,out[i],i);
 		//out[i] = hall_effect(mdc,out[i],i);
 		//out[i] = delay_effect(mdc,out[i],i);
 	}
