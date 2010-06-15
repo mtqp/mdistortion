@@ -79,6 +79,7 @@ G_MODULE_EXPORT void on_rare_cuadratic_clicked(gpointer distors,GtkRadioButton *
 
 G_MODULE_EXPORT 
 void on_eq_onoff_toggled (gpointer eqs, GtkToggleButton *b){
+	//CORREGIR ESO, SI EL DELAY O EL HALL ESTA PRENDIDO, Q NO SE ACTIVE!
 	if(global_ptr->_eq_sensitive)	global_ptr->_eq_sensitive = 0;
 	else							global_ptr->_eq_sensitive = 1;
 	gtk_widget_set_sensitive((GtkWidget*) eqs, global_ptr->_eq_sensitive);
@@ -129,14 +130,17 @@ void on_reset_treb_clicked(gpointer reset, GtkRadioButton *button){
 ////////////DELAY & HALL///////////////////////
 
 G_MODULE_EXPORT
-void on_delay_toggled(/*gpointer p*/GtkWindow *delay_window, GtkToggleButton *button){
+void on_delay_toggled(GtkToggleButton *eq, GtkToggleButton *button){
 	static GtkWindow* dl_w;
+	static int prev_eq_active = 0;//x las dudas lo seteo, pensar si no se jode...
 
 	if(button->active){
 		dl_w = open_sub_window("m_delay");
+		prev_eq_active = eq->active;
+		gtk_toggle_button_set_active(eq,0);	//eso es falso!
 	} else {
-		//printf("deberias intentar cerrar la ventana champ\n");
 		gtk_widget_destroy((GtkWidget*)dl_w);
+		gtk_toggle_button_set_active(eq,prev_eq_active);
 	}
 }
 

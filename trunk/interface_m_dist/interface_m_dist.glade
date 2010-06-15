@@ -229,7 +229,7 @@
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">True</property>
-                                                <signal name="toggled" handler="on_delay_toggled" object="m_delay"/>
+                                                <signal name="toggled" handler="on_delay_toggled" object="eq_onoff"/>
                                               </object>
                                               <packing>
                                                 <property name="position">0</property>

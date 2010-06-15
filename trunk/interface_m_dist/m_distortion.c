@@ -265,8 +265,9 @@ void mute(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nf
 	float smp;
 		
 	for(i;i<nframes;i++){
+		out[i] = equalizer_func(mdc,out[i],i);
 		//out[i] = hall_effect(mdc,out[i],i);
-		out[i] = delay_effect(mdc,out[i],i);
+		//out[i] = delay_effect(mdc,out[i],i);
 	}
 }
 
@@ -306,10 +307,10 @@ void by_pass(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t
 ///------------------EFFECTOS---------------------///
 /////////////////////////////////////////////////////
 
-float equalizer_func(m_distortion *md, float smp, int i){
+float equalizer_func(m_distortion *md, float smp, int i){ //eq y hall al mismo tiempo NO eq delay TMP
 	smp = equalize_sample(smp, md->m_bass);
 	smp = equalize_sample(smp, md->m_treb);
-	smp = equalize_sample(smp, md->m_mid);
+	return equalize_sample(smp, md->m_mid);
 }
 
 float delay_func(m_distortion *md, float smp, int i){
