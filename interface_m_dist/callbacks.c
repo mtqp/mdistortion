@@ -140,25 +140,37 @@ void on_delay_toggled(/*gpointer p*/GtkWindow *delay_window, GtkToggleButton *bu
 	}
 }
 
-G_MODULE_EXPORT void on_dl_onoff_toggled(GtkContainer* sets, GtkToggleButton *on_offb){
+G_MODULE_EXPORT 
+void on_dl_onoff_toggled(GtkContainer* sets, GtkToggleButton *on_offb){
 	if(on_offb->active)
-		gtk_widget_set_sensitive((GtkWidget*) sets, no_sensitivo);
+		gtk_widget_set_sensitive((GtkWidget*) sets, sensitivo);		
 	else
-		gtk_widget_set_sensitive((GtkWidget*) sets, sensitivo);
+		gtk_widget_set_sensitive((GtkWidget*) sets, no_sensitivo);
 }
 
 
 G_MODULE_EXPORT 
-void on_chorus_toggled(GtkWindow* chorus_window, GtkToggleButton *button){
-	//NO ANDA ESTA NO SE XQ
+void on_chorus_toggled(GtkToggleButton *eq, GtkToggleButton *button){
 	static GtkWindow* ch_w;
+	static int prev_eq_active = 0;//x las dudas lo seteo, pensar si no se jode...
 	if(button->active) {
 		ch_w = open_sub_window("m_chorus");
+		prev_eq_active = eq->active;
+		gtk_toggle_button_set_active(eq,0);	//eso es falso!
 	}
 	else {
 		//set_m_distortion(m_dist,e_delay);
 		gtk_widget_destroy((GtkWidget*)ch_w);
+		gtk_toggle_button_set_active(eq,prev_eq_active);
 	}
+}
+
+G_MODULE_EXPORT 
+void on_ch_onoff_toggled(GtkContainer* intensity, GtkToggleButton *on_offb){
+	if(on_offb->active)
+		gtk_widget_set_sensitive((GtkWidget*) intensity, sensitivo);		
+	else
+		gtk_widget_set_sensitive((GtkWidget*) intensity, no_sensitivo);
 }
 
 ////////////////////////////////////////////
