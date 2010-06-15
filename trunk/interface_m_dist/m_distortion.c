@@ -9,8 +9,8 @@ void init_m_distortion(m_distortion * md){
 	vol_new(md->_vctes);
 
 	/////DELAY/////
-	//md->_delay = delay_new(262144);	//really big buffer for long delays
-	//md->_delay = delay_new(65536);
+	md->_delay = delay_new(262144);	//really big buffer for long delays q no baje hasta mucho mas q 65536
+	//md->_delay = delay_new(65536);//siempre es multiplo de 4096, xq ese es el buffer de jack, no olvidarse!
 	////CHORUS////
 	md->_chorus = chorus_new(4096); //four small buffers for chorus
 
