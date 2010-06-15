@@ -10,7 +10,7 @@ void init_m_distortion(m_distortion * md){
 
 	/////DELAY/////
 	//md->_delay = delay_new(262144);	//really big buffer for long delays
-	md->_delay = delay_new(65536);
+	//md->_delay = delay_new(65536);
 	////CHORUS////
 	md->_chorus = chorus_new(4096); //four small buffers for chorus
 
@@ -251,7 +251,7 @@ void delay(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t n
 	float smp;
 	float vol; 
 	vol = 1.0+mdc->_dvol;
-
+/*
 	for(i;i<nframes;i++){
 	//	out[i] *= vol*100.0;
 	//	old_smp = out[i];
@@ -271,7 +271,7 @@ void delay(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t n
 		if(mdc->_delay->dl_sub_i == mdc->_delay->dl_size){	
 			mdc->_delay->dl_sub_i = 0;
 		}
-	}
+	}*/
 }
 
 void mute(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
