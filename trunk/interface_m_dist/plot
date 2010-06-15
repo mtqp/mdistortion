@@ -28,27 +28,3 @@ plot	'from_treb_to_bass.dat' title "filtros" linestyle 1
 #set output
 #replot
 
-
-
-
-
-	for(i;i<nframes;i++){
-	//	out[i] *= vol*100.0;
-	//	old_smp = out[i];
-	//	out[i] += mdc->_delay->delay_buf[i];
-	//	mdc->_delay->delay_buf[i] = old_smp;
-		smp = out[i];
-		out[i] += mdc->_delay->dl_buf1[mdc->_delay->dl_sub_i];
-		mdc->_delay->dl_buf1[mdc->_delay->dl_sub_i] = smp;
-		smp = out[i];
-		out[i] += mdc->_delay->dl_buf2[mdc->_delay->dl_sub_i];
-		mdc->_delay->dl_buf2[mdc->_delay->dl_sub_i] = smp/2;
-		smp = out[i];
-		out[i] += mdc->_delay->dl_buf3[mdc->_delay->dl_sub_i];
-		mdc->_delay->dl_buf3[mdc->_delay->dl_sub_i] = smp/2;
-
-		mdc->_delay->dl_sub_i++;
-		if(mdc->_delay->dl_sub_i == mdc->_delay->dl_size){	
-			mdc->_delay->dl_sub_i = 0;
-		}
-	}*/
