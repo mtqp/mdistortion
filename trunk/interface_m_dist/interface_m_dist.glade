@@ -87,7 +87,7 @@
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkFrame" id="eq">
+                  <object class="GtkFrame" id="box_eq">
                     <property name="visible">True</property>
                     <property name="label_xalign">0</property>
                     <child>
@@ -136,7 +136,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkFrame" id="frame1">
+                                  <object class="GtkFrame" id="reset_eq">
                                     <property name="visible">True</property>
                                     <property name="label_xalign">0</property>
                                     <property name="shadow_type">none</property>
@@ -211,7 +211,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkFrame" id="filter">
+                                  <object class="GtkFrame" id="extra_effects">
                                     <property name="visible">True</property>
                                     <property name="label_xalign">0</property>
                                     <property name="shadow_type">none</property>
