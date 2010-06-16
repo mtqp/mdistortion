@@ -156,22 +156,12 @@ void hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_
 	float vol;
 	if(mdc->_dvol<=0.95)vol = mdc->_vctes->hell_sqr_v+(mdc->_vctes->hell_sqr_v*mdc->_dvol);
 	else 				vol = 1.0;
-	if(global_ptr->_eq_sensitive){
-//		printf("no estamos ecualizando todavia\n"); 
-		for(i;i<nframes;i++){
-			out[i] = equalize_sample(out[i], mdc->m_bass);
-			out[i] = equalize_sample(out[i], mdc->m_treb);
-			out[i] = equalize_sample(out[i], mdc->m_mid);
-			//out[i]= vol*(1000.0*sqrt(out[i]));
-			//printf("outi == %f\n", out[i]);
-		}
-	} else {
-		for(i;i<nframes;i++){
-			out[i] = hall_effect(mdc,out[i],i);
-			out[i]= vol*(1000.0*sqrt(out[i])); //delay no funciona aqui! xq o es nan o cero
-		}
+
+	for(i;i<nframes;i++){
+		out[i]= vol*(1000.0*sqrt(out[i]));
 	}
 }
+
 
 void psychedelic_if(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 //	printf("psychedelic if\n");
