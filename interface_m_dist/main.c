@@ -127,6 +127,7 @@
 		m_ui = (m_user_interface*) malloc(sizeof(m_user_interface));
 		if(m_ui == NULL)	printf("Couldn't malloc UI Structure\n");
 		else {
+			printf("valor m_ui = %d\n", (int) m_ui);
 			m_ui->m_distortion 	= (GtkWindow*) 		window;
 			m_ui->box_eq 	   	= (GtkContainer*) 	gtk_builder_get_object(builder, "box_eq");
 			m_ui->eq_onoff 		= (GtkToggleButton*)gtk_builder_get_object(builder,"eq_onoff");
