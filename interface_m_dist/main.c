@@ -139,10 +139,10 @@
 			m_ui->hell_sqrt 	= (GtkRadioButton*) gtk_builder_get_object(builder,"hell_sqrt");
 			m_ui->by_60s		= (GtkRadioButton*) gtk_builder_get_object(builder,"by_60s");
 			m_ui->volume 		= (GtkScaleButton*) gtk_builder_get_object(builder,"volume");
-			m_ui->m_delay 		= (GtkWindow*) 		gtk_builder_get_object(builder,"m_delay");
+			m_ui->m_delay 		= (GtkWindow*)/*(GtkWidget*)*/ 		gtk_builder_get_object(builder,"m_delay");
 			m_ui->dl_onoff 		= (GtkToggleButton*)gtk_builder_get_object(builder,"dl_onoff");
 			m_ui->dl_sets 		= (GtkContainer*) 	gtk_builder_get_object(builder,"dl_sets");
-			m_ui->m_hall 		= (GtkWindow*) 		gtk_builder_get_object(builder,"m_hall");
+			m_ui->m_hall 		= (GtkWindow*)/*(GtkWidget*)*/ 		gtk_builder_get_object(builder,"m_hall");
 			m_ui->hl_onoff 		= (GtkToggleButton*)gtk_builder_get_object(builder,"hl_onoff");
 			m_ui->chintensity 	= (GtkContainer*) 	gtk_builder_get_object(builder,"chintensity");
 		}
