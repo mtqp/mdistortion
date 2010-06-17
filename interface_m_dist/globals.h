@@ -16,7 +16,7 @@ jack_port_t *output_left;
 jack_port_t *output_right;
 
 struct _m_distortion *m_dist; 
-//struct _m_user_interface *m_ui;
+struct _m_user_interface *m_ui;
 
 typedef struct _globals {
 	int _eq_sensitive; 
