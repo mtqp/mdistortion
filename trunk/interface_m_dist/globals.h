@@ -3,7 +3,7 @@
 #include <jack/jack.h>
 #include <stdio.h>
 #include "m_distortion.h"
-//#include "m_user_interface.h"
+#include "m_user_interface.h"
 
 #define sensitivo 1
 #define no_sensitivo 0

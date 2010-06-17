@@ -53,14 +53,14 @@ G_MODULE_EXPORT void on_by_pass_mode_clicked ( gpointer distors, GtkRadioButton 
 }
 
 //////////////DISTORSIONES/////////////////
+G_MODULE_EXPORT void on_hell_sqrt_clicked(gpointer distors,GtkRadioButton *button){
+	set_m_distortion(m_dist, e_hell_sqrt);
+}
 G_MODULE_EXPORT void on_log_rock_clicked(gpointer distors,GtkRadioButton *button){
 	set_m_distortion(m_dist, e_log_rock);
 }
 G_MODULE_EXPORT void on_log_rock_II_clicked(gpointer distors,GtkRadioButton *button){
 	set_m_distortion(m_dist, e_log_rock_II);
-}
-G_MODULE_EXPORT void on_hell_sqrt_clicked(gpointer distors,GtkRadioButton *button){
-	set_m_distortion(m_dist, e_hell_sqrt);
 }
 G_MODULE_EXPORT void on_psychedelic_if_clicked(gpointer distors,GtkRadioButton *button){
 	set_m_distortion(m_dist, e_psychedelic_if);
@@ -80,10 +80,17 @@ G_MODULE_EXPORT void on_rare_cuadratic_clicked(gpointer distors,GtkRadioButton *
 G_MODULE_EXPORT 
 void on_eq_onoff_toggled (gpointer eqs, GtkToggleButton *b){
 	//CORREGIR ESO, SI EL DELAY O EL HALL ESTA PRENDIDO, Q NO SE ACTIVE!
-	if(global_ptr->_eq_sensitive)	global_ptr->_eq_sensitive = 0;
-	else							global_ptr->_eq_sensitive = 1;
-	gtk_widget_set_sensitive((GtkWidget*) eqs, global_ptr->_eq_sensitive);
-//	g_print("eq_sensitive = %d\n",global_ptr->_eq_sensitive);
+	if(b->active) {
+		gtk_widget_set_sensitive((GtkWidget*) m_ui->eq_bars, sensitivo);
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->hell_sqrt,no_sensitivo);
+	}
+	else {
+		gtk_widget_set_sensitive((GtkWidget*) m_ui->eq_bars, no_sensitivo);
+		gtk_toggle_button_set_active((GtkToggleButton*)m_ui->by_60s,1);	//ESTO ES TRUE, X FAVOR HACER UN DEFINE!
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->hell_sqrt,sensitivo);
+		on_by_60s_clicked(NULL, m_ui->by_60s);
+//VER XQ TODAVIA ANDA RE MAL!
+	}
 }
 
 G_MODULE_EXPORT

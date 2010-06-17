@@ -137,6 +137,7 @@
 			m_ui->eq_bars 		= (GtkContainer*) 	gtk_builder_get_object(builder,"eq_bars");
 			m_ui->distors 		= (GtkContainer*) 	gtk_builder_get_object(builder,"distors");
 			m_ui->hell_sqrt 	= (GtkRadioButton*) gtk_builder_get_object(builder,"hell_sqrt");
+			m_ui->by_60s		= (GtkRadioButton*) gtk_builder_get_object(builder,"by_60s");
 			m_ui->volume 		= (GtkScaleButton*) gtk_builder_get_object(builder,"volume");
 			m_ui->m_delay 		= (GtkWindow*) 		gtk_builder_get_object(builder,"m_delay");
 			m_ui->dl_onoff 		= (GtkToggleButton*)gtk_builder_get_object(builder,"dl_onoff");
