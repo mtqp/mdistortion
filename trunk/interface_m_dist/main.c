@@ -123,8 +123,9 @@
 		/* Get main window pointer from UI */
 		window = GTK_WIDGET( gtk_builder_get_object( builder, "m_distortion" ) );
 		
+		printf("llegamos aqui...\n");
 		//*Set Up m_user_interface Structure*//
-		m_ui = (m_user_interface*) malloc(sizeof(m_user_interface));
+		/*m_ui = (m_user_interface*) malloc(sizeof(m_user_interface));
 		if(m_ui == NULL)	printf("Couldn't malloc UI Structure\n");
 		else {
 			printf("valor m_ui = %d\n", (int) m_ui);
@@ -144,7 +145,7 @@
 			m_ui->m_hall 		= (GtkWindow*) 		gtk_builder_get_object(builder,"m_hall");
 			m_ui->hl_onoff 		= (GtkToggleButton*)gtk_builder_get_object(builder,"hl_onoff");
 			m_ui->chintensity 	= (GtkContainer*) 	gtk_builder_get_object(builder,"chintensity");
-		}
+		}*/
 		
 		/* Connect signals */
 		gtk_builder_connect_signals( builder, NULL );

@@ -3,7 +3,7 @@
 #include <jack/jack.h>
 #include <stdio.h>
 #include "m_distortion.h"
-#include "m_user_interface.h"
+//#include "m_user_interface.h"
 
 #define sensitivo 1
 #define no_sensitivo 0
@@ -16,7 +16,7 @@ jack_port_t *output_left;
 jack_port_t *output_right;
 
 struct _m_distortion *m_dist; 
-struct _m_user_interface *m_ui;
+//struct _m_user_interface *m_ui;
 
 typedef struct _globals {
 	int _eq_sensitive; 
