@@ -116,7 +116,7 @@ void log_rock(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_
 	if(mdc->_dvol<=0.95)vol = 0.25+(0.25*mdc->_dvol);
 	else 				vol = 1.0;
 	if(global_ptr->_eq_sensitive){
-		printf("En C no nos alcanza el REAL-TIME para ecualizar\n");
+//		printf("En C no nos alcanza el REAL-TIME para ecualizar\n");
 		for(i;i<nframes;i++){
 			out[i]=vol*(sin(cos(log(sin(log(out[i]))))));
 		}
@@ -136,7 +136,7 @@ void log_rock2(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes
 	if(mdc->_dvol<=0.95)vol = 0.5+(0.5*mdc->_dvol);
 	else 				vol = 1.0;
 	if(global_ptr->_eq_sensitive){
-		printf("En C no nos alcanza el REAL-TIME para ecualizar\n");
+//		printf("En C no nos alcanza el REAL-TIME para ecualizar\n");
 		for(i;i<nframes;i++){
 			out[i]= vol*cos(tan(tan(log((out[i])))));
 		}
@@ -170,7 +170,7 @@ void psychedelic_if(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nf
 	vol = 1.0+mdc->_dvol;
 
 	if(global_ptr->_eq_sensitive){
-		printf("En C no nos alcanza el REAL-TIME para ecualizar\n");
+//		printf("En C no nos alcanza el REAL-TIME para ecualizar\n");
 		for(i;i<nframes;i++){
 			if(i < nframes/3) {
 				out[i] = vol*((log(out[i])*10000.0)/5);
@@ -200,7 +200,7 @@ void by_60s(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t 
 
 	int i = 0;
 	if(global_ptr->_eq_sensitive){
-		printf("En C no nos alcanza el REAL-TIME para ecualizar\n");
+//		printf("En C no nos alcanza el REAL-TIME para ecualizar\n");
 		for(i;i<nframes;i++){
 			out[i]= vol*(100.0 * out[i]);
 		}
@@ -220,7 +220,7 @@ void fuzzy_dark_pow4(jack_default_audio_sample_t *out, m_distortion *mdc, jack_n
 	if(mdc->_dvol<=0.95)vol = 0.0125+(0.0125*mdc->_dvol);//funciona de ganancia tbm un poco estaria bueno q cuando el volumen este al palo
 	else 				vol = 1.0;	   					//el valor de vol sea 1 y asi no influya
 	if(global_ptr->_eq_sensitive){
-		printf("En C no nos alcanza el REAL-TIME para ecualizar\n");
+//		printf("En C no nos alcanza el REAL-TIME para ecualizar\n");
 		for(i;i<nframes;i++){
 			out[i]= vol*(100000000.0*(-pow(out[i],4)));
 		}
@@ -238,7 +238,7 @@ void rare_cuadratic(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nf
 	int i = 0;
 	float vol = 1.0+mdc->_dvol;
 	if(global_ptr->_eq_sensitive){
-		printf("En C no nos alcanza el REAL-TIME para ecualizar\n");
+//		printf("En C no nos alcanza el REAL-TIME para ecualizar\n");
 		for(i;i<nframes;i++){
 			out[i]= vol*(11000.0*(pow(out[i],2)));
 		}
