@@ -14,6 +14,7 @@ typedef struct _m_user_interface{
 	GtkContainer* 	 eq_bars;
 	GtkContainer* 	 distors;
 		GtkRadioButton*  hell_sqrt;
+		GtkRadioButton*  by_60s;
 	GtkScaleButton*  volume;
 	//-m_delay-//
 	GtkWindow*		 m_delay;
