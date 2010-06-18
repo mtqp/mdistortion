@@ -1,8 +1,6 @@
 
 #include "m_window.h"
 
-//ESTA MAS Q CLARO Q PASANDOLE EL STRING Q TIENE Q ABRIR DIRECTAMENTE PODRIA HACERLO CON ALGUN STRCAT O ALGO ASI
-
 GtkWindow* open_sub_window(char* sub_window){
 	GtkBuilder *builder;
 	GtkWidget  *window;
