@@ -24,6 +24,8 @@ typedef struct _m_user_interface{
 	GtkWindow*		 m_hall;
 	GtkToggleButton* hl_onoff;
 	GtkContainer*	 chintensity;
+	GtkWindow* 		 info_m_distortion;
+	GtkWindow*		 save_m_distortion;
 } m_user_interface;
 
 #endif

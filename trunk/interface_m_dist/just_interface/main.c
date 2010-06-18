@@ -10,7 +10,7 @@
 #include <string.h>
 #include <math.h>
 
-#include "m_distortion.h"
+//#include "m_distortion.h"
 #include "globals.h"
 #include "m_user_interface.h"
 #include "callbacks.h"
@@ -29,8 +29,8 @@
 		//-------inicializar m dist----------//
 		///////////////////////////////////////
 		
-		m_dist = (m_distortion *) malloc(sizeof(m_distortion));
-		init_m_distortion(m_dist);
+		/*m_dist = (m_distortion *) malloc(sizeof(m_distortion));
+		init_m_distortion(m_dist);*/
 		
 		///////////////////////////////////////
 		//----inicializar interfaz grafica---//
@@ -76,6 +76,8 @@
 			m_ui->m_hall 		= (GtkWindow*)/*(GtkWidget*)*/ 		gtk_builder_get_object(builder,"m_hall");
 			m_ui->hl_onoff 		= (GtkToggleButton*)gtk_builder_get_object(builder,"hl_onoff");
 			m_ui->chintensity 	= (GtkContainer*) 	gtk_builder_get_object(builder,"chintensity");
+			m_ui->info_m_distortion = (GtkWindow*)  gtk_builder_get_object(builder,"info_m_distortion");
+			m_ui->save_m_distortion = (GtkWindow*)  gtk_builder_get_object(builder,"save_m_distortion");
 		}
 		
 		/* Connect signals */

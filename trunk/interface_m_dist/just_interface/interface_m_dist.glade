@@ -937,8 +937,8 @@ audio-volume-medium</property>
   <object class="GtkWindow" id="m_delay">
     <property name="type">popup</property>
     <property name="window_position">center</property>
-    <property name="default_width">500</property>
-    <property name="default_height">70</property>
+    <property name="default_width">545</property>
+    <property name="default_height">50</property>
     <property name="icon">g_stratocaster.png</property>
     <property name="opacity">0.95000000111758709</property>
     <child>
@@ -1169,8 +1169,8 @@ audio-volume-medium</property>
   </object>
   <object class="GtkWindow" id="m_hall">
     <property name="type">popup</property>
-    <property name="default_width">50</property>
-    <property name="default_height">250</property>
+    <property name="default_width">20</property>
+    <property name="default_height">317</property>
     <property name="icon">g_stratocaster.png</property>
     <property name="opacity">0.94999999999999996</property>
     <child>
@@ -1199,7 +1199,7 @@ audio-volume-medium</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkToggleButton" id="hlonoff">
+                      <object class="GtkToggleButton" id="hl_onoff">
                         <property name="label" translatable="yes">On/Off</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -1278,6 +1278,7 @@ audio-volume-medium</property>
   <object class="GtkWindow" id="info_m_distortion">
     <property name="window_position">mouse</property>
     <property name="opacity">0.94999999999999996</property>
+    <signal name="hide" handler="gtk_widget_hide"/>
     <child>
       <object class="GtkFrame" id="inf">
         <property name="visible">True</property>
@@ -1341,6 +1342,7 @@ L.U.: 389/08.
   <object class="GtkWindow" id="save_m_distortion">
     <property name="window_position">mouse</property>
     <property name="opacity">0.94999999999999996</property>
+    <signal name="hide" handler="gtk_widget_hide"/>
     <child>
       <object class="GtkVBox" id="vbox15">
         <property name="visible">True</property>
