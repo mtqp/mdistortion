@@ -145,6 +145,8 @@
 			m_ui->m_hall 		= (GtkWindow*)/*(GtkWidget*)*/ 		gtk_builder_get_object(builder,"m_hall");
 			m_ui->hl_onoff 		= (GtkToggleButton*)gtk_builder_get_object(builder,"hl_onoff");
 			m_ui->chintensity 	= (GtkContainer*) 	gtk_builder_get_object(builder,"chintensity");
+			m_ui->info_m_distortion = (GtkWindow*)  gtk_builder_get_object(builder,"info_m_distortion");
+			m_ui->save_m_distortion = (GtkWindow*)  gtk_builder_get_object(builder,"save_m_distortion");
 		}
 		
 		/* Connect signals */

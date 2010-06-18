@@ -79,50 +79,45 @@ G_MODULE_EXPORT void on_rare_cuadratic_clicked(gpointer distors,GtkRadioButton *
 
 G_MODULE_EXPORT 
 void on_eq_onoff_toggled (gpointer eqs, GtkToggleButton *b){
-	//CORREGIR ESO, SI EL DELAY O EL HALL ESTA PRENDIDO, Q NO SE ACTIVE!
 	if(b->active) {
-		printf("b->active\n");
+
 		gtk_widget_set_sensitive((GtkWidget*) m_ui->eq_bars, sensitivo);
 		gtk_widget_set_sensitive((GtkWidget*) m_ui->hell_sqrt,no_sensitivo);
-		/*gtk_toggle_button_set_active((GtkToggleButton*) m_ui->dl_onoff,1); //apago el delay
-		gtk_toggle_button_set_active((GtkToggleButton*) m_ui->dl_onoff,1); //apago el hall*/
-		//gtk_widget_set_sensitive(m_ui->m_delay, no_sensitivo);  //cancelo los botones para activarlo
-		//gtk_widget_set_sensitive(m_ui->m_hall, no_sensitivo); //PARECE NO ANDAR
-//		printf("m_ui->dl_onoff->active = %d\n !m_ui->dl_onoff->active = %d\n", (int)m_ui->dl_onoff->active, (int)!(m_ui->dl_onoff->active));
+		gtk_toggle_button_set_active((GtkToggleButton*) m_ui->dl_onoff,false); //apago el delay
+		gtk_toggle_button_set_active((GtkToggleButton*) m_ui->hl_onoff,false); //apago el hall
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, no_sensitivo);
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, no_sensitivo);
+
 		if(m_dist->_last_dist_active == e_hell_sqrt) {
-			gtk_toggle_button_set_active((GtkToggleButton*)m_ui->by_60s,1);	//ESTO ES TRUE, X FAVOR HACER UN DEFINE!
+			gtk_toggle_button_set_active((GtkToggleButton*)m_ui->by_60s,true);
 			on_by_60s_clicked(NULL, m_ui->by_60s);
 		}
 	}
 	else {
-		gtk_widget_set_sensitive((GtkWidget*) m_ui->eq_bars,  no_sensitivo);
-		//gtk_widget_set_sensitive((GtkWidget*) m_ui->delay, sensitivo);  //cancelo los botones para activarlo
-		//gtk_widget_set_sensitive((GtkWidget*) m_ui->hall,  sensitivo);
-//		if((!m_ui->dl_onoff->active) && (!m_ui->hl_onoff->active))
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_bars,  no_sensitivo);
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);  //cancelo los botones para activarlo
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
+		if((!gtk_toggle_button_get_active(m_ui->dl_onoff)) && (!gtk_toggle_button_get_active(m_ui->hl_onoff))){
 			gtk_widget_set_sensitive((GtkWidget*) m_ui->hell_sqrt,sensitivo);
-		
-//VER XQ TODAVIA ANDA RE MAL!
+		}
 	}
 }
 
 G_MODULE_EXPORT
 void on_bass_scale_value_changed(GtkAdjustment *b_adjs, GtkRange *range ){
 	float band = (5.0*b_adjs->value)+6.5;
-//	g_print("lpf band = %f\n", band);	
 	reset_eq_params(m_dist->m_bass, band, LPF);
 }
 
 G_MODULE_EXPORT
 void on_mid_scale_value_changed(GtkAdjustment *m_adjs, GtkRange *range ){
 	float band = (4.0*m_adjs->value)+10.5;
-//	g_print("bpf band = %f\n", band);	
 	reset_eq_params(m_dist->m_mid, band, BPF);
 }
 
 G_MODULE_EXPORT
 void on_treb_scale_value_changed(GtkAdjustment *t_adjs, GtkRange *range ){
 	float band = (4.0*t_adjs->value)+5.5;
-//	g_print("hpf band = %f\n", band);	
 	reset_eq_params(m_dist->m_treb, band, HPF);
 }
 
@@ -152,19 +147,31 @@ G_MODULE_EXPORT
 void on_delay_toggled(GtkToggleButton *eq, GtkToggleButton *button){
 	static GtkWindow* dl_w;
 	static int prev_eq_active = 0;//x las dudas lo seteo, pensar si no se jode...
-
+	
 	if(button->active){
-		//dl_w = open_sub_window("m_delay");
+		set_effect_window_position(m_ui->m_delay,e_delay);
 		gtk_widget_show((GtkWidget*)m_ui->m_delay);
 		prev_eq_active = eq->active;
-		gtk_toggle_button_set_active(eq,0);	//eso es falso!
-		gtk_widget_set_sensitive((GtkWidget*) m_ui->hell_sqrt,no_sensitivo);
-		if(m_dist->_last_dist_active == e_hell_sqrt) {
-			gtk_toggle_button_set_active((GtkToggleButton*)m_ui->by_60s,1);	//ESTO ES TRUE, X FAVOR HACER UN DEFINE!
-			on_by_60s_clicked(NULL, m_ui->by_60s);
-		}
+		gtk_toggle_button_set_active(eq,false);	//eso es falso!
 	} else {
-		gtk_widget_destroy((GtkWidget*)m_ui->m_delay);
+		gtk_widget_hide((GtkWidget*)m_ui->m_delay);
+		gtk_toggle_button_set_active(eq,prev_eq_active);
+	}
+}
+
+G_MODULE_EXPORT 
+void on_hall_toggled(GtkToggleButton *eq, GtkToggleButton *button){
+	static GtkWindow* ch_w;
+	static int prev_eq_active = 0;//x las dudas lo seteo, pensar si no se jode...
+	
+	if(button->active) {
+		set_effect_window_position(m_ui->m_hall,e_hall);
+		gtk_widget_show((GtkWidget*)m_ui->m_hall);
+		prev_eq_active = eq->active;
+		gtk_toggle_button_set_active(eq,false);
+	}
+	else {
+		gtk_widget_hide((GtkWidget*)m_ui->m_hall);
 		gtk_toggle_button_set_active(eq,prev_eq_active);
 	}
 }
@@ -173,38 +180,50 @@ G_MODULE_EXPORT
 void on_dl_onoff_toggled(GtkContainer* sets, GtkToggleButton *on_offb){
 	if(on_offb->active)
 		gtk_widget_set_sensitive((GtkWidget*) sets, sensitivo);		
-	else
-		gtk_widget_set_sensitive((GtkWidget*) sets, no_sensitivo);
-}
-
-
-G_MODULE_EXPORT 
-void on_hall_toggled(GtkToggleButton *eq, GtkToggleButton *button){
-	static GtkWindow* ch_w;
-	static int prev_eq_active = 0;//x las dudas lo seteo, pensar si no se jode...
-	if(button->active) {
-		ch_w = open_sub_window("m_hall");
-		prev_eq_active = eq->active;
-		gtk_toggle_button_set_active(eq,0);	//eso es falso!
 		gtk_widget_set_sensitive((GtkWidget*) m_ui->hell_sqrt,no_sensitivo);
 		if(m_dist->_last_dist_active == e_hell_sqrt) {
-			gtk_toggle_button_set_active((GtkToggleButton*)m_ui->by_60s,1);	//ESTO ES TRUE, X FAVOR HACER UN DEFINE!
+			gtk_toggle_button_set_active((GtkToggleButton*)m_ui->by_60s,true);
 			on_by_60s_clicked(NULL, m_ui->by_60s);
 		}
-	}
-	else {
-		//set_m_distortion(m_dist,e_delay);  no existe mas delay papa
-		gtk_widget_destroy((GtkWidget*)ch_w);
-		gtk_toggle_button_set_active(eq,prev_eq_active);
-	}
+	else
+		gtk_widget_set_sensitive((GtkWidget*) sets, no_sensitivo);
+		if((!gtk_toggle_button_get_active(m_ui->dl_onoff)) && (!gtk_toggle_button_get_active(m_ui->hl_onoff))){
+			gtk_widget_set_sensitive((GtkWidget*) m_ui->hell_sqrt,sensitivo);
+		}
 }
 
 G_MODULE_EXPORT 
 void on_hl_onoff_toggled(GtkContainer* intensity, GtkToggleButton *on_offb){
-	if(on_offb->active)
-		gtk_widget_set_sensitive((GtkWidget*) intensity, sensitivo);		
-	else
+	if(on_offb->active){
+		gtk_widget_set_sensitive((GtkWidget*) intensity, sensitivo);
+		gtk_widget_set_sensitive((GtkWidget*) m_ui->hell_sqrt,no_sensitivo);		
+		if(m_dist->_last_dist_active == e_hell_sqrt) {
+			gtk_toggle_button_set_active((GtkToggleButton*)m_ui->by_60s,true);
+			on_by_60s_clicked(NULL, m_ui->by_60s);
+		}
+	}
+	else{
 		gtk_widget_set_sensitive((GtkWidget*) intensity, no_sensitivo);
+		if((!gtk_toggle_button_get_active(m_ui->dl_onoff)) && (!gtk_toggle_button_get_active(m_ui->hl_onoff))){
+			gtk_widget_set_sensitive((GtkWidget*) m_ui->hell_sqrt,sensitivo);
+		}
+	}
+}
+
+////////////////////////////////////////////
+//-----------AUX_FUNCTIONS----------------//
+////////////////////////////////////////////
+
+void set_effect_window_position(GtkWindow* window, int effect){
+	int x,y;
+	int w,h;
+	int w_d,h_d;
+	gtk_window_get_position(m_ui->m_distortion, &x, &y);
+	gtk_window_get_size(m_ui->m_distortion, &w, &h);
+	gtk_window_get_size(window,&w_d,&h_d);
+	if(effect == e_delay) 		gtk_window_move(window,x,y-h_d-1);
+	if(effect == e_hall)		gtk_window_move(window,x+w+4,y);
+	//PODRIA HACER UN SWITCH Y PONER UN DEFAULT Q PRINTEFEE
 }
 
 ////////////////////////////////////////////
