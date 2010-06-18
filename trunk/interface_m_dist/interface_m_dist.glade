@@ -1073,6 +1073,7 @@ audio-volume-medium</property>
                                             <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
                                             <property name="group">q_four</property>
+                                            <signal name="clicked" handler="on_q_one_clicked"/>
                                           </object>
                                         </child>
                                         <child>
@@ -1084,6 +1085,7 @@ audio-volume-medium</property>
                                             <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
                                             <property name="group">q_four</property>
+                                            <signal name="clicked" handler="on_q_two_clicked"/>
                                           </object>
                                           <packing>
                                             <property name="top_attach">1</property>
@@ -1099,6 +1101,7 @@ audio-volume-medium</property>
                                             <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
                                             <property name="group">q_four</property>
+                                            <signal name="clicked" handler="on_q_three_clicked"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">1</property>
@@ -1113,6 +1116,7 @@ audio-volume-medium</property>
                                             <property name="receives_default">False</property>
                                             <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
+                                            <signal name="clicked" handler="on_q_four_clicked"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">1</property>

@@ -29,8 +29,6 @@ typedef struct _m_distortion {
 	m_delay*  	_delay;
 	m_hall* 	_hall;
 	
-	char* _name_dists[10];	//cambio xq le agregue el delay ojo ahiii
-	char* _name_effects[4]; //PARA QUE USAS LOS NAMES!?!?!?
 }m_distortion;
 
 

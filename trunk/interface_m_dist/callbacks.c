@@ -80,7 +80,6 @@ G_MODULE_EXPORT void on_rare_cuadratic_clicked(gpointer distors,GtkRadioButton *
 G_MODULE_EXPORT 
 void on_eq_onoff_toggled (gpointer eqs, GtkToggleButton *b){
 	if(b->active) {
-
 		gtk_widget_set_sensitive((GtkWidget*) m_ui->eq_bars, sensitivo);
 		gtk_widget_set_sensitive((GtkWidget*) m_ui->hell_sqrt,no_sensitivo);
 		gtk_toggle_button_set_active((GtkToggleButton*) m_ui->dl_onoff,false); //apago el delay
@@ -141,7 +140,7 @@ void on_reset_treb_clicked(gpointer reset, GtkRadioButton *button){
 	gtk_adjustment_set_value(reset,0.0);
 } 
 
-////////////DELAY & HALL///////////////////////
+////////////DELAY///////////////////////
 
 G_MODULE_EXPORT
 void on_delay_toggled(GtkToggleButton *eq, GtkToggleButton *button){
@@ -160,6 +159,41 @@ void on_delay_toggled(GtkToggleButton *eq, GtkToggleButton *button){
 }
 
 G_MODULE_EXPORT 
+void on_dl_onoff_toggled(GtkContainer* sets, GtkToggleButton *on_offb){
+	if(on_offb->active){
+		gtk_widget_set_sensitive((GtkWidget*) sets, sensitivo);		
+		gtk_widget_set_sensitive((GtkWidget*) m_ui->hell_sqrt,no_sensitivo);
+		if(m_dist->_last_dist_active == e_hell_sqrt) {
+			gtk_toggle_button_set_active((GtkToggleButton*)m_ui->by_60s,true);
+			on_by_60s_clicked(NULL, m_ui->by_60s);
+		}
+		delay_effect = f_effect[e_delay];
+	}
+	else {
+		gtk_widget_set_sensitive((GtkWidget*) sets, no_sensitivo);
+		if((!gtk_toggle_button_get_active(m_ui->dl_onoff)) && (!gtk_toggle_button_get_active(m_ui->hl_onoff))){
+			gtk_widget_set_sensitive((GtkWidget*) m_ui->hell_sqrt,sensitivo);
+		}
+		delay_effect = f_effect[e_dummy];
+	}
+}
+
+
+G_MODULE_EXPORT void on_q_one_clicked(gpointer n, GtkRadioButton* b){
+	m_dist->_delay->dl_cant_bufs_active = 1;
+}
+G_MODULE_EXPORT void on_q_two_clicked(gpointer n, GtkRadioButton* b){
+	m_dist->_delay->dl_cant_bufs_active = 2;
+}
+G_MODULE_EXPORT void on_q_three_clicked(gpointer n, GtkRadioButton* b){
+	m_dist->_delay->dl_cant_bufs_active = 3;
+}
+G_MODULE_EXPORT void on_q_four_clicked(gpointer n, GtkRadioButton* b){
+	m_dist->_delay->dl_cant_bufs_active = 4;
+}
+
+////////////HALL///////////////////////
+G_MODULE_EXPORT 
 void on_hall_toggled(GtkToggleButton *eq, GtkToggleButton *button){
 	static GtkWindow* ch_w;
 	static int prev_eq_active = 0;//x las dudas lo seteo, pensar si no se jode...
@@ -174,22 +208,6 @@ void on_hall_toggled(GtkToggleButton *eq, GtkToggleButton *button){
 		gtk_widget_hide((GtkWidget*)m_ui->m_hall);
 		gtk_toggle_button_set_active(eq,prev_eq_active);
 	}
-}
-
-G_MODULE_EXPORT 
-void on_dl_onoff_toggled(GtkContainer* sets, GtkToggleButton *on_offb){
-	if(on_offb->active)
-		gtk_widget_set_sensitive((GtkWidget*) sets, sensitivo);		
-		gtk_widget_set_sensitive((GtkWidget*) m_ui->hell_sqrt,no_sensitivo);
-		if(m_dist->_last_dist_active == e_hell_sqrt) {
-			gtk_toggle_button_set_active((GtkToggleButton*)m_ui->by_60s,true);
-			on_by_60s_clicked(NULL, m_ui->by_60s);
-		}
-	else
-		gtk_widget_set_sensitive((GtkWidget*) sets, no_sensitivo);
-		if((!gtk_toggle_button_get_active(m_ui->dl_onoff)) && (!gtk_toggle_button_get_active(m_ui->hl_onoff))){
-			gtk_widget_set_sensitive((GtkWidget*) m_ui->hell_sqrt,sensitivo);
-		}
 }
 
 G_MODULE_EXPORT 
