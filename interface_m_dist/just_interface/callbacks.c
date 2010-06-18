@@ -184,8 +184,8 @@ void set_effect_window_position(GtkWindow* window, int effect){
 //	printf("m dist x=%d , y=%d\n",x,y);
 	gtk_window_get_size(m_ui->m_distortion, &w, &h);
 	gtk_window_get_size(window,&w_d,&h_d);
-	if(effect == e_delay) 		gtk_window_move(window,x,y-h_d);
-	if(effect == e_hall)		gtk_window_move(window,x+w,y);
+	if(effect == e_delay) 		gtk_window_move(window,x,y-h_d-1);
+	if(effect == e_hall)		gtk_window_move(window,x+w+4,y);
 	/*	if(x-h_d>=0){	//tengo arriba espacio para ponerlo.
 		gtk_window_move(window,x,y-h_d);
 	} else {

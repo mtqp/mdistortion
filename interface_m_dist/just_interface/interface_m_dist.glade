@@ -937,7 +937,7 @@ audio-volume-medium</property>
   <object class="GtkWindow" id="m_delay">
     <property name="type">popup</property>
     <property name="window_position">center</property>
-    <property name="default_width">545</property>
+    <property name="default_width">549</property>
     <property name="default_height">50</property>
     <property name="icon">g_stratocaster.png</property>
     <property name="opacity">0.95000000111758709</property>
@@ -1170,7 +1170,7 @@ audio-volume-medium</property>
   <object class="GtkWindow" id="m_hall">
     <property name="type">popup</property>
     <property name="default_width">20</property>
-    <property name="default_height">317</property>
+    <property name="default_height">340</property>
     <property name="icon">g_stratocaster.png</property>
     <property name="opacity">0.94999999999999996</property>
     <child>
