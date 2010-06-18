@@ -18,15 +18,11 @@ jack_port_t *output_right;
 struct _m_distortion *m_dist; 
 struct _m_user_interface *m_ui;
 
-typedef struct _globals {
-	int _eq_sensitive; 
-	//int _chorus_toggled;
-	//int _delay_toggled;
-
+/*typedef struct _globals {
 	//FILE *f_out;
 	int plot_x;
 	int plot_by_pass;
 } globals;
 
-globals* global_ptr;
+globals* global_ptr;*/
 #endif
