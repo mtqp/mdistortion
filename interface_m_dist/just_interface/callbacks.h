@@ -9,6 +9,7 @@
 
 #include "globals.h"
 #include "enum_dist.h"
+#include "enum_effects.h"
 #include "m_window.h"
 
 #define false 0
@@ -47,6 +48,10 @@ G_MODULE_EXPORT void on_hall_toggled(GtkToggleButton *eq, GtkToggleButton *butto
 
 G_MODULE_EXPORT void on_dl_onoff_toggled(GtkContainer* sets, GtkToggleButton *on_offb);
 G_MODULE_EXPORT void on_hl_onoff_toggled(GtkContainer* intensity, GtkToggleButton *on_offb);
+
+
+/////functiones marian/////
+void set_effect_window_position(GtkWindow* w, int effect);
 
 ///////CALLBACKS-JACK///////
 

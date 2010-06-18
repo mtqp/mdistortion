@@ -2,7 +2,8 @@
 #define __GLOBALS_H__
 //#include <jack/jack.h>
 #include <stdio.h>
-#include "m_distortion.h"
+//#include "m_distortion.h"
+#include "enum_dist.h"
 #include "m_user_interface.h"
 
 #define sensitivo 1
@@ -12,10 +13,14 @@
 #define back_to_rock_mode -1
 
 
-struct _m_distortion *m_dist; 
+//struct _m_distortion *m_dist; 
 struct _m_user_interface *m_ui;
+int last_dist_active;
 
-typedef struct _globals {
+void set_m_distortion(int dist);
+
+
+typedef struct _globals {  //no se necesita para mucho...
 	int _eq_sensitive; 
 	//int _chorus_toggled;
 	//int _delay_toggled;
