@@ -50,10 +50,12 @@ G_MODULE_EXPORT void on_q_one_clicked(gpointer n, GtkRadioButton* b);
 G_MODULE_EXPORT void on_q_two_clicked(gpointer n, GtkRadioButton* b);
 G_MODULE_EXPORT void on_q_three_clicked(gpointer n, GtkRadioButton* b);
 G_MODULE_EXPORT void on_q_four_clicked(gpointer n, GtkRadioButton* b);
+G_MODULE_EXPORT void on_dl_speed_scale_value_changed(GtkAdjustment* dl_speed_adjs, GtkRange* range);
+
 
 G_MODULE_EXPORT void on_hall_toggled(GtkToggleButton *eq, GtkToggleButton *button);
 G_MODULE_EXPORT void on_hl_onoff_toggled(GtkContainer* intensity, GtkToggleButton *on_offb);
-
+G_MODULE_EXPORT void on_hl_intensity_scale_value_changed(GtkAdjustment* hl_intensity_adjs, GtkRange* range);
 ///////CALLBACKS-JACK///////
 
 int process (jack_nframes_t nframes, void *arg);
