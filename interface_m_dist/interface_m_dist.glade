@@ -114,6 +114,7 @@
                                   <object class="GtkToggleButton" id="eq_onoff">
                                     <property name="label" translatable="yes">EQ</property>
                                     <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <signal name="toggled" handler="on_eq_onoff_toggled" object="eq_bars"/>
@@ -958,6 +959,7 @@ audio-volume-medium</property>
                   <object class="GtkToggleButton" id="dl_onoff">
                     <property name="label" translatable="yes">On/Off</property>
                     <property name="visible">True</property>
+                    <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <signal name="toggled" handler="on_dl_onoff_toggled" object="dl_sets"/>
@@ -1029,6 +1031,7 @@ audio-volume-medium</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="adjustment">delay_speed</property>
+                                            <property name="draw_value">False</property>
                                           </object>
                                           <packing>
                                             <property name="position">1</property>
@@ -1206,6 +1209,7 @@ audio-volume-medium</property>
                       <object class="GtkToggleButton" id="hl_onoff">
                         <property name="label" translatable="yes">On/Off</property>
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <signal name="toggled" handler="on_hl_onoff_toggled" object="chintensity"/>

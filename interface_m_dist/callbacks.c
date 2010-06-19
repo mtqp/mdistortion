@@ -34,44 +34,99 @@ G_MODULE_EXPORT void on_rock_mode_clicked (gpointer distors, GtkRadioButton *but
 	gtk_widget_set_sensitive((GtkWidget*) distors, sensitivo);
 	if(GTK_TOGGLE_BUTTON(button)->active){
 		set_m_distortion(m_dist, back_to_rock_mode);
+		if(m_dist->_last_dist_active == e_hell_sqrt){
+			on_hell_sqrt_clicked(NULL, m_ui->hell_sqrt);
+		}
 	}
 }
 
 G_MODULE_EXPORT void on_random_mode_clicked ( gpointer distors,GtkRadioButton *button){
 	gtk_widget_set_sensitive((GtkWidget*) distors, no_sensitivo);
+	gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_onoff, sensitivo);
+	if(!m_ui->eq_onoff->active){
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
+	}
 	set_m_distortion(m_dist,e_random_day);
 }
 
 G_MODULE_EXPORT void on_mute_mode_clicked ( gpointer distors,GtkRadioButton *button){
 	gtk_widget_set_sensitive((GtkWidget*) distors, no_sensitivo);
+	gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_onoff, sensitivo);
+	if(!m_ui->eq_onoff->active){
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
+	}
 	set_m_distortion(m_dist, e_mute);
 }
 
 G_MODULE_EXPORT void on_by_pass_mode_clicked ( gpointer distors, GtkRadioButton *button){
 	gtk_widget_set_sensitive((GtkWidget*) distors, no_sensitivo);
+	gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_onoff, sensitivo);
+	if(!m_ui->eq_onoff->active){
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
+	}
 	set_m_distortion(m_dist, e_by_pass);
 }
 
 //////////////DISTORSIONES/////////////////
-G_MODULE_EXPORT void on_hell_sqrt_clicked(gpointer distors,GtkRadioButton *button){
+G_MODULE_EXPORT void on_hell_sqrt_clicked(gpointer distors,GtkRadioButton *button){ //ESTO ES HIPER BLACK, SE PUEDE HACER UNA SOLA FUNCION!!
+	gtk_toggle_button_set_active(m_ui->eq_onoff, false);	//apago el eq
+	gtk_toggle_button_set_active(m_ui->dl_onoff, false); 	//apago el delay
+	gtk_toggle_button_set_active(m_ui->hl_onoff, false); 	//apago el hall
+	gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_onoff, no_sensitivo);
+	gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, no_sensitivo);
+	gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, no_sensitivo);
+
 	set_m_distortion(m_dist, e_hell_sqrt);
 }
 G_MODULE_EXPORT void on_log_rock_clicked(gpointer distors,GtkRadioButton *button){
+	gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_onoff, sensitivo);
+	if(!m_ui->eq_onoff->active){
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
+	}
 	set_m_distortion(m_dist, e_log_rock);
 }
 G_MODULE_EXPORT void on_log_rock_II_clicked(gpointer distors,GtkRadioButton *button){
+	gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_onoff, sensitivo);
+	if(!m_ui->eq_onoff->active){
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
+	}
 	set_m_distortion(m_dist, e_log_rock_II);
 }
 G_MODULE_EXPORT void on_psychedelic_if_clicked(gpointer distors,GtkRadioButton *button){
+	gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_onoff, sensitivo);
+	if(!m_ui->eq_onoff->active){
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
+	}
 	set_m_distortion(m_dist, e_psychedelic_if);
 }
 G_MODULE_EXPORT void on_by_60s_clicked(gpointer distors,GtkRadioButton *button){
+	gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_onoff, sensitivo);
+	if(!m_ui->eq_onoff->active){
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
+	}
 	set_m_distortion(m_dist, e_by_60s);
 }
 G_MODULE_EXPORT void on_fuzzy_dark_pow_IV_clicked(gpointer distors,GtkRadioButton *button){
+	gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_onoff, sensitivo);
+	if(!m_ui->eq_onoff->active){
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
+	}
 	set_m_distortion(m_dist, e_fuzzy_dark_pow_IV);
 }
 G_MODULE_EXPORT void on_rare_cuadratic_clicked(gpointer distors,GtkRadioButton *button){
+	gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_onoff, sensitivo);
+	if(!m_ui->eq_onoff->active){
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
+	}
 	set_m_distortion(m_dist, e_rare_cuadratic);
 }
 
@@ -81,24 +136,15 @@ G_MODULE_EXPORT
 void on_eq_onoff_toggled (gpointer eqs, GtkToggleButton *b){
 	if(b->active) {
 		gtk_widget_set_sensitive((GtkWidget*) m_ui->eq_bars, sensitivo);
-		gtk_widget_set_sensitive((GtkWidget*) m_ui->hell_sqrt,no_sensitivo);
 		gtk_toggle_button_set_active((GtkToggleButton*) m_ui->dl_onoff,false); //apago el delay
 		gtk_toggle_button_set_active((GtkToggleButton*) m_ui->hl_onoff,false); //apago el hall
 		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, no_sensitivo);
 		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, no_sensitivo);
-
-		if(m_dist->_last_dist_active == e_hell_sqrt) {
-			gtk_toggle_button_set_active((GtkToggleButton*)m_ui->by_60s,true);
-			on_by_60s_clicked(NULL, m_ui->by_60s);
-		}
 	}
 	else {
 		gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_bars,  no_sensitivo);
 		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);  //cancelo los botones para activarlo
 		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
-		if((!gtk_toggle_button_get_active(m_ui->dl_onoff)) && (!gtk_toggle_button_get_active(m_ui->hl_onoff))){
-			gtk_widget_set_sensitive((GtkWidget*) m_ui->hell_sqrt,sensitivo);
-		}
 	}
 }
 
@@ -162,18 +208,10 @@ G_MODULE_EXPORT
 void on_dl_onoff_toggled(GtkContainer* sets, GtkToggleButton *on_offb){
 	if(on_offb->active){
 		gtk_widget_set_sensitive((GtkWidget*) sets, sensitivo);		
-		gtk_widget_set_sensitive((GtkWidget*) m_ui->hell_sqrt,no_sensitivo);
-		if(m_dist->_last_dist_active == e_hell_sqrt) {
-			gtk_toggle_button_set_active((GtkToggleButton*)m_ui->by_60s,true);
-			on_by_60s_clicked(NULL, m_ui->by_60s);
-		}
 		delay_effect = f_effect[e_delay];
 	}
 	else {
 		gtk_widget_set_sensitive((GtkWidget*) sets, no_sensitivo);
-		if((!gtk_toggle_button_get_active(m_ui->dl_onoff)) && (!gtk_toggle_button_get_active(m_ui->hl_onoff))){
-			gtk_widget_set_sensitive((GtkWidget*) m_ui->hell_sqrt,sensitivo);
-		}
 		delay_effect = f_effect[e_dummy];
 	}
 }
@@ -214,17 +252,11 @@ G_MODULE_EXPORT
 void on_hl_onoff_toggled(GtkContainer* intensity, GtkToggleButton *on_offb){
 	if(on_offb->active){
 		gtk_widget_set_sensitive((GtkWidget*) intensity, sensitivo);
-		gtk_widget_set_sensitive((GtkWidget*) m_ui->hell_sqrt,no_sensitivo);		
-		if(m_dist->_last_dist_active == e_hell_sqrt) {
-			gtk_toggle_button_set_active((GtkToggleButton*)m_ui->by_60s,true);
-			on_by_60s_clicked(NULL, m_ui->by_60s);
-		}
+		hall_effect = f_effect[e_hall];
 	}
 	else{
 		gtk_widget_set_sensitive((GtkWidget*) intensity, no_sensitivo);
-		if((!gtk_toggle_button_get_active(m_ui->dl_onoff)) && (!gtk_toggle_button_get_active(m_ui->hl_onoff))){
-			gtk_widget_set_sensitive((GtkWidget*) m_ui->hell_sqrt,sensitivo);
-		}
+		hall_effect = f_effect[e_dummy];
 	}
 }
 
