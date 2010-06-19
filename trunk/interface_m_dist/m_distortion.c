@@ -298,7 +298,7 @@ float delay_func(m_distortion *md, float smp, int i){
 
 	}
 	md->_delay->dl_sub_i++;
-	if(md->_delay->dl_sub_i == md->_delay->dl_size){	
+	if(md->_delay->dl_sub_i == md->_delay->dl_speed){	
 		md->_delay->dl_sub_i = 0;
 	}
 	

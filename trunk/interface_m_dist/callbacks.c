@@ -230,6 +230,10 @@ G_MODULE_EXPORT void on_q_four_clicked(gpointer n, GtkRadioButton* b){
 	m_dist->_delay->dl_cant_bufs_active = 4;
 }
 
+G_MODULE_EXPORT void on_dl_speed_scale_value_changed(GtkAdjustment* dl_speed_adjs, GtkRange* range){
+	m_dist->_delay->dl_speed = 98304*dl_speed_adjs->value + 163839;
+}
+
 ////////////HALL///////////////////////
 G_MODULE_EXPORT 
 void on_hall_toggled(GtkToggleButton *eq, GtkToggleButton *button){
@@ -260,6 +264,9 @@ void on_hl_onoff_toggled(GtkContainer* intensity, GtkToggleButton *on_offb){
 	}
 }
 
+G_MODULE_EXPORT void on_hl_intensity_scale_value_changed(GtkAdjustment* hl_intensity_adjs, GtkRange* range){
+
+}
 ////////////////////////////////////////////
 //-----------AUX_FUNCTIONS----------------//
 ////////////////////////////////////////////
