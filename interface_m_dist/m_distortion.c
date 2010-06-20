@@ -9,10 +9,11 @@ void init_m_distortion(m_distortion * md){
 	vol_new(md->_vctes);
 
 	/////DELAY/////
-	md->_delay = delay_new(262144);	//really big buffer for long delays q no baje hasta mucho mas q 65536
-	//md->_delay = delay_new(65536);//siempre es multiplo de 4096, xq ese es el buffer de jack, no olvidarse!
+	md->_delay = delay_new(262144);		//really big buffer for long delays q no baje hasta mucho mas q 65536
+	//md->_delay = delay_new(65536);	//siempre es multiplo de 4096, xq ese es el buffer de jack, no olvidarse!
+
 	/////HALL//////
-	md->_hall = hall_new(4096); //four small buffers for hall
+	md->_hall = hall_new(4096,4);	 	//four small buffers for hall
 
 	//////EQ//////
 	eq_new(md);
@@ -298,7 +299,7 @@ float delay_func(m_distortion *md, float smp, int i){
 
 	}
 	md->_delay->dl_sub_i++;
-	if(md->_delay->dl_sub_i == md->_delay->dl_speed){	
+	if(md->_delay->dl_sub_i >= md->_delay->dl_speed){	
 		md->_delay->dl_sub_i = 0;
 	}
 	
@@ -306,18 +307,14 @@ float delay_func(m_distortion *md, float smp, int i){
 }
 
 float hall_func(m_distortion *md, float smp, int i){
-	float save_smp = smp;
-	smp += md->_hall->hll_buf1[i];
-	md->_hall->hll_buf1[i] = md->_hall->hll_coef1*save_smp;
-	save_smp = smp;
-	smp += md->_hall->hll_buf2[i];
-	md->_hall->hll_buf2[i] = md->_hall->hll_coef2*save_smp;	//VA A ESTAR MULTIPLICADO X CTES EENTRE 0 Y UNO Q REGULARAN LA CANTIDAD DE EFECTO
-	save_smp = smp;
-	smp += md->_hall->hll_buf3[i];
-	md->_hall->hll_buf3[i] = md->_hall->hll_coef3*save_smp;
-	save_smp = smp;
-	smp += md->_hall->hll_buf4[i];
-	md->_hall->hll_buf4[i] = md->_hall->hll_coef4*save_smp;
+	int j;
+	float save_smp;
+	for(j=0;j<md->_hall->hll_buf_quantity;j++){	//EL HALL COEF FIJARSE SI SE NECESITA UNO SOLO O NO!
+		save_smp = smp;
+		smp += md->_hall->hll_bufs[j][i];
+		md->_hall->hll_bufs[j][i] = md->_hall->hll_coef1*save_smp;
+	}
+	//VA A ESTAR MULTIPLICADO X CTES EENTRE 0 Y UNO Q REGULARAN LA CANTIDAD DE EFECTO
 	return smp;
 }
 

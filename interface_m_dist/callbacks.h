@@ -50,6 +50,7 @@ G_MODULE_EXPORT void on_q_one_clicked(gpointer n, GtkRadioButton* b);
 G_MODULE_EXPORT void on_q_two_clicked(gpointer n, GtkRadioButton* b);
 G_MODULE_EXPORT void on_q_three_clicked(gpointer n, GtkRadioButton* b);
 G_MODULE_EXPORT void on_q_four_clicked(gpointer n, GtkRadioButton* b);
+G_MODULE_EXPORT void on_q_extreme_clicked(gpointer n, GtkRadioButton* b);
 G_MODULE_EXPORT void on_dl_speed_scale_value_changed(GtkAdjustment* dl_speed_adjs, GtkRange* range);
 
 
