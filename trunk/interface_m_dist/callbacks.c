@@ -230,8 +230,14 @@ G_MODULE_EXPORT void on_q_four_clicked(gpointer n, GtkRadioButton* b){
 	m_dist->_delay->dl_cant_bufs_active = 4;
 }
 
+G_MODULE_EXPORT void on_q_extreme_clicked(gpointer n, GtkRadioButton* b){
+	//SET FULL BUFFER
+}
+
 G_MODULE_EXPORT void on_dl_speed_scale_value_changed(GtkAdjustment* dl_speed_adjs, GtkRange* range){
-	m_dist->_delay->dl_speed = 98304*dl_speed_adjs->value + 163839;
+//	printf("ANDA MUY MAL EL DL SPEED SCALE VALUE\n");
+	m_dist->_delay->dl_speed = (int)dl_speed_adjs->value;
+//	printf("value adjs == %d\nvalue speed == %d\n", dl_speed_adjs->value, m_dist->_delay->dl_speed);
 }
 
 ////////////HALL///////////////////////
