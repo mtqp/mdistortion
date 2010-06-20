@@ -61,8 +61,7 @@ G_MODULE_EXPORT void on_hl_intensity_scale_value_changed(GtkAdjustment* hl_inten
 
 int process (jack_nframes_t nframes, void *arg);
 void jack_shutdown (void *arg);
-
-/////functiones marian/////
+////////////////////////////
 void set_effect_window_position(GtkWindow* w, int effect);
 
 #endif
