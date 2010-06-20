@@ -1456,5 +1456,6 @@ L.U.: 389/08.
     <property name="step_increment">0.01</property>
     <property name="page_increment">0.01</property>
     <property name="page_size">0.01</property>
+    <signal name="value_changed" handler="on_hl_intensity_scale_value_changed" object="hall_intensity"/>
   </object>
 </interface>

@@ -13,8 +13,8 @@ G_MODULE_EXPORT int on_m_distortion_destroy (GtkObject *object, gpointer user_da
 //ES LA MISMA FUNCION, NO TIENE SENTIDO Q ESTE DOS VECES, MANDARLAS JUNTAS
 G_MODULE_EXPORT int on_quit_clicked( GtkButton *button, gpointer   data ){
     gtk_main_quit ();
-    /*free_m_distortion(m_dist);
-    jack_shutdown(input_port);
+    free_m_distortion_and_effects(m_dist);
+    /*jack_shutdown(input_port);
     jack_shutdown(output_left);
     jack_shutdown(output_right);*/
     printf("ON QUIT CLICKED SIN LIBERAR NADA\n");
@@ -22,11 +22,13 @@ G_MODULE_EXPORT int on_quit_clicked( GtkButton *button, gpointer   data ){
 }
 
 G_MODULE_EXPORT int on_info_clicked(GtkButton *button, gpointer data){
-	/*global_ptr->_info_w = */open_sub_window("info_m_distortion");
+	GtkWindow* w;
+	w = open_sub_window("info_m_distortion");
 }
 
 G_MODULE_EXPORT int on_save_clicked(GtkButton *button, gpointer data){
-	/*global_ptr->_save_w = */open_sub_window("save_m_distortion");
+	GtkWindow* w;
+	w = open_sub_window("save_m_distortion");	//NO ESTOY USANDO EL PARAMETRO Q DEVUELVE, OJO
 }
 
 //////////MODES////////////
@@ -197,7 +199,7 @@ void on_delay_toggled(GtkToggleButton *eq, GtkToggleButton *button){
 		set_effect_window_position(m_ui->m_delay,e_delay);
 		gtk_widget_show((GtkWidget*)m_ui->m_delay);
 		prev_eq_active = eq->active;
-		gtk_toggle_button_set_active(eq,false);	//eso es falso!
+		gtk_toggle_button_set_active(eq,false);
 	} else {
 		gtk_widget_hide((GtkWidget*)m_ui->m_delay);
 		gtk_toggle_button_set_active(eq,prev_eq_active);
@@ -235,9 +237,7 @@ G_MODULE_EXPORT void on_q_extreme_clicked(gpointer n, GtkRadioButton* b){
 }
 
 G_MODULE_EXPORT void on_dl_speed_scale_value_changed(GtkAdjustment* dl_speed_adjs, GtkRange* range){
-//	printf("ANDA MUY MAL EL DL SPEED SCALE VALUE\n");
-	m_dist->_delay->dl_speed = (int)dl_speed_adjs->value;
-//	printf("value adjs == %d\nvalue speed == %d\n", dl_speed_adjs->value, m_dist->_delay->dl_speed);
+	m_dist->_delay->dl_speed = (int)dl_speed_adjs->value;	//todavia hay q ver como arreglar el cambiar la velocidad
 }
 
 ////////////HALL///////////////////////
@@ -271,22 +271,7 @@ void on_hl_onoff_toggled(GtkContainer* intensity, GtkToggleButton *on_offb){
 }
 
 G_MODULE_EXPORT void on_hl_intensity_scale_value_changed(GtkAdjustment* hl_intensity_adjs, GtkRange* range){
-
-}
-////////////////////////////////////////////
-//-----------AUX_FUNCTIONS----------------//
-////////////////////////////////////////////
-
-void set_effect_window_position(GtkWindow* window, int effect){
-	int x,y;
-	int w,h;
-	int w_d,h_d;
-	gtk_window_get_position(m_ui->m_distortion, &x, &y);
-	gtk_window_get_size(m_ui->m_distortion, &w, &h);
-	gtk_window_get_size(window,&w_d,&h_d);
-	if(effect == e_delay) 		gtk_window_move(window,x,y-h_d-1);
-	if(effect == e_hall)		gtk_window_move(window,x+w+4,y);
-	//PODRIA HACER UN SWITCH Y PONER UN DEFAULT Q PRINTEFEE
+	m_dist->_hall->hll_coef = hl_intensity_adjs->value + 1.0;
 }
 
 ////////////////////////////////////////////
@@ -309,4 +294,15 @@ void jack_shutdown (void *arg){
 	exit (1);
 }
 
+////////////////////////////////////////////
+void set_effect_window_position(GtkWindow* window, int effect){
+	int x,y;
+	int w,h;
+	int w_d,h_d;
+	gtk_window_get_position(m_ui->m_distortion, &x, &y);
+	gtk_window_get_size(m_ui->m_distortion, &w, &h);
+	gtk_window_get_size(window,&w_d,&h_d);
+	if(effect == e_delay) 		gtk_window_move(window,x,y-h_d-1);
+	if(effect == e_hall)		gtk_window_move(window,x+w+4,y);
+}
 

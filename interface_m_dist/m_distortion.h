@@ -1,6 +1,8 @@
 #ifndef __M_DISTORTIOM_H__
 #define __M_DISTORTIOM_H__
 
+struct _m_distortion;
+
 #include <jack/jack.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,6 +10,7 @@
 #include <string.h>
 
 #include "globals.h"
+#include "m_effects.h"
 #include "m_eq.h"
 #include "m_hall.h"
 #include "m_delay.h"
@@ -28,15 +31,14 @@ typedef struct _m_distortion {
 	
 	m_delay*  	_delay;
 	m_hall* 	_hall;
-	
+
 }m_distortion;
 
 
 void init_m_distortion(m_distortion * md);
-void free_m_distortion(m_distortion *md);
+void free_m_distortion_and_effects(m_distortion *md);
 void distortionize(m_distortion *md, jack_default_audio_sample_t *out, jack_nframes_t nframes);
 void set_m_distortion( m_distortion * md, int distor);
-void eq_new(m_distortion* md);
 
 //extern volume_hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes);
 
@@ -55,19 +57,5 @@ DISTORTION by_pass;
 
 DISTORTION * f_dist[10];	
 DISTORTION * distortion_channel;
-
-typedef float (EFFECT) (m_distortion *md, float sample, int i);
-
-EFFECT equalizer_func;
-EFFECT delay_func;
-EFFECT hall_func;
-EFFECT volume_func;
-EFFECT dummy_func;
-
-EFFECT * f_effect[5];
-EFFECT * equalizer_effect;
-EFFECT * delay_effect;
-EFFECT * hall_effect;
-EFFECT * volume_effect;
 
 #endif
