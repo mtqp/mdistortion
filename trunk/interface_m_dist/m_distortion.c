@@ -9,7 +9,7 @@ void init_m_distortion(m_distortion * md){
 	vol_new(md->_vctes);
 
 	/////DELAY/////
-	md->_delay = delay_new(262144);		//really big buffer for long delays q no baje hasta mucho mas q 65536
+	md->_delay = delay_new(262144,8);		//really big buffer for long delays q no baje hasta mucho mas q 65536
 	//md->_delay = delay_new(65536);	//siempre es multiplo de 4096, xq ese es el buffer de jack, no olvidarse!
 
 	/////HALL//////
@@ -258,46 +258,22 @@ float equalizer_func(m_distortion *md, float smp, int i){
 }
 
 float delay_func(m_distortion *md, float smp, int i){
-	float old_smp = smp;
+	float old_smp;
 	int bufs_active = md->_delay->dl_cant_bufs_active;
+	int j;
+	for(j=0;j<bufs_active;j++){
+		old_smp = smp;
+		smp += md->_delay->dl_bufs[j][md->_delay->dl_sub_i];
+		md->_delay->dl_bufs[j][md->_delay->dl_sub_i] = old_smp;
+	}
+	
+	for(j=bufs_active;j<md->_delay->dl_total_bufs;j++){
+		md->_delay->dl_bufs[j][md->_delay->dl_sub_i] = 0.0;	
+	}
 	
 	//CUANDO CAMBIA de 4 a uno menor y vuelve mete basura... limpiando los arrays safas... hay q ver q otra forma hay
 	//parche provisorio mandar cero
-	switch(bufs_active){
-		case 1:
-			//no deberia hacer nada
-			md->_delay->dl_buf1[md->_delay->dl_sub_i] = 0.0;
-			md->_delay->dl_buf2[md->_delay->dl_sub_i] = 0.0;
-			md->_delay->dl_buf3[md->_delay->dl_sub_i] = 0.0;
-			break;
-		case 2:
-			smp += md->_delay->dl_buf1[md->_delay->dl_sub_i];
-			md->_delay->dl_buf1[md->_delay->dl_sub_i] = old_smp;
-			md->_delay->dl_buf2[md->_delay->dl_sub_i] = 0.0;
-			md->_delay->dl_buf3[md->_delay->dl_sub_i] = 0.0;
-			break;
-		case 3:
-			smp += md->_delay->dl_buf1[md->_delay->dl_sub_i];
-			md->_delay->dl_buf1[md->_delay->dl_sub_i] = old_smp;
-			old_smp = smp;
-			smp += md->_delay->dl_buf2[md->_delay->dl_sub_i];
-			md->_delay->dl_buf2[md->_delay->dl_sub_i] = old_smp/1.5;
-			md->_delay->dl_buf3[md->_delay->dl_sub_i] = 0.0;
-			break;
-		case 4:	
-			smp += md->_delay->dl_buf1[md->_delay->dl_sub_i];
-			md->_delay->dl_buf1[md->_delay->dl_sub_i] = old_smp;
-			old_smp = smp;
-			smp += md->_delay->dl_buf2[md->_delay->dl_sub_i];
-			md->_delay->dl_buf2[md->_delay->dl_sub_i] = old_smp/1.5;
-			old_smp = smp;
-			smp += md->_delay->dl_buf3[md->_delay->dl_sub_i];
-			md->_delay->dl_buf3[md->_delay->dl_sub_i] = old_smp/1.5;
-			break;
-		default:
-			printf("Delay function may or may not return the correct value\n");
-
-	}
+	
 	md->_delay->dl_sub_i++;
 	if(md->_delay->dl_sub_i >= md->_delay->dl_speed){	
 		md->_delay->dl_sub_i = 0;
