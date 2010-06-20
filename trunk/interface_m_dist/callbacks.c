@@ -231,7 +231,7 @@ G_MODULE_EXPORT void on_q_four_clicked(gpointer n, GtkRadioButton* b){
 }
 
 G_MODULE_EXPORT void on_q_extreme_clicked(gpointer n, GtkRadioButton* b){
-	//SET FULL BUFFER
+	m_dist->_delay->dl_cant_bufs_active = m_dist->_delay->dl_total_bufs;
 }
 
 G_MODULE_EXPORT void on_dl_speed_scale_value_changed(GtkAdjustment* dl_speed_adjs, GtkRange* range){

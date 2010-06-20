@@ -8,21 +8,6 @@ void init_m_distortion(m_distortion * md){
 	md->_dvol = 0.0;
 	vol_new(md->_vctes);
 
-	/////DELAY/////
-	md->_delay = delay_new(262144,8);		//really big buffer for long delays q no baje hasta mucho mas q 65536
-	//md->_delay = delay_new(65536);	//siempre es multiplo de 4096, xq ese es el buffer de jack, no olvidarse!
-
-	/////HALL//////
-	md->_hall = hall_new(4096,4);	 	//four small buffers for hall
-
-	//////EQ//////
-	eq_new(md);
-	
-	///////GLOBALS///////
-	/*global_ptr = (globals*) malloc(sizeof(globals));
-	global_ptr->_eq_sensitive   = sensitivo;
-	global_ptr->plot_x = 0;		//es muy posible q no se necesite mas*/
-
 	/////DISTORTIONS////
 	md->_last_dist_active = e_hell_sqrt;
 
@@ -49,7 +34,7 @@ void init_m_distortion(m_distortion * md){
 	delay_effect  	 = f_effect[e_dummy];
 
 	distortion_channel  = f_dist[md->_last_dist_active]; 
-	printf("M_DISTORTION initialized\n\n");
+	printf("M_DISTORTION initialized\n");
 }
 
 void free_m_distortion(m_distortion *md){

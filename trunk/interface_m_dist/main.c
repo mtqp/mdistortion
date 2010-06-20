@@ -100,6 +100,14 @@
 		
 		m_dist = (m_distortion *) malloc(sizeof(m_distortion));
 		init_m_distortion(m_dist);
+		printf("Init M_EFFECTS\n");
+		/////DELAY/////
+		m_dist->_delay = delay_new(262144,7);	//really big buffer for long delays q no baje hasta mucho mas q 65536
+		/////HALL//////
+		m_dist->_hall  = hall_new(4096,4);	 	//four small buffers for hall
+		//////EQ//////
+		eq_new(m_dist);
+		printf("M_EFFECTS initialized\n\n");
 		
 		///////////////////////////////////////
 		//----inicializar interfaz grafica---//
