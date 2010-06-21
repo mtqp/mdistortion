@@ -5,11 +5,6 @@
 //---------CALLBACKS-INTERFAZ-------------//
 ////////////////////////////////////////////
 
-G_MODULE_EXPORT int on_m_distortion_destroy (GtkObject *object, gpointer user_data){
-    gtk_main_quit();
-	printf("ON M DISTORTION DESTROY SIN LIBERAR NADA PAPA\n");
-	return false;	
-}
 //ES LA MISMA FUNCION, NO TIENE SENTIDO Q ESTE DOS VECES, MANDARLAS JUNTAS
 G_MODULE_EXPORT int on_quit_clicked( GtkButton *button, gpointer   data ){
     gtk_main_quit ();
@@ -44,31 +39,19 @@ G_MODULE_EXPORT void on_rock_mode_clicked (gpointer distors, GtkRadioButton *but
 
 G_MODULE_EXPORT void on_random_mode_clicked ( gpointer distors,GtkRadioButton *button){
 	gtk_widget_set_sensitive((GtkWidget*) distors, no_sensitivo);
-	gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_onoff, sensitivo);
-	if(!m_ui->eq_onoff->active){
-		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);
-		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
-	}
+	reset_effects_buttons();
 	set_m_distortion(m_dist,e_random_day);
 }
 
 G_MODULE_EXPORT void on_mute_mode_clicked ( gpointer distors,GtkRadioButton *button){
 	gtk_widget_set_sensitive((GtkWidget*) distors, no_sensitivo);
-	gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_onoff, sensitivo);
-	if(!m_ui->eq_onoff->active){
-		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);
-		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
-	}
+	reset_effects_buttons();
 	set_m_distortion(m_dist, e_mute);
 }
 
 G_MODULE_EXPORT void on_by_pass_mode_clicked ( gpointer distors, GtkRadioButton *button){
 	gtk_widget_set_sensitive((GtkWidget*) distors, no_sensitivo);
-	gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_onoff, sensitivo);
-	if(!m_ui->eq_onoff->active){
-		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);
-		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
-	}
+	reset_effects_buttons();
 	set_m_distortion(m_dist, e_by_pass);
 }
 
@@ -84,51 +67,27 @@ G_MODULE_EXPORT void on_hell_sqrt_clicked(gpointer distors,GtkRadioButton *butto
 	set_m_distortion(m_dist, e_hell_sqrt);
 }
 G_MODULE_EXPORT void on_log_rock_clicked(gpointer distors,GtkRadioButton *button){
-	gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_onoff, sensitivo);
-	if(!m_ui->eq_onoff->active){
-		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);
-		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
-	}
+	reset_effects_buttons();
 	set_m_distortion(m_dist, e_log_rock);
 }
 G_MODULE_EXPORT void on_log_rock_II_clicked(gpointer distors,GtkRadioButton *button){
-	gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_onoff, sensitivo);
-	if(!m_ui->eq_onoff->active){
-		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);
-		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
-	}
+	reset_effects_buttons();
 	set_m_distortion(m_dist, e_log_rock_II);
 }
 G_MODULE_EXPORT void on_psychedelic_if_clicked(gpointer distors,GtkRadioButton *button){
-	gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_onoff, sensitivo);
-	if(!m_ui->eq_onoff->active){
-		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);
-		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
-	}
+	reset_effects_buttons();
 	set_m_distortion(m_dist, e_psychedelic_if);
 }
 G_MODULE_EXPORT void on_by_60s_clicked(gpointer distors,GtkRadioButton *button){
-	gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_onoff, sensitivo);
-	if(!m_ui->eq_onoff->active){
-		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);
-		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
-	}
+	reset_effects_buttons();
 	set_m_distortion(m_dist, e_by_60s);
 }
 G_MODULE_EXPORT void on_fuzzy_dark_pow_IV_clicked(gpointer distors,GtkRadioButton *button){
-	gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_onoff, sensitivo);
-	if(!m_ui->eq_onoff->active){
-		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);
-		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
-	}
+	reset_effects_buttons();
 	set_m_distortion(m_dist, e_fuzzy_dark_pow_IV);
 }
 G_MODULE_EXPORT void on_rare_cuadratic_clicked(gpointer distors,GtkRadioButton *button){
-	gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_onoff, sensitivo);
-	if(!m_ui->eq_onoff->active){
-		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);
-		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
-	}
+	reset_effects_buttons();
 	set_m_distortion(m_dist, e_rare_cuadratic);
 }
 
@@ -137,6 +96,7 @@ G_MODULE_EXPORT void on_rare_cuadratic_clicked(gpointer distors,GtkRadioButton *
 G_MODULE_EXPORT 
 void on_eq_onoff_toggled (gpointer eqs, GtkToggleButton *b){
 	if(b->active) {
+		equalizer_effect = f_effect[e_equalizer];
 		gtk_widget_set_sensitive((GtkWidget*) m_ui->eq_bars, sensitivo);
 		gtk_toggle_button_set_active((GtkToggleButton*) m_ui->dl_onoff,false); //apago el delay
 		gtk_toggle_button_set_active((GtkToggleButton*) m_ui->hl_onoff,false); //apago el hall
@@ -144,6 +104,7 @@ void on_eq_onoff_toggled (gpointer eqs, GtkToggleButton *b){
 		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, no_sensitivo);
 	}
 	else {
+		equalizer_effect = f_effect[e_dummy];
 		gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_bars,  no_sensitivo);
 		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);  //cancelo los botones para activarlo
 		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
@@ -287,6 +248,7 @@ int process (jack_nframes_t nframes, void *arg){
 	memcpy (outR, in, sizeof (jack_default_audio_sample_t) * nframes);
 	
 	distortionize(m_dist, outL, sizeof (jack_default_audio_sample_t) * nframes); //la gran magia
+
 	return 0;      
 }
 
@@ -304,5 +266,13 @@ void set_effect_window_position(GtkWindow* window, int effect){
 	gtk_window_get_size(window,&w_d,&h_d);
 	if(effect == e_delay) 		gtk_window_move(window,x,y-h_d-1);
 	if(effect == e_hall)		gtk_window_move(window,x+w+4,y);
+}
+
+void reset_effects_buttons(){
+	gtk_widget_set_sensitive((GtkWidget*)m_ui->eq_onoff, sensitivo);
+	if(!m_ui->eq_onoff->active){
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->dl_onoff, sensitivo);
+		gtk_widget_set_sensitive((GtkWidget*)m_ui->hl_onoff, sensitivo);
+	}
 }
 

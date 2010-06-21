@@ -139,15 +139,15 @@ void by_60s(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t 
 	vol = 1.0+mdc->_dvol;
 	for(i;i<nframes;i++){
 		out[i] = equalizer_effect(mdc,out[i],i);
-		out[i] = vol*(100.0 * out[i]);
 		out[i] = delay_effect(mdc,out[i],i);
 		out[i] = hall_effect(mdc,out[i],i);
+		out[i] = vol*(100.0 * out[i]);
 	}
 }
 
-void fuzzy_dark_pow4(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){ //fuzzy oscura // siempre negativa.
+void fuzzy_dark_pow4(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 	int i = 0;
-	float vol = 0.0125+(0.0125*mdc->_dvol);//funciona de ganancia tbm un poco estaria bueno q cuando el volumen este al palo
+	float vol = 0.0125+(0.0125*mdc->_dvol);
 	for(i;i<nframes;i++){
 		out[i] = equalizer_effect(mdc,out[i],i);
 		out[i] = vol*(100000000.0*(-pow(out[i],4)));
@@ -157,7 +157,7 @@ void fuzzy_dark_pow4(jack_default_audio_sample_t *out, m_distortion *mdc, jack_n
 
 }
 
-void rare_cuadratic(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){ //cuadratica RARISIMA
+void rare_cuadratic(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 	int i = 0;
 	float vol = 1.0+mdc->_dvol;
 	for(i;i<nframes;i++){

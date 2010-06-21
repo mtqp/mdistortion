@@ -8,7 +8,7 @@
     <property name="window_position">center</property>
     <property name="icon">g_stratocaster.png</property>
     <property name="opacity">0.94999999999999996</property>
-    <signal name="destroy" handler="on_m_distortion_destroy"/>
+    <signal name="destroy" handler="on_quit_clicked"/>
     <child>
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
@@ -1341,8 +1341,9 @@ audio-volume-medium</property>
   </object>
   <object class="GtkWindow" id="info_m_distortion">
     <property name="window_position">mouse</property>
+    <property name="icon">g_stratocaster.png</property>
     <property name="opacity">0.94999999999999996</property>
-    <signal name="hide" handler="gtk_widget_hide"/>
+    <signal name="destroy" handler="gtk_widget_destroy"/>
     <child>
       <object class="GtkFrame" id="inf">
         <property name="visible">True</property>
@@ -1405,8 +1406,9 @@ L.U.: 389/08.
   </object>
   <object class="GtkWindow" id="save_m_distortion">
     <property name="window_position">mouse</property>
+    <property name="icon">g_stratocaster.png</property>
     <property name="opacity">0.94999999999999996</property>
-    <signal name="hide" handler="gtk_widget_hide"/>
+    <signal name="destroy" handler="gtk_widget_destroy"/>
     <child>
       <object class="GtkVBox" id="vbox15">
         <property name="visible">True</property>
