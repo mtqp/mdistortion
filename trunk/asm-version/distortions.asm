@@ -2,12 +2,10 @@
 
 section .data
 	hs_cte : dd 1000.0
-	hs_vanterior : dd 1
+	hs_vol_anterior : dd 1
 
 section .text
 	global hell_sqr
-
-;acordarse de poner el condicional if para ecualizar o no ecualizar	
 
 hell_sqr:
 	%define buf_out [ebp+8]
@@ -16,26 +14,26 @@ hell_sqr:
 
 ;	---------> convencion_C 
 	push ebp
-	mov ebp,esp
+	mov  ebp,esp
 	push edi
 	push esi
 	push ebx
 
-	mov 	ebx,md_ptr	;estr
-	mov eax,[hs_vanterior]
-	cmp dword eax,[ebx+12]
-	je no_hs_calcvol
+	mov 	  ebx,md_ptr			;estr
+	mov 	  eax,[hs_vol_anterior]
+	cmp dword eax,[ebx+4]			;¿¿vol_anterior == md->_dvol??
+	je  no_hs_calcvol
 	
-	mov eax,[ebx+12]
-	mov dword [hs_vanterior],eax
+	mov 	  eax,[ebx+4]			;eax = md->_dvol
+	mov dword [hs_vol_anterior],eax
 
 hs_calcvol:
 	pxor    xmm7,xmm7
 	pxor 	xmm6,xmm6
 
-	movss   xmm7,[ebx+12]	;[0,0,0,vol]
+	movss   xmm7,[ebx+4]	;[0,0,0,vol]
 	
-	lea ebx,[ebx+16]		;ptr_vol_ctes
+	lea ebx,[ebx+8]			;ptr_vol_ctes
 	mov ebx,[ebx]
 	lea ebx,[ebx+8]			;apunta a hellsqr_v
 	movss	xmm6,[ebx]		;[0,0,0,0.15]
@@ -70,22 +68,17 @@ ciclo_hs:
 	cmp esi,0
 	je fin_hs
 	
-	movdqu	xmm0,[edi]	;xmm0 lowpass
-	;movdqu  xmm1,xmm0	;xmm1 highpass
-	jmp fpu_hs_equalize
+	movdqu	xmm0,[edi]	;xmm0 = first 4 smps
 
+	sqrtps	xmm0,xmm0	;xmm0 = [sqrt(out1),sqrt(out2),sqrt(out3),sqrt(out4)]
 
-fpu_hs_equalized:	
-
-;	sqrtps	xmm0,xmm0
-
-	mulps 	xmm0,xmm7
-	movdqu	[edi],xmm0
+	mulps 	xmm0,xmm7	;xmm0 = first 4 res;
+	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm7[i%4];
 	
-	lea ebx,[ebx+16]
-	lea edi,[edi+16]
+	lea edi,[edi+16]	;out* += 4;
 	
-	sub esi,4
+	sub esi,4			;n -= 4;
+	je fin_hs			;¿n==0?
 	jmp ciclo_hs
 	
 fin_hs:
@@ -95,18 +88,4 @@ fin_hs:
 	pop edi
 	pop ebp
 	ret
-
-fpu_hs_equalize:
-	mov edx, md_ptr
-	mov edx,[edx+8]		;edx = ptr_eq
-	
-	movdqu [edx],xmm0		;eq->data = xmm0 (se levanta dsp desde fpu)
-	
-	
-	
-	movdqu	xmm0,[edx]	;xmm0 = data
-	movdqu 	xmm1,[edx+62] ;xmm1 = lg
-	mulps	xmm0,xmm1	;l         *= es->lg;
-	;como faltan los otros filtros no hacemos nada mas
-	jmp fpu_hs_equalized
 
