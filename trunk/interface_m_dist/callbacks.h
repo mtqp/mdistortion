@@ -21,7 +21,8 @@
 G_MODULE_EXPORT int on_quit_clicked( GtkButton *button, gpointer   data );
 G_MODULE_EXPORT int on_info_clicked(GtkButton *button, gpointer data);//las dos hacen lo mismo, quizas se pueden unificar, pensar
 G_MODULE_EXPORT int on_save_clicked(GtkButton *button, gpointer data);
-G_MODULE_EXPORT int on_m_distortion_destroy (GtkObject *object, gpointer user_data);
+/*G_MODULE_EXPORT void on_info_m_distortion_hide(GtkObject* o, gpointer data);
+G_MODULE_EXPORT void on_save_m_distortion_hide(GtkObject* o, gpointer data);*/
 G_MODULE_EXPORT void on_rock_mode_clicked (gpointer distors, GtkRadioButton *button);
 G_MODULE_EXPORT void on_random_mode_clicked ( gpointer distors,GtkRadioButton *button);
 G_MODULE_EXPORT void on_mute_mode_clicked ( gpointer distors,GtkRadioButton *button);
@@ -63,5 +64,5 @@ int process (jack_nframes_t nframes, void *arg);
 void jack_shutdown (void *arg);
 ////////////////////////////
 void set_effect_window_position(GtkWindow* w, int effect);
-
+void reset_effects_buttons();
 #endif
