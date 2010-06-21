@@ -9,7 +9,7 @@ typedef struct _m_hall {
 	float  hll_coef;
 	float  hll_buf_quantity;
 	float**hll_bufs;
-} m_hall;
+} m_hall;				//Estructura HALL
 
 m_hall* hall_new(int size, int quantity);
 

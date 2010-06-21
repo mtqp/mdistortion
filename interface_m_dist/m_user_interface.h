@@ -3,6 +3,11 @@
 
 #include <gtk/gtk.h>
 
+/*
+	m_user_interface almacena parte de la estructura de la interfaz,
+	la cual será usada en las distintas callbacks
+*/
+
 typedef struct _m_user_interface{
 	//-m_dist-//
 	GtkWindow*		 m_distortion;

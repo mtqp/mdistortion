@@ -7,9 +7,9 @@
 typedef struct _m_delay {
 	int    dl_size;
 	int    dl_sub_i;
-	int	   dl_cant_bufs_active;	//1,2,3 o 4
-	int	   dl_total_bufs;
-	int    dl_speed;			//algo cercano a [65536 ... 262144] multiplo de 4096
+	int	   dl_cant_bufs_active;	//1,2,3 o 4 + modo extremo (todos los buffers, en particular este programa usa 8)
+	int	   dl_total_bufs;		//cantidad total
+	int    dl_speed;			//[32768 ... 262144] multiplo de 4096
 	float**dl_bufs;
 } m_delay;
 

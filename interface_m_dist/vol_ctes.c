@@ -1,6 +1,16 @@
 
 #include "vol_ctes.h"
 
+/*Inicializa estructura VOL_CTES*/
+void vol_new(vol_ctes* v){
+	v = (vol_ctes*) malloc(sizeof(vol_ctes));
+	if(v!=NULL){
+		set_vol_ctes(v);
+	} else {
+		printf("Couldn't malloc Volume Structure\n");
+	}
+}
+
 void set_vol_ctes (vol_ctes* v){
 	/*facilita el calculo tenerlas en memoria*/
 	v->log_rock_v 	=  0.250; 
@@ -13,11 +23,3 @@ void set_vol_ctes (vol_ctes* v){
 	printf("	Volume Set\n");
 }
 
-void vol_new(vol_ctes* v){
-	v = (vol_ctes*) malloc(sizeof(vol_ctes));
-	if(v!=NULL){
-		set_vol_ctes(v);
-	} else {
-		printf("Couldn't malloc Volume Structure\n");
-	}
-}
