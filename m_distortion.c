@@ -9,8 +9,8 @@ void init_m_distortion(m_distortion * md){
 	printf("\nInit M_DISTORTION\n");
 
 	/////VOLUMEN////
-	md->_dvol = 0.0;
-	vol_new(md->_vctes);
+	md->_dvol  = 0.0;
+	md->_vctes = vol_new();
 
 	/////DISTORTIONS////
 	md->_last_dist_active = e_hell_sqrt;			//Setea la distorsión inicial
@@ -38,33 +38,43 @@ void init_m_distortion(m_distortion * md){
 	delay_effect  	 = f_effect[e_dummy];
 
 	distortion_channel  = f_dist[md->_last_dist_active]; 
-	printf("M_DISTORTION initialized\n");
+	printf("M_DISTORTION initialized\n\n");
 }
 
-void free_m_distortion_and_effects(m_distortion *md){//Libera todas las estructuras del programa
-	/*int i;
+void free_m_distortion_and_effects(m_distortion *md){
+	/*Libera todas las estructuras del programa*/
+	int i;
 	for(i=0;i<md->_delay->dl_total_bufs;i++){
 		free(md->_delay->dl_bufs[i]);
+		md->_delay->dl_bufs[i] = NULL;
 	}
 	free(md->_delay->dl_bufs);
-	free(md->_delay);		///hasta aca el free de delay
+	md->_delay->dl_bufs = NULL;
+	free(md->_delay);
+	md->_delay = NULL;		///hasta aca el free de delay
 	
 	for(i=0;i<md->_hall->hll_buf_quantity;i++){
 		free(md->_hall->hll_bufs);
+		md->_hall->hll_bufs = NULL;
 	}
 	free(md->_hall->hll_bufs);
-	free(md->_hall);		//hasta aca el free de hall
+	md->_hall->hll_bufs = NULL;
+	free(md->_hall);		
+	md->_hall = NULL;		//hasta aca el free de hall
 	
 	free(md->m_bass);
 	free(md->m_treb);
-	free(md->m_mid);		//hasta aca el free de eq
+	free(md->m_mid);
+	md->m_bass = NULL;
+	md->m_treb = NULL;
+	md->m_mid  = NULL;		//hasta aca el free de eq
 	
-	free(md->_vctes);		//hasta aca el free de volumen ctes
+	free(md->_vctes);		
+	md->_vctes = NULL;		//hasta aca el free de volumen ctes
 	
 	free(md);				//m_distortion and effects freeded (no se si existe esa palabra!)
 
-	printf("Freeing M_DISTORTION succesfull\n");*/
-	printf("POR LO PRONTO LO LIBERO NADA DE M_DISTORTION\n");
+	printf("Freeing M_DISTORTION succesfull\n");
 }
 
 /*Llama al distosión* actual*/
@@ -96,7 +106,7 @@ void set_m_distortion( m_distortion * md, int dist){
 */
 void log_rock(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 	int i = 0;
-	float vol = 0.25+(0.25*mdc->_dvol);
+	float vol = mdc->_vctes->log_rock_v+(mdc->_vctes->log_rock_v*mdc->_dvol);
 	for(i;i<nframes;i++){
 		out[i] = equalizer_effect(mdc,out[i],i);
 		out[i] = delay_effect(mdc,out[i],i);
@@ -107,32 +117,28 @@ void log_rock(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_
 
 void log_rock2(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){//
 	int i = 0;
-	float vol = 0.5+(0.5*mdc->_dvol);
+	float vol = mdc->_vctes->log_rock2_v+(mdc->_vctes->log_rock2_v*mdc->_dvol);
 	for(i;i<nframes;i++){
 		out[i] = equalizer_effect(mdc,out[i],i);		
 		out[i] = delay_effect(mdc,out[i],i);
 		out[i] = hall_effect(mdc,out[i],i);
-		out[i]= vol*cos(tan(tan(log((out[i])))));
+		out[i]=  vol*cos(tan(tan(log((out[i])))));
 	}
 }
 
 
 void hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 	int i = 0;
-	float vol = 0.015+(0.015*mdc->_dvol);
+	float vol = mdc->_vctes->hell_sqr_v+(mdc->_vctes->hell_sqr_v*mdc->_dvol);
 	for(i;i<nframes;i++){
 		out[i]= vol*(1000.0*sqrt(out[i]));
 	}
-	/*float vol = mdc->_vctes->hell_sqr_v+(mdc->_vctes->hell_sqr_v*mdc->_dvol);
-	for(i;i<nframes;i++){
-		out[i]= vol*(1000.0*sqrt(out[i]));
-	}*/
 }
 
 
 void psychedelic_if(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 	int i = 0;
-	float vol = 1.0+mdc->_dvol;
+	float vol = mdc->_vctes->psyche_v+(mdc->_vctes->psyche_v*mdc->_dvol);
 	for(i;i<nframes;i++){
 		out[i] = equalizer_effect(mdc,out[i],i);		
 		out[i] = delay_effect(mdc,out[i],i);
@@ -146,9 +152,8 @@ void psychedelic_if(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nf
 }
 
 void by_60s(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
-	float vol; 
 	int i=0;
-	vol = 1.0+mdc->_dvol;
+	float vol = mdc->_vctes->by_60s_v+(mdc->_vctes->by_60s_v*mdc->_dvol);
 	for(i;i<nframes;i++){
 		out[i] = equalizer_effect(mdc,out[i],i);
 		out[i] = delay_effect(mdc,out[i],i);
@@ -159,7 +164,7 @@ void by_60s(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t 
 
 void fuzzy_dark_pow4(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 	int i = 0;
-	float vol = 0.0125+(0.0125*mdc->_dvol);
+	float vol = mdc->_vctes->fuzzy_dark_v+(mdc->_vctes->fuzzy_dark_v*mdc->_dvol);
 	for(i;i<nframes;i++){
 		out[i] = equalizer_effect(mdc,out[i],i);
 		out[i] = vol*(100000000.0*(-pow(out[i],4)));
@@ -171,7 +176,7 @@ void fuzzy_dark_pow4(jack_default_audio_sample_t *out, m_distortion *mdc, jack_n
 
 void rare_cuadratic(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 	int i = 0;
-	float vol = 1.0+mdc->_dvol;
+	float vol = mdc->_vctes->rare_c_v+(mdc->_vctes->rare_c_v*mdc->_dvol);
 	for(i;i<nframes;i++){
 		out[i] = equalizer_effect(mdc,out[i],i);
 		out[i] = delay_effect(mdc,out[i],i);
