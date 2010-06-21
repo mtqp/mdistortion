@@ -9,10 +9,10 @@
 G_MODULE_EXPORT int on_quit_clicked( GtkButton *button, gpointer   data ){
     gtk_main_quit ();
     free_m_distortion_and_effects(m_dist);
-    /*jack_shutdown(input_port);
-    jack_shutdown(output_left);
-    jack_shutdown(output_right);*/
-    printf("ON QUIT CLICKED SIN LIBERAR NADA\n");
+	/*free(input_port);
+	free(output_left);
+	free(output_right);*/
+    printf("LIBERA TODO M_DISTORTION, Y GTK, PENSAR COMO VER SI LIBERA TODO JACK\n");
     return false;
 }
 
