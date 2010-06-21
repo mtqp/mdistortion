@@ -1,41 +1,38 @@
 
 #include "m_eq.h"
 
-/* Computes a EQ filter on a sample */
-float equalize_sample(float sample, m_equalizer * b){
-	float result;
+/* Aplica ecualización sobre el sample */
+float equalize_sample(float sample, m_equalizer * eq){
+	float eq_sample;
 
-	/* compute result */
-	result = b->a0 * sample + b->a1 * b->x1 + b->a2 * b->x2 -
-	   b->a3 * b->y1 - b->a4 * b->y2;
+	/* Obtener sample ecualizada */
+	eq_sample = eq->a0 * sample + eq->a1 * eq->x1 + eq->a2 * eq->x2 - eq->a3 * eq->y1 - eq->a4 * eq->y2;
 
-	/* shift x1 to x2, sample to x1 */
-	b->x2 = b->x1;
-	b->x1 = sample;
+	/* Recalcular history buffers */
+	eq->x2 = eq->x1;
+	eq->x1 = sample;
+	eq->y2 = eq->y1;
+	eq->y1 = eq_sample;
 
-	/* shift y1 to y2, result to y1 */
-	b->y2 = b->y1;
-	b->y1 = result;
-
-	return result;
+	return eq_sample;
 }
 
-/* sets up a EQ Filter */
+/* Inicializa filter ecualizador */
 m_equalizer *band_EQ_new(int type, float dbGain, float freq, float srate, float bandwidth){
-	m_equalizer *b;
+	m_equalizer *eq;
 	float A, omega, sn, cs, alpha, beta;
 	float a0, a1, a2, b0, b1, b2;
 
-	b = malloc(sizeof(m_equalizer));
-	if (b == NULL)
+	eq = malloc(sizeof(m_equalizer));
+	if (eq == NULL)
 	   return NULL;
 
-	b->_dbgain = dbGain;
-	b->_freq = freq;
-	b->_srate = srate;
-	b->_bandwidth = bandwidth;
+	eq->_dbgain = dbGain;
+	eq->_freq = freq;
+	eq->_srate = srate;
+	eq->_bandwidth = bandwidth;
 	
-	/* setup variables */
+	/* Inicializacion variables */
 	A = pow(10, dbGain /40);
 	omega = 2 * M_PI * freq /srate;
 	sn = sin(omega);
@@ -101,30 +98,31 @@ m_equalizer *band_EQ_new(int type, float dbGain, float freq, float srate, float 
 	   a2 = (A + 1) - (A - 1) * cs - beta * sn;
 	   break;
 	default:
-	   free(b);
+	   free(eq);
 	   return NULL;
 	}
 
-	/* precompute the coefficients */
-	b->a0 = b0 /a0;
-	b->a1 = b1 /a0;
-	b->a2 = b2 /a0;
-	b->a3 = a1 /a0;
-	b->a4 = a2 /a0;
+	/* Coeficientes EQ */
+	eq->a0 = b0 /a0;
+	eq->a1 = b1 /a0;
+	eq->a2 = b2 /a0;
+	eq->a3 = a1 /a0;
+	eq->a4 = a2 /a0;
 
-	/* zero initial samples */
-	b->x1 = b->x2 = 0;
-	b->y1 = b->y2 = 0;
+	/* History buffer inicial */
+	eq->x1 = eq->x2 = 0;
+	eq->y1 = eq->y2 = 0;
 
-	return b;
+	return eq;
 }
 
-void reset_eq_params(m_equalizer *bq, float bandwidth, int filter_type){
+/*Dada una banda, recalcula el filtro dependiendo del parámetro bandwith*/
+void reset_eq_params(m_equalizer *eq, float bandwidth, int filter_type){
 	float omega, sn, cs, alpha;
 	float a0, a1, a2, b0, b1, b2;
 
-	/* setup variables */
-	omega = 2 * M_PI * bq->_freq / bq->_srate;
+	/* Inicializa variables */
+	omega = 2 * M_PI * eq->_freq / eq->_srate;
 	sn = sin(omega);
 	cs = cos(omega);
 	alpha = sn * sinh(M_LN2 /2 * bandwidth * omega /sn);
@@ -156,13 +154,13 @@ void reset_eq_params(m_equalizer *bq, float bandwidth, int filter_type){
 			break;
 	}
 
-	/* precompute the coefficients */
-	bq->a0 = b0 /a0;
-	bq->a1 = b1 /a0;
-	bq->a2 = b2 /a0;
-	bq->a3 = a1 /a0;
-	bq->a4 = a2 /a0;
+	/* Coeficientes EQ */
+	eq->a0 = b0 /a0;
+	eq->a1 = b1 /a0;
+	eq->a2 = b2 /a0;
+	eq->a3 = a1 /a0;
+	eq->a4 = a2 /a0;
 
-	bq->_bandwidth = bandwidth;
+	eq->_bandwidth = bandwidth;
 }
 

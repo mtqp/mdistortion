@@ -1,6 +1,11 @@
 #ifndef __ENUM_DIST_H__
 #define __ENUM_DIST_H__
 
+/*
+	Simple enum de los nombres de las distorsiones 
+	para mejor legibilidad de código.
+*/
+
 enum {
 	e_log_rock,
 	e_log_rock_II,

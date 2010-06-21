@@ -1,6 +1,9 @@
 
 #include "m_effects.h"
 
+/*
+	Inicializa las estructura de los efectos
+*/
 void init_m_effects(m_distortion* md){
 	printf("Init M_EFFECTS\n");
 /////DELAY/////
@@ -12,6 +15,10 @@ void init_m_effects(m_distortion* md){
 	printf("M_EFFECTS initialized\n\n");
 }
 
+/*
+	Inicializa la estructura ecualizador.
+	Hay tres estructuras, una para cada banda.
+*/
 void eq_new(m_distortion* md){
 	md->m_bass = band_EQ_new(LPF, 15.0, 800.0, 4096.0,6.5);
 	md->m_treb = band_EQ_new(HPF, 4.0, 2000.0, 880096.0, 5.5);
@@ -22,12 +29,18 @@ void eq_new(m_distortion* md){
 		printf("	EQ Set\n");
 }
 
+/*
+	Función que ecualiza el sample pasado como parámetro.
+*/
 float equalizer_func(m_distortion *md, float smp, int i){
 	smp = equalize_sample(smp, md->m_bass);
 	smp = equalize_sample(smp, md->m_treb);
 	return equalize_sample(smp, md->m_mid);
 }
 
+/*
+	Función que aplica efecto delay sobre el sample de parámetro.
+*/
 float delay_func(m_distortion *md, float smp, int i){
 	float old_smp;
 	int bufs_active = md->_delay->dl_cant_bufs_active;
@@ -52,10 +65,13 @@ float delay_func(m_distortion *md, float smp, int i){
 	return smp;
 }
 
+/*
+	Función que aplica efecto hall sobre el sample de parámetro.
+*/
 float hall_func(m_distortion *md, float smp, int i){
 	int j;
 	float save_smp;
-	for(j=0;j<md->_hall->hll_buf_quantity;j++){	//EL HALL COEF FIJARSE SI SE NECESITA UNO SOLO O NO!
+	for(j=0;j<md->_hall->hll_buf_quantity;j++){
 		save_smp = smp;
 		smp += md->_hall->hll_bufs[j][i];
 		md->_hall->hll_bufs[j][i] = md->_hall->hll_coef*(save_smp/2);
@@ -63,10 +79,17 @@ float hall_func(m_distortion *md, float smp, int i){
 	return smp;
 }
 
+/*
+	TODAVIA ESTO NO HACE NADA.
+*/
 float volume_func(m_distortion *md, float smp, int i){
 	return 0.0;//no creo poder tenerla en una funcion sepada xq las ctes son diferentes... ahh claro sisisi si puedo, para eso tengo la struct ctes!
 }
 
+/*
+	Función dummy que no modifica el sample, necesaria cuando
+	NO se quiere aplicar un efecto a la señal
+*/
 float dummy_func(m_distortion *md, float smp, int i){
 	return smp;
 }

@@ -19,7 +19,6 @@ struct _m_distortion;
 #include "enum_effects.h"
 
 typedef struct _m_distortion {
-	//YA CAGUE EL ASM, HAY Q REAHACERLO
 	int _last_dist_active;
 	
 	float _dvol;
@@ -32,7 +31,7 @@ typedef struct _m_distortion {
 	m_delay*  	_delay;
 	m_hall* 	_hall;
 
-}m_distortion;
+}m_distortion;			//estructura principal
 
 
 void init_m_distortion(m_distortion * md);

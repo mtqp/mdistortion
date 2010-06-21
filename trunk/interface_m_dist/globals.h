@@ -11,6 +11,8 @@
 #define not_def_toggled 0
 #define back_to_rock_mode -1
 
+/*Variables globales que utiliza todo el programa*/
+
 jack_port_t *input_port;
 jack_port_t *output_left;
 jack_port_t *output_right;

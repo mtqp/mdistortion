@@ -1,6 +1,10 @@
 
 #include "m_distortion.h"
 
+/** Inicializa la estructura principal 
+*y se encarga de llamar a la inicialización de
+*las sub-estructuras
+**/
 void init_m_distortion(m_distortion * md){
 	printf("\nInit M_DISTORTION\n");
 
@@ -9,10 +13,10 @@ void init_m_distortion(m_distortion * md){
 	vol_new(md->_vctes);
 
 	/////DISTORTIONS////
-	md->_last_dist_active = e_hell_sqrt;
+	md->_last_dist_active = e_hell_sqrt;			//Setea la distorsión inicial
 
-	f_dist[e_log_rock] 			= &log_rock;
-	f_dist[e_log_rock_II] 		= &log_rock2;
+	f_dist[e_log_rock] 			= &log_rock;		//Almacena los function* a los distintos
+	f_dist[e_log_rock_II] 		= &log_rock2;		//tipos de distorsiones
 	f_dist[e_hell_sqrt] 		= &hell_sqr;
 	f_dist[e_psychedelic_if]	= &psychedelic_if;
 	f_dist[e_by_60s] 			= &by_60s;
@@ -23,8 +27,8 @@ void init_m_distortion(m_distortion * md){
 	f_dist[e_by_pass] 			= &by_pass;
 	printf("	Distortions Effects Set\n");
 
-	f_effect[e_equalizer]	= &equalizer_func;
-	f_effect[e_delay]		= &delay_func;
+	f_effect[e_equalizer]	= &equalizer_func;		//Almacena los function* a los distintos
+	f_effect[e_delay]		= &delay_func;			//tipos de efectos
 	f_effect[e_hall]		= &hall_func;
 	f_effect[e_volume]		= &volume_func;
 	f_effect[e_dummy]		= &dummy_func;
@@ -37,7 +41,7 @@ void init_m_distortion(m_distortion * md){
 	printf("M_DISTORTION initialized\n");
 }
 
-void free_m_distortion_and_effects(m_distortion *md){
+void free_m_distortion_and_effects(m_distortion *md){//Libera todas las estructuras del programa
 	/*int i;
 	for(i=0;i<md->_delay->dl_total_bufs;i++){
 		free(md->_delay->dl_bufs[i]);
@@ -63,10 +67,12 @@ void free_m_distortion_and_effects(m_distortion *md){
 	printf("POR LO PRONTO LO LIBERO NADA DE M_DISTORTION\n");
 }
 
+/*Llama al distosión* actual*/
 void distortionize(m_distortion *md, jack_default_audio_sample_t *out, jack_nframes_t nframes){
 	distortion_channel(out, md, nframes);
 }
 
+/*Setea la distorsión pasada en parámetro 'dist' como la actual*/
 void set_m_distortion( m_distortion * md, int dist){
 	int cambia_modo = dist==e_random_day || dist==e_mute || dist==e_by_pass;
 	if(dist==back_to_rock_mode)	
@@ -82,6 +88,12 @@ void set_m_distortion( m_distortion * md, int dist){
 ///----------------DISTORSIONES-------------------///
 /////////////////////////////////////////////////////
 
+/*
+  Cada una de las distorsiones se encarga de calcular el volumen
+  aplicarle todos los efectos y distorsionar la señal,
+  recibe por parámetro el buffer in, devolviendo el out en el
+  mismo buffer
+*/
 void log_rock(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 	int i = 0;
 	float vol = 0.25+(0.25*mdc->_dvol);
