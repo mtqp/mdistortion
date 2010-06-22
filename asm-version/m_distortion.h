@@ -39,20 +39,18 @@ void free_m_distortion_and_effects(m_distortion *md);
 void distortionize(m_distortion *md, jack_default_audio_sample_t *out, jack_nframes_t nframes);
 void set_m_distortion( m_distortion * md, int distor);
 
-//extern volume_hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes);
-
 typedef void (DISTORTION)(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes);
 
+extern DISTORTION hell_sqr;
 DISTORTION log_rock;
 DISTORTION log_rock2;
-DISTORTION hell_sqr;
 DISTORTION psychedelic_if;
 DISTORTION by_60s;
 DISTORTION fuzzy_dark_pow4;
 DISTORTION rare_cuadratic;
 DISTORTION random_day;
 DISTORTION mute;
-DISTORTION by_pass;
+extern DISTORTION by_pass;		//todavia no esta completa, es apra probar el hall!
 
 DISTORTION * f_dist[10];	
 DISTORTION * distortion_channel;
