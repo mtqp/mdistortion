@@ -127,15 +127,6 @@ void log_rock2(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes
 }
 
 
-void hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
-	int i = 0;
-	float vol = mdc->_vctes->hell_sqr_v+(mdc->_vctes->hell_sqr_v*mdc->_dvol);
-	for(i;i<nframes;i++){
-		out[i]= vol*(1000.0*sqrt(out[i]));
-	}
-}
-
-
 void psychedelic_if(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 	int i = 0;
 	float vol = mdc->_vctes->psyche_v+(mdc->_vctes->psyche_v*mdc->_dvol);
@@ -197,7 +188,7 @@ void random_day(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframe
 	if(mod2 == 5)			fuzzy_dark_pow4(out,mdc,nframes);
 	if(mod2 == 6)			rare_cuadratic(out,mdc,nframes);
 }	
-
+/*
 void by_pass(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 	int i=0;
    	for (i;i<nframes;i++){
@@ -205,7 +196,7 @@ void by_pass(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t
 		out[i] = hall_effect(mdc,out[i],i);
 		out[i] = delay_effect(mdc,out[i],i);
    	}
-}
+}*/
 
 void mute(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes){
 	int i=0;
