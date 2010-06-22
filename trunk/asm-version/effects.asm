@@ -8,3 +8,16 @@ float hall_func(m_distortion *md, float smp, int i){
 	}
 	return smp;
 } tengo q hacerlo para cuatro samples!
+
+;ocupados ESI EBX EDI
+;xmm0 y xmm7
+hall:
+	mov eax,esi
+	sub eax,nframes		;eax = i
+	
+	mov ecx,md_ptr 
+	lea ecx,[ecx+28]	;ecx = ptr_hall
+	
+	movdqu xmm1,xmm0		;save_smp = smp
+	
+	jmp after_hall
