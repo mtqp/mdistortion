@@ -55,14 +55,12 @@ by_pass:
 ciclo_bp:
 	movdqu	xmm0,[edi]	;xmm0 = first 4 smps
 	
-	;mov  eax,esi
-	;sub  eax,nframes
-	;push esi			;push i
+	mov  eax,esi
+	sub  eax,nframes
+	push esi			;push i
 	;push xmm0			;push [smp...smp+4]
-	;push ebx			;push m_dist
-	;call hall_func		;//esto ESTA LLAMANDO SIEMPRE A HALL EH!
-	jmp hall
-after_hall:
+	push ebx			;push m_dist
+	call hall			;//esto ESTA LLAMANDO SIEMPRE A HALL EH!
 
 	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm7[i%4];
 	
