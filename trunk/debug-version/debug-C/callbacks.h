@@ -65,7 +65,9 @@ G_MODULE_EXPORT void on_hl_onoff_toggled(GtkContainer* intensity, GtkToggleButto
 G_MODULE_EXPORT void on_hl_intensity_scale_value_changed(GtkAdjustment* hl_intensity_adjs, GtkRange* range);
 
 ///////////AUXs//////////////
-
 void set_effect_window_position(GtkWindow* w, int effect);
 void reset_effects_buttons();
+
+/////////DUM-AUDIO//////////
+void on_dum_callback_clicked();
 #endif

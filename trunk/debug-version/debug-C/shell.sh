@@ -1,2 +1,2 @@
 make
-./m_distortion rock
+./m_distortion

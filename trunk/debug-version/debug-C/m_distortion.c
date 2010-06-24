@@ -46,31 +46,21 @@ void free_m_distortion_and_effects(m_distortion *md){
 	int i;
 	for(i=0;i<md->_delay->dl_total_bufs;i++){
 		free(md->_delay->dl_bufs[i]);
-		md->_delay->dl_bufs[i] = NULL;
 	}
 	free(md->_delay->dl_bufs);
-	md->_delay->dl_bufs = NULL;
 	free(md->_delay);
-	md->_delay = NULL;		///hasta aca el free de delay
 	
 	for(i=0;i<md->_hall->hll_buf_quantity;i++){
-		free(md->_hall->hll_bufs);
-		md->_hall->hll_bufs = NULL;
+		free(md->_hall->hll_bufs[i]);
 	}
 	free(md->_hall->hll_bufs);
-	md->_hall->hll_bufs = NULL;
 	free(md->_hall);		
-	md->_hall = NULL;		//hasta aca el free de hall
 	
 	free(md->m_bass);
 	free(md->m_treb);
 	free(md->m_mid);
-	md->m_bass = NULL;
-	md->m_treb = NULL;
-	md->m_mid  = NULL;		//hasta aca el free de eq
 	
 	free(md->_vctes);		
-	md->_vctes = NULL;		//hasta aca el free de volumen ctes
 	
 	free(md);				//m_distortion and effects freeded (no se si existe esa palabra!)
 

@@ -1,6 +1,12 @@
 
 #include "callbacks.h"
 
+///DUM AUDIO//
+void on_dum_callback_clicked(){
+	distortionize(m_dist, dum_audio->dummy_buf, dum_audio->dummy_size); //la gran magia
+	reset_buf(dum_audio);	
+}
+
 		////////////////////////////////////////////
 		//---------CALLBACKS-INTERFAZ-------------//
 		////////////////////////////////////////////

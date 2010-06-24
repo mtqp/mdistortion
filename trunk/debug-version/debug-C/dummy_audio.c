@@ -11,6 +11,10 @@ dummy_audio* init_dummy_audio(dummy_audio_size size){
 	return d;
 }
 
+void free_dummy_audio(dummy_audio* d){
+	free(d->dummy_buf);
+	free(d);
+}
 void reset_buf(dummy_audio* d){
 	int i;
 	for(i=0;i<d->dummy_size;i++)

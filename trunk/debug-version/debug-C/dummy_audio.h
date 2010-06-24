@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-typedef float  dummy_audio_size;
+typedef int    dummy_audio_size;
 typedef float* dummy_audio_buf;
 
 typedef struct _dummy_audio{
