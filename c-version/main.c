@@ -29,13 +29,12 @@
 		const char **ports;
 		unsigned long buf_size = 4096;
 		
-	
 		if (argc < 2) {
 			 fprintf (stderr, "usage: jack_simple_client <name>\n");
 			 return 1;
 		}
 
-		/* try to become a client of the JACK server */
+		// try to become a client of the JACK server 
 		if ((client = jack_client_new (argv[1])) == 0) {
 			 fprintf (stderr, "jack server not running?\n");
 			 return 1;
