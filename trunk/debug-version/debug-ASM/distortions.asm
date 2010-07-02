@@ -57,10 +57,11 @@ ciclo_bp:
 	
 	mov  eax,esi
 	sub  eax,nframes
-	push esi			;push i
+	push eax			;push i
 	;push xmm0			;push [smp...smp+4]
 	push ebx			;push m_dist
 	call hall			;//esto ESTA LLAMANDO SIEMPRE A HALL EH!
+	add  esp,8
 
 	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm7[i%4];
 	
