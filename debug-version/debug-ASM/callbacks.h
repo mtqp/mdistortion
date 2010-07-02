@@ -11,6 +11,7 @@
 #include "enum_dist.h"
 #include "enum_effects.h"
 #include "m_window.h"
+#include "dummy_audio.h"
 
 #define false 0
 #define true  1

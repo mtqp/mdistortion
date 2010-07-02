@@ -8,6 +8,8 @@
 ;	}
 ;	return smp;
 ;} tengo q hacerlo para cuatro samples!
+section .text
+	global hall
 
 hall:
 	%define md_ptr 	[ebp+8]

@@ -8,8 +8,8 @@ MATH = -lm
 NASM = -g -f elf
 CFLAGS = -Wall
 
-mdistor: main.c $(cOBJS) $(asmOBJS) $(uiOBJS)
-	gcc -o m_distortion $(GTK) $(MATH) main.c $(cOBJS) $(asmOBJS) $(uiOBJS)
+mdistor: main.c $(cOBJS) $(asmOBJS) $(uiOBJS) $(audioOBJS)
+	gcc -o m_distortion $(GTK) $(MATH) main.c $(cOBJS) $(asmOBJS) $(uiOBJS) $(audioOBJS)
 
 %.o: %.c
 	gcc -c $< $(GTK) $(MATH)

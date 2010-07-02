@@ -116,14 +116,14 @@ void log_rock2(float* out, m_distortion *mdc, int nframes){//
 	}
 }
 
-
+/*
 void hell_sqr(float* out, m_distortion *mdc, int nframes){
 	int i = 0;
 	float vol = mdc->_vctes->hell_sqr_v+(mdc->_vctes->hell_sqr_v*mdc->_dvol);
 	for(i;i<nframes;i++){
 		out[i]= vol*(1000.0*sqrt(out[i]));
 	}
-}
+}*/
 
 
 void psychedelic_if(float* out, m_distortion *mdc, int nframes){
@@ -188,6 +188,7 @@ void random_day(float* out, m_distortion *mdc, int nframes){
 	if(mod2 == 6)			rare_cuadratic(out,mdc,nframes);
 }	
 
+/*
 void by_pass(float* out, m_distortion *mdc, int nframes){
 	int i=0;
    	for (i;i<nframes;i++){
@@ -195,7 +196,7 @@ void by_pass(float* out, m_distortion *mdc, int nframes){
 		out[i] = hall_effect(mdc,out[i],i);
 		out[i] = delay_effect(mdc,out[i],i);
    	}
-}
+}*/
 
 void mute(float* out, m_distortion *mdc, int nframes){
 	int i=0;
