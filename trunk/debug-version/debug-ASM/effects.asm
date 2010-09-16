@@ -8,24 +8,22 @@
 ;	}
 ;	return smp;
 ;} tengo q hacerlo para cuatro samples!
-section .text
-	global hall
 
-hall:
+hall_asm:
 	%define md_ptr 	[ebp+8]
-	;%define smps   	[ebp+12]
+	;%define smps   [ebp+12]
 	%define i 		[ebp+12]
 
 	convencion_C
 	
 	mov 	edx,md_ptr 
-	lea 	edx,[edx+28]	;ecx = ptr_hall
+	mov 	edx,[edx+28]	;edx = ptr_hall
 	
-	mov 	ecx,[edx+8]		;edx = buf_quantity
+	mov 	ecx,[edx+8]		;ecx = buf_quantity
 	
 	pxor    xmm5,xmm5
 	pxor    xmm6,xmm6
-	movss   xmm5,[ecx+4]	;xmm5=[0,0,0,coef]
+	movss   xmm5,[edx+4]	;xmm5=[0,0,0,coef]
 	movlhps xmm5,xmm5		;xmm5=[0,coef,0,coef]
 	movdqu  xmm6,xmm5		;xmm6=[0,coef,0,coef]
 	pslldq  xmm6,4			;xmm6=[coef,0,coef,0]
@@ -52,8 +50,13 @@ ciclo_hl:
 	mulps	xmm1,xmm3		;xmm1 = md->_hall->hll_coef*(save_smp/2);
 	movdqu  [ebx],xmm1		;guardo en memoria
 
-	add		eax,1			;habia otra q era com oaumentar uno estaba mas buena
+	inc 	eax			;habia otra q era com oaumentar uno estaba mas buena
 	cmp		eax,ecx
 	jne		ciclo_hl	
 	convencion_C_fin
+
+dummy_asm:
+	xor 	ecx,ecx
+	cmp		ecx,0
+	ret
 

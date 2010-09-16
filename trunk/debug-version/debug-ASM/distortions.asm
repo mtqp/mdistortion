@@ -1,4 +1,5 @@
 ;aqui se declaran extern las funciones que se usen
+;extern hall
 
 %include "m_macros.asm"
 %include "effects.asm"
@@ -51,26 +52,31 @@ by_pass:
 	mov esi,nframes ;contador ciclo
 	mov ebx,md_ptr
 	mov edi,buf_out	;buf_salida
+	xor eax,eax
 
 ciclo_bp:
 	movdqu	xmm0,[edi]	;xmm0 = first 4 smps
 	
-	mov  eax,esi
-	sub  eax,nframes
-	push eax			;push i
+	;HABRA Q PUSHEAR NFRAMES O LA DIFERENCIA NO SE
+	push esi			;push i
 	;push xmm0			;push [smp...smp+4]
-	push ebx			;push m_dist
-	call hall			;//esto ESTA LLAMANDO SIEMPRE A HALL EH!
-	add  esp,8
+	push 	ebx			;push m_dist
+	;call 	hall_asm	;//esto ESTA LLAMANDO SIEMPRE A HALL EH!
+	call 	dummy_asm
+	add 	esp,8		;recupero el sp de los push q hice
 
 	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm7[i%4];
 	
 	lea edi,[edi+16]	;out* += 4;
 	
-	sub esi,4			;n -= 4;
-	cmp esi,0			;¿n==0?
+	add eax,4			;i += 4;
+	cmp eax,nframes		;¿i==nframes?
 	je fin_bp
 	jmp ciclo_bp
 	
 fin_bp:
-	convencion_C_fin
+	pop ebx
+	pop esi
+	pop edi
+	pop ebp
+	ret
