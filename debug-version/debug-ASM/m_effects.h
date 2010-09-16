@@ -26,4 +26,7 @@ EFFECT * volume_effect; //todavia volume no se usa para nada
 void init_m_effects(struct _m_distortion* md);
 void eq_new(struct _m_distortion* md);
 
+extern void hall_asm(struct _m_distortion* md, int buf_size);
+extern void dummy_asm(struct _m_distortion* md, int buf_size);
+
 #endif

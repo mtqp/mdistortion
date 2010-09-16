@@ -1,4 +1,5 @@
 ;aqui se declaran extern las funciones que se usen
+;extern hall
 
 %include "m_macros.asm"
 %include "effects.asm"

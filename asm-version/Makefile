@@ -16,6 +16,9 @@ mdistor: main.c $(cOBJS) $(asmOBJS) $(uiOBJS)
 %.o : %.asm
 	nasm $(NASM) $< 
 
+asm: $(asmOBJS)
+	nasm $(NASM) $<
+
 clean:
 	rm -f m_distortion
 	rm -f *.o
