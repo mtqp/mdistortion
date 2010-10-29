@@ -78,6 +78,7 @@ int main (int argc, char *argv[]) {
 
 	////////////////////////
 	open_sub_window("d_audio");
+	open_sub_window("stream_to_file");
 	////////////////////////
 
 	gtk_main();

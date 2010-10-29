@@ -70,4 +70,5 @@ void reset_effects_buttons();
 
 /////////DUM-AUDIO//////////
 void on_dum_callback_clicked();
+void on_C_save_clicked();
 #endif
