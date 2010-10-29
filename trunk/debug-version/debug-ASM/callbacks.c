@@ -7,12 +7,24 @@ void on_dum_callback_clicked(){
 	srand(time(NULL));
 	distortionize(m_dist, dum_audio->dummy_buf, dum_audio->dummy_size); //la gran magia
 	reset_buf(dum_audio);	
-	int i;
+/*	int i;
 	for(i=0;i<dum_audio->dummy_size;i++){
 		if (i%4 == 0 && i!=0) printf("\nLinea %d:\n",i/4);
 		printf("\t%f,",dum_audio->dummy_buf[i]);
 	}
 	printf("\n");
+*/
+}
+
+void on_ASM_save_clicked(){
+	int i;
+	printf("==> Saving processed data into 'processed_stream_ASM'\n");
+	FILE *asm_save = fopen("processed_stream_ASM", "w");
+	for (i=0;i<dum_audio->dummy_size;i++){
+		fprintf(asm_save,"%f\n",dum_audio->dummy_buf[i]);
+	}
+	printf("==> Data saved\n");
+	fclose(asm_save);
 }
 
 		////////////////////////////////////////////
