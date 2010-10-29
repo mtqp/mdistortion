@@ -1,4 +1,5 @@
 
+#include <stdio.h>
 #include "callbacks.h"
 
 ///DUM AUDIO//
@@ -10,6 +11,16 @@ void on_dum_callback_clicked(){
 		printf("%f,",dum_audio->dummy_buf[i]);
 	}
 	printf("\n");*/
+}
+void on_C_save_clicked(){
+	int i;
+	printf("==> Saving processed data into 'processed_stream_C'\n");
+	FILE *c_save = fopen("processed_stream_C", "w");
+	for (i=0;i<dum_audio->dummy_size;i++){
+		fprintf(c_save,"%f\n",dum_audio->dummy_buf[i]);
+	}
+	printf("==> Data saved\n");
+	fclose(c_save);
 }
 
 		////////////////////////////////////////////
