@@ -49,7 +49,7 @@ hs_calcvol:
 	pxor 	xmm6,xmm6
 	pxor	xmm5,xmm5
 	movss 	xmm6,[%2]
-	movlhps xmm6,xmm6
+	movlhps xmm6,xmm6		;ESTO SE PUEDE REEMPLAZAR POR UPLOAD CTE
 	movdqu 	xmm5,xmm6
 	pslldq 	xmm5,4
 	addps 	xmm6,xmm5		;xmm6 = [d_cte,d_cte,d_cte,d_cte]
@@ -57,3 +57,15 @@ hs_calcvol:
 	mulps	xmm7,xmm6		;xmm7 = [cte*vol,cte*vol,cte*vol,cte*vol]
 ;----------------------------------------------
 %endmacro
+
+;carga en el 1er registro pasado como parametro la constante del tercer parametro. (utiliza un segundo registro xmmX provisorio)
+%macro upload_cte 3		;parametros : [regDST,regIntermedio,floatASetear]	('regIntermedio' se modificara)
+	pxor    %1,%1
+	pxor    %2,%2
+	movss   %1,[%3]		;%1=[0,0,0,cte]
+	movlhps %1,%1		;%1=[0,cte,0,cte]
+	movdqu  %2,%1		;%2=[0,cte,0,cte]
+	pslldq  %2,4		;%2=[cte,0,cte,0]
+	addps   %1,%2		;%1=[cte,cte,cte,cte]
+%endmacro
+

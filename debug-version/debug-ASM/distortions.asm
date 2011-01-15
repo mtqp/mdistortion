@@ -1,8 +1,5 @@
 ;aqui se declaran extern las funciones que se usen
-;extern hall
-
-%include "m_macros.asm"
-%include "effects.asm"
+extern hall_asm
 
 %define buf_out [ebp+8]
 %define md_ptr  [ebp+12]
@@ -10,19 +7,50 @@
 
 section .data
 	hs_cte : dd 1000.0
-	hs_vol_anterior : dd 1
+	_vol_anterior : dd 1
 
 section .text
 	global hell_sqr
 	global by_pass
 
-hell_sqr:
+%include "m_macros.asm"
 
+log_rock:			;log rock distortion function!
+	convencion_C
+	
+	necesito_calcular_vol md_ptr, _vol_anterior, 3, no_lrock_calcvol
+	
+	calcular_volumen _vol_anterior, hs_cte, 3 			
+;	void log_rock(float* out, m_distortion *mdc, int nframes){
+;	int i = 0;
+;	float vol = mdc->_vctes->log_rock_v+(mdc->_vctes->log_rock_v*mdc->_dvol);
+;	for(i;i<nframes;i++){
+;		out[i] = equalizer_effect(mdc,out[i],i);
+;		out[i] = delay_effect(mdc,out[i],i);
+;		out[i] = hall_effect(mdc,out[i],i);
+;		out[i]=vol*sin(cos(log(sin(log(out[i])))));
+;	}
+no_lrock_calcvol:
+	mov esi,nframes
+	mov ebx,md_ptr
+	mov edi,buf_out
+
+ciclo_lrock:
+	movdqu	xmm0,[edi]	;xmm0 = first 4 smps
+	;call eq
+	;call delay
+	;call hall
+		
+	
+	
+	convencion_C_fin
+
+hell_sqr:			;hell square distortion function!
 	convencion_C 
 
-	necesito_calcular_vol md_ptr, hs_vol_anterior, 3, no_hs_calcvol
+	necesito_calcular_vol md_ptr, _vol_anterior, 3, no_hs_calcvol
 	
-	calcular_volumen hs_vol_anterior, hs_cte, 3 
+	calcular_volumen _vol_anterior, hs_cte, 3 			
 	
 no_hs_calcvol:
 	mov esi,nframes ;contador ciclo
@@ -57,12 +85,10 @@ by_pass:
 ciclo_bp:
 	movdqu	xmm0,[edi]	;xmm0 = first 4 smps
 	
-	;HABRA Q PUSHEAR NFRAMES O LA DIFERENCIA NO SE
-	push esi			;push i
-	;push xmm0			;push [smp...smp+4]
-	push 	ebx			;push m_dist
+	push 	eax			;push i (offset)
+	push  	ebx			;push m_dist
 	;call 	hall_asm	;//esto ESTA LLAMANDO SIEMPRE A HALL EH!
-	call 	dummy_asm
+	;call 	dummy_asm
 	add 	esp,8		;recupero el sp de los push q hice
 
 	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm7[i%4];
@@ -71,12 +97,7 @@ ciclo_bp:
 	
 	add eax,4			;i += 4;
 	cmp eax,nframes		;¿i==nframes?
-	je fin_bp
-	jmp ciclo_bp
+	jne ciclo_bp
 	
 fin_bp:
-	pop ebx
-	pop esi
-	pop edi
-	pop ebp
-	ret
+	convencion_C_fin
