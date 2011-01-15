@@ -5,17 +5,19 @@ uiOBJS    = m_window.o callbacks.o m_user_interface.o
 JACK = `pkg-config --cflags --libs jack`
 GTK  = `pkg-config --cflags --libs gtk+-2.0 gmodule-2.0`
 MATH = -lm
-NASM = -g -f elf
+NASM = -f elf
+DEBUGNASM = -g
+DEBUGC = -ggdb
 CFLAGS = -Wall
 
 mdistor: main.c $(cOBJS) $(asmOBJS) $(uiOBJS) $(audioOBJS)
-	gcc -o m_distortion $(GTK) $(MATH) main.c $(cOBJS) $(asmOBJS) $(uiOBJS) $(audioOBJS)
+	gcc -o m_distortion $(DEBUGC) $(CFLAGS) $(GTK) $(MATH) main.c $(cOBJS) $(asmOBJS) $(uiOBJS) $(audioOBJS)
 
 %.o: %.c
-	gcc -c $< $(GTK) $(MATH)
+	gcc -c $< $(DEBUGC) $(CFLAGS) $(GTK) $(MATH)
 
 %.o : %.asm
-	nasm $(NASM) $< 
+	nasm $(DEBUGNASM) $(NASM) $< 
 
 clean:
 	rm -f m_distortion

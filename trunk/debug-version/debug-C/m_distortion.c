@@ -101,7 +101,8 @@ void log_rock(float* out, m_distortion *mdc, int nframes){
 		out[i] = equalizer_effect(mdc,out[i],i);
 		out[i] = delay_effect(mdc,out[i],i);
 		out[i] = hall_effect(mdc,out[i],i);
-		out[i]=vol*sin(cos(log(sin(log(out[i])))));
+//		out[i]=vol*sin(cos(log(sin(log(out[i])))));
+		out[i]=vol*sin(cos(1.0+log(sin(log(out[i]+1.0)))));
 	}
 }
 

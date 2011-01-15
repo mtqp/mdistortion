@@ -7,7 +7,7 @@
 typedef struct _m_hall {
 	int    hll_size_bufs;
 	float  hll_coef;
-	float  hll_buf_quantity;
+	int  hll_buf_quantity;		/*fijarse si esto no cambia nada!!!!!*/
 	float**hll_bufs;
 } m_hall;				//Estructura HALL
 

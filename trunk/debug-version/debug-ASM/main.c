@@ -28,8 +28,6 @@
 int main (int argc, char *argv[]) {
 	int buf_size = 4096;
 	
-	printf("quitar el nombre de rock en el programa\n");
-	
 	///////////////////////////////////////
 	//-------inicializar m dist----------//
 	///////////////////////////////////////

@@ -5,7 +5,7 @@
 ///DUM AUDIO//
 void on_dum_callback_clicked(){
 	distortionize(m_dist, dum_audio->dummy_buf, dum_audio->dummy_size); //la gran magia
-	reset_buf(dum_audio);	
+//	reset_buf(dum_audio);	
 	/*int i;
 	for(i=0;i<dum_audio->dummy_size;i++){
 		printf("%f,",dum_audio->dummy_buf[i]);

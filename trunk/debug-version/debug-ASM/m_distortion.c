@@ -39,6 +39,7 @@ void init_m_distortion(m_distortion * md){
 
 	distortion_channel  = f_dist[md->_last_dist_active]; 
 	printf("M_DISTORTION initialized\n\n");
+	
 }
 
 void free_m_distortion_and_effects(m_distortion *md){
@@ -94,7 +95,7 @@ void set_m_distortion( m_distortion * md, int dist){
   recibe por parámetro el buffer in, devolviendo el out en el
   mismo buffer
 */
-void log_rock(float* out, m_distortion *mdc, int nframes){
+/*void log_rock(float* out, m_distortion *mdc, int nframes){
 	int i = 0;
 	float vol = mdc->_vctes->log_rock_v+(mdc->_vctes->log_rock_v*mdc->_dvol);
 	for(i;i<nframes;i++){
@@ -103,7 +104,7 @@ void log_rock(float* out, m_distortion *mdc, int nframes){
 		out[i] = hall_effect(mdc,out[i],i);
 		out[i]=vol*sin(cos(log(sin(log(out[i])))));
 	}
-}
+}*/
 
 void log_rock2(float* out, m_distortion *mdc, int nframes){//
 	int i = 0;
