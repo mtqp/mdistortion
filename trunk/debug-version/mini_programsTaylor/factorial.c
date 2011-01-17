@@ -93,7 +93,7 @@ int main(int argc, char** argv){
 		//printf("ASMsin(%f)=%f \t\t|| sin(%f)=%f\n",ref[i],data[i],ref[i],dataSin[i]);
 		//printf("ASMcos(%f)=%f \t\t|| cos(%f)=%f\n",ref[i],data[i],ref[i],dataCos[i]);
 		//printf("ASMtan(%f)=%f\t|| tan(%f)=%f\n",ref[i],data[i],ref[i],dataTan[i]);
-		printf("asmLog(%f)=%f\t|| log(%f)=%f\n",ref[i],data[i],ref[i],dataLog[i]);
+		printf("asmLog(%f)=%f\t|| log(%f)=%f	||taylorlog=%f\n",ref[i],data[i],ref[i],dataLog[i],taylorLog(ref[i]));
 	}
 
 	return 0;
