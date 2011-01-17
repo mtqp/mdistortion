@@ -224,6 +224,7 @@ asmLog:
 ;////////	
 	movdqu	xmm3,xmm2
 	mulps	xmm3,xmm1	;xmm3 = (buf-1)^3[4]
+	movdqu	xmm2,xmm3
 	
 	mov		eax,tres
 	movdqu	xmm4,[eax]
@@ -233,7 +234,8 @@ asmLog:
 ;////////	
 	movdqu 	xmm3,xmm2
 	mulps	xmm3,xmm1	;xmm3 = (buf-1)^4[4]
-	
+	movdqu	xmm2,xmm3
+		
 	mov 	eax,cuatro
 	movdqu	xmm4,[eax]
 	divps	xmm3,xmm4	;xmm3 = (buf-1)^4/4[4]
@@ -242,6 +244,7 @@ asmLog:
 ;////////	
 	movdqu	xmm3,xmm2
 	mulps	xmm3,xmm1	;xmm3 = (buf-1)^5[5]
+	movdqu	xmm2,xmm3
 	
 	mov 	eax,cinco
 	movdqu	xmm4,[eax]
@@ -251,6 +254,7 @@ asmLog:
 ;////////	
 	movdqu	xmm3,xmm2
 	mulps	xmm3,xmm1	;xmm3 = (buf-1)^6[4]
+	movdqu	xmm2,xmm3
 	
 	mov		eax,seis
 	movdqu	xmm4,[eax]
@@ -261,6 +265,7 @@ asmLog:
 	
 	movdqu	xmm3,xmm2
 	mulps	xmm3,xmm1	;xmm3 = (buf-1)^7[4]
+	movdqu	xmm2,xmm3
 	
 	mov		eax,siete
 	movdqu	xmm4,[eax]
@@ -271,6 +276,7 @@ asmLog:
 	
 	movdqu	xmm3,xmm2
 	mulps	xmm3,xmm1	;xmm3 = (buf-1)^8[4]
+	movdqu	xmm2,xmm3
 	
 	mov		eax,ocho
 	movdqu	xmm4,[eax]
@@ -281,6 +287,7 @@ asmLog:
 
 	movdqu	xmm3,xmm2
 	mulps	xmm3,xmm1	;xmm3 = (buf-1)^9[4]
+	movdqu	xmm2,xmm3
 	
 	mov		eax,nueve
 	movdqu	xmm4,[eax]
