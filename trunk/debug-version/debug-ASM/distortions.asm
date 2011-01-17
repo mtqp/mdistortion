@@ -4,6 +4,8 @@ extern hall_asm
 %define buf_out [ebp+8]
 %define md_ptr  [ebp+12]
 %define nframes [ebp+16]
+%define buf		[ebp]
+%define i		[ebp-4]
 
 section .data
 	hs_cte : dd 1000.0
@@ -12,15 +14,25 @@ section .data
 section .text
 	global hell_sqr
 	global by_pass
+	global log_rock
 
 %include "m_macros.asm"
 
 log_rock:			;log rock distortion function!
-	convencion_C
+	convencion_C_mem 8
 	
-	necesito_calcular_vol md_ptr, _vol_anterior, 3, no_lrock_calcvol
+	mov	eax,buf_out
+	;mov ebx,buf
+	mov dword [ebp],eax 
+	mov ecx,33
+	mov dword [ebp-4],ecx
+	mov eax,buf
+	mov ecx,i
+
 	
-	calcular_volumen _vol_anterior, hs_cte, 3 			
+;	necesito_calcular_vol md_ptr, _vol_anterior, 3, no_lrock_calcvol
+;	calcular_volumen _vol_anterior, hs_cte, 3 			
+
 ;	void log_rock(float* out, m_distortion *mdc, int nframes){
 ;	int i = 0;
 ;	float vol = mdc->_vctes->log_rock_v+(mdc->_vctes->log_rock_v*mdc->_dvol);
@@ -43,7 +55,7 @@ ciclo_lrock:
 		
 	
 	
-	convencion_C_fin
+	convencion_C_fin_mem 8
 
 hell_sqr:			;hell square distortion function!
 	convencion_C 

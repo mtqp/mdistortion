@@ -44,7 +44,7 @@ typedef void (DISTORTION)(dummy_audio_buf out, m_distortion *mdc, dummy_audio_si
 
 extern DISTORTION log_rock;
 DISTORTION log_rock2;
-DISTORTION hell_sqr;
+extern DISTORTION hell_sqr;
 DISTORTION psychedelic_if;
 DISTORTION by_60s;
 DISTORTION fuzzy_dark_pow4;
