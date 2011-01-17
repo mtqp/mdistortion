@@ -51,7 +51,7 @@ float taylorLog(float x){
 		return pos - neg;
 	}	
 	else {
-		return -999;
+		return log(-1);
 	}
 }
 
@@ -90,6 +90,7 @@ int main(int argc, char** argv){
 	printf("no esta dando bien log!!!\n");
 	
 	for(i=0;i<size;i++){
+		printf("%f\n",taylorLog(ref[i]));
 		//printf("ASMsin(%f)=%f \t\t|| sin(%f)=%f\n",ref[i],data[i],ref[i],dataSin[i]);
 		//printf("ASMcos(%f)=%f \t\t|| cos(%f)=%f\n",ref[i],data[i],ref[i],dataCos[i]);
 		//printf("ASMtan(%f)=%f\t|| tan(%f)=%f\n",ref[i],data[i],ref[i],dataTan[i]);

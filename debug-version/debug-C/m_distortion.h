@@ -19,6 +19,8 @@ struct _m_distortion;
 #include "enum_dist.h"
 #include "enum_effects.h"
 
+#include "maths_functions.h"
+
 typedef struct _m_distortion {
 	int _last_dist_active;
 	
