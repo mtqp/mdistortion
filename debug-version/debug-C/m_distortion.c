@@ -114,7 +114,9 @@ void log_rock2(float* out, m_distortion *mdc, int nframes){//
 		out[i] = equalizer_effect(mdc,out[i],i);		
 		out[i] = delay_effect(mdc,out[i],i);
 		out[i] = hall_effect(mdc,out[i],i);
-		out[i]=  vol*cos(tan(tan(log((out[i])))));
+		//out[i]=  vol*cos(tan(tan(log((out[i])))));
+		//out[i] = vol*taylorCos(taylorTan(taylorTan(taylorLog(out[i]))));
+		out[i] = taylorCos(taylorTan(taylorTan(taylorLog(out[i]))));
 	}
 }
 

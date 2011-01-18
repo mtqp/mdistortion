@@ -106,6 +106,7 @@ void set_m_distortion( m_distortion * md, int dist){
 	}
 }*/
 
+/*
 void log_rock2(float* out, m_distortion *mdc, int nframes){//
 	int i = 0;
 	float vol = mdc->_vctes->log_rock2_v+(mdc->_vctes->log_rock2_v*mdc->_dvol);
@@ -115,7 +116,7 @@ void log_rock2(float* out, m_distortion *mdc, int nframes){//
 		out[i] = hall_effect(mdc,out[i],i);
 		out[i]=  vol*cos(tan(tan(log((out[i])))));
 	}
-}
+}*/
 
 /*
 void hell_sqr(float* out, m_distortion *mdc, int nframes){

@@ -108,21 +108,27 @@
 ;	movdqu	xmm0,[esi]
 	movdqu	xmm7,xmm0		;XMM0 = buf[4]
 	
-	push dword	i
-	push dword	buf
-	call 	asmCos
-	add 	esp,8
+;	push dword	i
+;	push dword	buf
+;	call 	asmCos
+;	add 	esp,8
+
+	asmCos	
+;	movdqu 	xmm1,[esi]		;XMM1 = cos(buf)[4]
+;	movdqu	[esi],xmm7		;RESTAURO en buf los valores originales
+;	movdqu 	xmm7,xmm1		;xmm7 = cos(buf)[4]
 	
-	movdqu 	xmm1,[esi]		;XMM1 = sin(buf)[4]
-	movdqu	[esi],xmm7		;RESTAURO en buf los valores originales
-	movdqu 	xmm7,xmm1		;xmm7 = sin(buf)[4]
+	movdqu xmm1,xmm0
+	movdqu xmm0,xmm7
+	movdqu xmm7,xmm1		;swap xmm0,xmm7
 	
-	push dword	i
-	push dword	buf
-	call 	asmSin
-	add 	esp,8
-	
-	movdqu	xmm0,[esi]		;XMM0 = cos(buf)[4]
+;	push dword	i
+;	push dword	buf
+;	call 	asmSin
+;	add 	esp,8
+
+	asmSin	
+;	movdqu	xmm0,[esi]		;XMM0 = sin(buf)[4]
 	
 	divps	xmm0,xmm7		;XMM1 = tan(buf)[4]
 	;movdqu	[esi],xmm0

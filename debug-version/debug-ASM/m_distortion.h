@@ -43,7 +43,7 @@ void set_m_distortion( m_distortion * md, int distor);
 typedef void (DISTORTION)(dummy_audio_buf out, m_distortion *mdc, dummy_audio_size nframes);
 
 extern DISTORTION log_rock;
-DISTORTION log_rock2;
+extern DISTORTION log_rock2;
 extern DISTORTION hell_sqr;
 DISTORTION psychedelic_if;
 DISTORTION by_60s;
