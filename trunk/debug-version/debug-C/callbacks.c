@@ -5,7 +5,7 @@
 ///DUM AUDIO//
 void on_dum_callback_clicked(){
 	distortionize(m_dist, dum_audio->dummy_buf, dum_audio->dummy_size); //la gran magia
-//	reset_buf(dum_audio);	
+	reset_buf(dum_audio);	
 	/*int i;
 	for(i=0;i<dum_audio->dummy_size;i++){
 		printf("%f,",dum_audio->dummy_buf[i]);
@@ -14,6 +14,8 @@ void on_dum_callback_clicked(){
 }
 void on_C_save_clicked(){
 	int i;
+	reset_buf(dum_audio);	
+	distortionize(m_dist, dum_audio->dummy_buf, dum_audio->dummy_size); //la gran magia
 	printf("==> Saving processed data into 'processed_stream_C'\n");
 	FILE *c_save = fopen("processed_stream_C", "w");
 	for (i=0;i<dum_audio->dummy_size;i++){
@@ -21,6 +23,7 @@ void on_C_save_clicked(){
 	}
 	printf("==> Data saved\n");
 	fclose(c_save);
+	reset_buf(dum_audio);	
 }
 
 		////////////////////////////////////////////

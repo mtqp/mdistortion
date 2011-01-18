@@ -1,15 +1,35 @@
 ;aqui se declaran extern las funciones que se usen
+
+
 extern hall_asm
 
 %define buf_out [ebp+8]
 %define md_ptr  [ebp+12]
 %define nframes [ebp+16]
-%define buf		[ebp]
-%define i		[ebp-4]
 
 section .data
 	hs_cte : dd 1000.0
 	_vol_anterior : dd 1
+;-------------para funciones matematicas -------------
+	;anda barbaro definirlas asi y subirlas... para asi evitar hacer el shuffle... es un poco mas 
+	;de mem por CREO YO mucha mas velocidad.
+	unoFact:	dd 1.0,1.0,1.0,1.0
+	dosFact: 	dd 2.0,2.0,2.0,2.0
+	tresFact: 	dd 6.0,6.0,6.0,6.0
+	cuatroFact:	dd 24.0,24.0,24.0,24.0
+	cincoFact:	dd 120.0,120.0,120.0,120.0
+	seisFact:	dd 720.0,720.0,720.0,720.0
+	sieteFact:	dd 5040.0,5040.0,5040.0,5040.0
+	ochoFact:	dd 40320.0,40320.0,40320.0,40320.0
+	nueveFact:  dd 362880.0,362880.0,362880.0,362880.0
+	tres:		dd 3.0,3.0,3.0,3.0
+	cuatro:		dd 4.0,4.0,4.0,4.0
+	cinco:		dd 5.0,5.0,5.0,5.0
+	seis:		dd 6.0,6.0,6.0,6.0
+	siete:		dd 7.0,7.0,7.0,7.0
+	ocho:		dd 8.0,8.0,8.0,8.0
+	nueve:		dd 9.0,9.0,9.0,9.0
+;-----------------------------------------------------
 
 section .text
 	global hell_sqr
@@ -17,31 +37,15 @@ section .text
 	global log_rock
 
 %include "m_macros.asm"
+%include "maths_functions.asm"
 
+;|||||||||||||||||||||||LOG-ROCK||||||||||||||||||||||||||||
 log_rock:			;log rock distortion function!
-	convencion_C_mem 8
-	
-	mov	eax,buf_out
-	;mov ebx,buf
-	mov dword [ebp],eax 
-	mov ecx,33
-	mov dword [ebp-4],ecx
-	mov eax,buf
-	mov ecx,i
+	convencion_C
 
-	
 ;	necesito_calcular_vol md_ptr, _vol_anterior, 3, no_lrock_calcvol
 ;	calcular_volumen _vol_anterior, hs_cte, 3 			
 
-;	void log_rock(float* out, m_distortion *mdc, int nframes){
-;	int i = 0;
-;	float vol = mdc->_vctes->log_rock_v+(mdc->_vctes->log_rock_v*mdc->_dvol);
-;	for(i;i<nframes;i++){
-;		out[i] = equalizer_effect(mdc,out[i],i);
-;		out[i] = delay_effect(mdc,out[i],i);
-;		out[i] = hall_effect(mdc,out[i],i);
-;		out[i]=vol*sin(cos(log(sin(log(out[i])))));
-;	}
 no_lrock_calcvol:
 	mov esi,nframes
 	mov ebx,md_ptr
@@ -52,11 +56,27 @@ ciclo_lrock:
 	;call eq
 	;call delay
 	;call hall
-		
-	
-	
-	convencion_C_fin_mem 8
 
+	asmLog
+	asmSin
+	asmLog
+	asmCos
+	asmSin
+	;multiply volume	
+
+	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm7[i%4];
+	
+	lea edi,[edi+16]	;out* += 4;
+	
+	sub esi,4			;n -= 4;
+	cmp esi,0			;¿n==0?
+	jne ciclo_lrock
+
+fin_lrock:	
+	convencion_C_fin
+;|||||||||||||||||||||||0000000000||||||||||||||||||||||||||||
+
+;!!!!!!!!!!!!!!!!!!!!!!!HELL-SQRT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 hell_sqr:			;hell square distortion function!
 	convencion_C 
 
@@ -84,8 +104,9 @@ ciclo_hs:
 	
 fin_hs:
 	convencion_C_fin
-	
-;-------------------------------
+;||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+;|||||||||||||||||||||||||BY-PASS||||||||||||||||||||||||||
 by_pass:
 	convencion_C
 
@@ -113,3 +134,4 @@ ciclo_bp:
 	
 fin_bp:
 	convencion_C_fin
+;||||||||||||||||||||||||||||||||||||||||||||||||||||||||||

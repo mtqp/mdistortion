@@ -2,6 +2,8 @@
 %define buf [ebp+8]
 %define i	[ebp+12]
 
+;precondicion, de xmm0 se toma el buffer y en xmm0 se deja el buffer
+
 section .data
 	;anda barbaro definirlas asi y subirlas... para asi evitar hacer el shuffle... es un poco mas 
 	;de mem por CREO YO mucha mas velocidad.
@@ -95,21 +97,21 @@ asmCos:
 	convencion_C
 	
 	mov 	eax,unoFact
-	movdqu	xmm0,[eax]		;XMM0 = 1.0[4]
+	movdqu	xmm1,[eax]		;XMM0 = 1.0[4]
 	
 	mov 	esi,buf
 	mov 	ebx,i
 	shl		ebx,2
 	add		esi,ebx
-	movdqu	xmm1,[esi]		;XMM1 = buf[i,...,i+3]
+	movdqu	xmm0,[esi]		;XMM1 = buf[i,...,i+3]
 	
-	mulps	xmm1,xmm1		;XMM1 = buf^2[i,...,i+3]
+	mulps	xmm0,xmm0		;XMM1 = buf^2[i,...,i+3]
 	
-	movdqu  xmm2,xmm1		;XMM2 = buf^2[4]
-	mulps	xmm2,xmm1		;XMM2 = buf^4[4]
+	movdqu  xmm2,xmm0		;XMM2 = buf^2[4]
+	mulps	xmm2,xmm0		;XMM2 = buf^4[4]
 	
 	movdqu	xmm3,xmm2		;XMM3 = buf^4[4]
-	mulps	xmm3,xmm1		;XMM3 = buf^6[4]
+	mulps	xmm3,xmm0		;XMM3 = buf^6[4]
 	
 	movdqu	xmm4,xmm2		;XMM4 = buf^4[4]
 	mulps	xmm4,xmm4		;XMM4 = buf^8[4]
@@ -117,7 +119,7 @@ asmCos:
 	mov 	eax,dosFact
 	movdqu	xmm5,[eax]
 	
-	divps	xmm1,xmm5		;XMM1 = buf^2/2![4]
+	divps	xmm0,xmm5		;XMM1 = buf^2/2![4]
 	
 	mov 	eax,cuatroFact
 	movdqu	xmm5,[eax]
@@ -134,10 +136,12 @@ asmCos:
 	
 	divps	xmm4,xmm5		;XMM4 = buf^8/8![4]	
 	
-	subps	xmm0,xmm1
-	addps	xmm0,xmm2
-	subps	xmm0,xmm3
-	addps	xmm0,xmm4
+	subps	xmm1,xmm0
+	addps	xmm1,xmm2
+	subps	xmm1,xmm3
+	addps	xmm1,xmm4
+	
+	movdqu	xmm0,xmm1
 	
 	movdqu 	[esi],xmm0
 	
@@ -150,11 +154,13 @@ asmTan:
 	mov 	ebx,i
 	shl		ebx,2
 	add		esi,ebx
-	movdqu	xmm7,[esi]		;XMM0 = buf[4]
+	
+	movdqu	xmm0,[esi]
+	movdqu	xmm7,xmm0		;XMM0 = buf[4]
 	
 	push dword	i
 	push dword	buf
-	call 	asmSin
+	call 	asmCos
 	add 	esp,8
 	
 	movdqu 	xmm1,[esi]		;XMM1 = sin(buf)[4]
@@ -163,14 +169,15 @@ asmTan:
 	
 	push dword	i
 	push dword	buf
-	call 	asmCos
+	call 	asmSin
 	add 	esp,8
 	
 	movdqu	xmm0,[esi]		;XMM0 = cos(buf)[4]
 	
-	divps	xmm7,xmm0		;XMM1 = tan(buf)[4]
+	divps	xmm0,xmm7		;XMM1 = tan(buf)[4]
 	
-	movdqu	[esi],xmm7
+;;	movdqu 	xmm0,xmm7		;si lo hago en el orden inverso gano esta instruccion, dsp perfeccionar
+	movdqu	[esi],xmm0
 	
 	convencion_C_fin
 
