@@ -47,7 +47,7 @@ extern DISTORTION log_rock2;
 extern DISTORTION hell_sqr;
 DISTORTION psychedelic_if;
 DISTORTION by_60s;
-DISTORTION fuzzy_dark_pow4;
+extern DISTORTION fuzzy_dark_pow4;
 DISTORTION rare_cuadratic;
 DISTORTION random_day;
 DISTORTION mute;

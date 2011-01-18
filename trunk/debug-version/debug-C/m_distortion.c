@@ -161,7 +161,8 @@ void fuzzy_dark_pow4(float* out, m_distortion *mdc, int nframes){
 	float vol = mdc->_vctes->fuzzy_dark_v+(mdc->_vctes->fuzzy_dark_v*mdc->_dvol);
 	for(i;i<nframes;i++){
 		out[i] = equalizer_effect(mdc,out[i],i);
-		out[i] = vol*(100000000.0*(-pow(out[i],4)));
+		//out[i] = vol*(100000000.0*(-pow(out[i],4)));
+		out[i] = (100000000.0*(-pow(out[i],4)));
 		out[i] = delay_effect(mdc,out[i],i);
 		out[i] = hall_effect(mdc,out[i],i);
 	}
