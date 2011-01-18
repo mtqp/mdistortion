@@ -76,11 +76,11 @@ int main(int argc, char** argv){
 	}
 
 	for(i=0;i<size;i+=4){
-		///*
+		/*
 			asmLog(data,i);
-	//	*/
+		*/
 	
-		//asmTan(data,i);
+		asmTan(data,i);
 		//		printf("AFTER = [%f,%f,%f,%f]\n",data[i],data[i+1],data[i+2],data[i+3]);
 		/*asmCos(data,i);
 		asmTan(data,i);
@@ -90,11 +90,10 @@ int main(int argc, char** argv){
 	printf("no esta dando bien log!!!\n");
 	
 	for(i=0;i<size;i++){
-		printf("%f\n",taylorLog(ref[i]));
 		//printf("ASMsin(%f)=%f \t\t|| sin(%f)=%f\n",ref[i],data[i],ref[i],dataSin[i]);
 		//printf("ASMcos(%f)=%f \t\t|| cos(%f)=%f\n",ref[i],data[i],ref[i],dataCos[i]);
-		//printf("ASMtan(%f)=%f\t|| tan(%f)=%f\n",ref[i],data[i],ref[i],dataTan[i]);
-		printf("asmLog(%f)=%f\t|| log(%f)=%f	||taylorlog=%f\n",ref[i],data[i],ref[i],dataLog[i],taylorLog(ref[i]));
+		printf("ASMtan(%f)=%f\t|| tan(%f)=%f\n",ref[i],data[i],ref[i],dataTan[i]);
+		//printf("asmLog(%f)=%f\t|| log(%f)=%f	||taylorlog=%f\n",ref[i],data[i],ref[i],dataLog[i],taylorLog(ref[i]));
 	}
 
 	return 0;
