@@ -35,6 +35,7 @@ section .text
 	global hell_sqr
 	global by_pass
 	global log_rock
+	global log_rock2
 
 %include "m_macros.asm"
 %include "maths_functions.asm"
@@ -75,6 +76,51 @@ ciclo_lrock:
 fin_lrock:	
 	convencion_C_fin
 ;|||||||||||||||||||||||0000000000||||||||||||||||||||||||||||
+
+;|||||||||||||||||||||||LOG-ROCK-II|||||||||||||||||||||||||||
+;void log_rock2(float* out, m_distortion *mdc, int nframes){//
+;	int i = 0;
+;	float vol = mdc->_vctes->log_rock2_v+(mdc->_vctes->log_rock2_v*mdc->_dvol);
+;	for(i;i<nframes;i++){
+;		out[i] = equalizer_effect(mdc,out[i],i);		
+;		out[i] = delay_effect(mdc,out[i],i);
+;		out[i] = hall_effect(mdc,out[i],i);
+;		out[i]=  vol*cos(tan(tan(log((out[i])))));
+;	}
+log_rock2:			;log rock II distortion function!
+	convencion_C
+
+;	necesito_calcular_vol md_ptr, _vol_anterior, 3, no_lrock_calcvol
+;	calcular_volumen _vol_anterior, hs_cte, 3 			
+
+no_lrock2_calcvol:
+	mov esi,nframes
+	mov ebx,md_ptr
+	mov edi,buf_out
+
+ciclo_lrock2:
+	movdqu	xmm0,[edi]	;xmm0 = first 4 smps
+	;call eq
+	;call delay
+	;call hall
+
+	asmLog
+	asmTan
+	asmTan
+	asmCos
+	;multiply volume	
+
+	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm7[i%4];
+	
+	lea edi,[edi+16]	;out* += 4;
+	
+	sub esi,4			;n -= 4;
+	cmp esi,0			;¿n==0?
+	jne ciclo_lrock2
+
+fin_lrock2:	
+	convencion_C_fin
+;|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 ;!!!!!!!!!!!!!!!!!!!!!!!HELL-SQRT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 hell_sqr:			;hell square distortion function!
