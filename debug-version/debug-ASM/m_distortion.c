@@ -154,6 +154,7 @@ void by_60s(float* out, m_distortion *mdc, int nframes){
 	}
 }
 
+/*
 void fuzzy_dark_pow4(float* out, m_distortion *mdc, int nframes){
 	int i = 0;
 	float vol = mdc->_vctes->fuzzy_dark_v+(mdc->_vctes->fuzzy_dark_v*mdc->_dvol);
@@ -163,8 +164,7 @@ void fuzzy_dark_pow4(float* out, m_distortion *mdc, int nframes){
 		out[i] = delay_effect(mdc,out[i],i);
 		out[i] = hall_effect(mdc,out[i],i);
 	}
-
-}
+}*/
 
 void rare_cuadratic(float* out, m_distortion *mdc, int nframes){
 	int i = 0;

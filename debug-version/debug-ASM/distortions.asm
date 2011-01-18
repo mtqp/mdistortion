@@ -29,6 +29,8 @@ section .data
 	siete:		dd 7.0,7.0,7.0,7.0
 	ocho:		dd 8.0,8.0,8.0,8.0
 	nueve:		dd 9.0,9.0,9.0,9.0
+	fdp4_cte:	dd 100000000.0,100000000.0,100000000.0,100000000.0
+	menosUno:	dd -1.0,-1.0,-1.0,-1.0
 ;-----------------------------------------------------
 
 section .text
@@ -36,6 +38,7 @@ section .text
 	global by_pass
 	global log_rock
 	global log_rock2
+	global fuzzy_dark_pow4
 
 %include "m_macros.asm"
 %include "maths_functions.asm"
@@ -78,15 +81,6 @@ fin_lrock:
 ;|||||||||||||||||||||||0000000000||||||||||||||||||||||||||||
 
 ;|||||||||||||||||||||||LOG-ROCK-II|||||||||||||||||||||||||||
-;void log_rock2(float* out, m_distortion *mdc, int nframes){//
-;	int i = 0;
-;	float vol = mdc->_vctes->log_rock2_v+(mdc->_vctes->log_rock2_v*mdc->_dvol);
-;	for(i;i<nframes;i++){
-;		out[i] = equalizer_effect(mdc,out[i],i);		
-;		out[i] = delay_effect(mdc,out[i],i);
-;		out[i] = hall_effect(mdc,out[i],i);
-;		out[i]=  vol*cos(tan(tan(log((out[i])))));
-;	}
 log_rock2:			;log rock II distortion function!
 	convencion_C
 
@@ -120,6 +114,50 @@ ciclo_lrock2:
 
 fin_lrock2:	
 	convencion_C_fin
+;|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+;||||||||||||||||||||FUZZYDARKPOW4||||||||||||||||||||||||||||
+fuzzy_dark_pow4:			;log rock II distortion function!
+	convencion_C
+
+;	necesito_calcular_vol md_ptr, _vol_anterior, 3, no_lrock_calcvol
+;	calcular_volumen _vol_anterior, hs_cte, 3 			
+
+no_fdp4_calcvol:
+	mov esi,nframes
+	mov ebx,md_ptr
+	mov edi,buf_out
+
+ciclo_fdp4:
+	movdqu	xmm0,[edi]	;xmm0 = first 4 smps
+
+	;call eq
+
+	mov		eax,fdp4_cte
+	mov 	ebx,menosUno
+	movdqu	xmm1,[eax]
+	movdqu	xmm2,[ebx]
+	
+	mulps	xmm0,xmm0	;XMM0 = BUF^2
+	mulps	xmm0,xmm0	;XMM0 = BUF^4
+	mulps	xmm0,xmm2	;xmm0 = -BUF^4
+	mulps	xmm0,xmm1	;xmm0 = (100000000.0*(-pow(out[i],4)))
+	
+	;multiply volume	
+	;call delay
+	;call hall
+
+	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm7[i%4];
+	
+	lea edi,[edi+16]	;out* += 4;
+	
+	sub esi,4			;n -= 4;
+	cmp esi,0			;¿n==0?
+	jne ciclo_fdp4	
+
+fin_fdp4:	
+	convencion_C_fin
+
 ;|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 ;!!!!!!!!!!!!!!!!!!!!!!!HELL-SQRT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
