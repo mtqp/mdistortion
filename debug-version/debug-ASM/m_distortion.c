@@ -143,6 +143,7 @@ void psychedelic_if(float* out, m_distortion *mdc, int nframes){
 	}
 }
 
+/*
 void by_60s(float* out, m_distortion *mdc, int nframes){
 	int i=0;
 	float vol = mdc->_vctes->by_60s_v+(mdc->_vctes->by_60s_v*mdc->_dvol);
@@ -152,7 +153,7 @@ void by_60s(float* out, m_distortion *mdc, int nframes){
 		out[i] = hall_effect(mdc,out[i],i);
 		out[i] = vol*(100.0 * out[i]);
 	}
-}
+}*/
 
 /*
 void fuzzy_dark_pow4(float* out, m_distortion *mdc, int nframes){
@@ -166,6 +167,7 @@ void fuzzy_dark_pow4(float* out, m_distortion *mdc, int nframes){
 	}
 }*/
 
+/*
 void rare_cuadratic(float* out, m_distortion *mdc, int nframes){
 	int i = 0;
 	float vol = mdc->_vctes->rare_c_v+(mdc->_vctes->rare_c_v*mdc->_dvol);
@@ -175,11 +177,10 @@ void rare_cuadratic(float* out, m_distortion *mdc, int nframes){
 		out[i] = hall_effect(mdc,out[i],i);
 		out[i] = vol*(11000.0*(pow(out[i],2)));
 	}
-}
+}*/
 
-void random_day(float* out, m_distortion *mdc, int nframes){
-	srand(time(NULL));
-	int mod2;
+/*void random_day(float* out, m_distortion *mdc, int nframes){
+	unsigned int mod2;
 	mod2 = rand()%7;
 	if(mod2 == 0) 			log_rock(out,mdc,nframes);
 	if(mod2 == 1)			log_rock2(out,mdc,nframes);
@@ -189,7 +190,7 @@ void random_day(float* out, m_distortion *mdc, int nframes){
 	if(mod2 == 5)			fuzzy_dark_pow4(out,mdc,nframes);
 	if(mod2 == 6)			rare_cuadratic(out,mdc,nframes);
 }	
-
+*/
 /*
 void by_pass(float* out, m_distortion *mdc, int nframes){
 	int i=0;
@@ -200,10 +201,11 @@ void by_pass(float* out, m_distortion *mdc, int nframes){
    	}
 }*/
 
+/*
 void mute(float* out, m_distortion *mdc, int nframes){
 	int i=0;
 	for(i;i<nframes;i++){
 		out[i] = 0.0;
 	}
-}
+}*/
 

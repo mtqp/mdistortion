@@ -48,10 +48,10 @@ extern DISTORTION hell_sqr;
 DISTORTION psychedelic_if;
 DISTORTION by_60s;
 extern DISTORTION fuzzy_dark_pow4;
-DISTORTION rare_cuadratic;
-DISTORTION random_day;
-DISTORTION mute;
-DISTORTION by_pass;
+extern DISTORTION rare_cuadratic;
+extern DISTORTION random_day;
+extern DISTORTION mute;
+extern DISTORTION by_pass;
 
 DISTORTION * f_dist[10];	
 DISTORTION * distortion_channel;
