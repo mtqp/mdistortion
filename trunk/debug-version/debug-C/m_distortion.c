@@ -176,13 +176,14 @@ void rare_cuadratic(float* out, m_distortion *mdc, int nframes){
 		out[i] = equalizer_effect(mdc,out[i],i);
 		out[i] = delay_effect(mdc,out[i],i);
 		out[i] = hall_effect(mdc,out[i],i);
-		out[i] = vol*(11000.0*(pow(out[i],2)));
+		//out[i] = vol*(11000.0*(pow(out[i],2)));
+		out[i] = (11000.0*(pow(out[i],2)));
 	}
 }
 
 void random_day(float* out, m_distortion *mdc, int nframes){
 	srand(time(NULL));
-	int mod2;
+	unsigned int mod2;
 	mod2 = rand()%7;
 	if(mod2 == 0) 			log_rock(out,mdc,nframes);
 	if(mod2 == 1)			log_rock2(out,mdc,nframes);
