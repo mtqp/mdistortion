@@ -127,7 +127,7 @@ void hell_sqr(float* out, m_distortion *mdc, int nframes){
 	}
 }*/
 
-
+/*
 void psychedelic_if(float* out, m_distortion *mdc, int nframes){
 	int i = 0;
 	float vol = mdc->_vctes->psyche_v+(mdc->_vctes->psyche_v*mdc->_dvol);
@@ -137,11 +137,12 @@ void psychedelic_if(float* out, m_distortion *mdc, int nframes){
 		out[i] = hall_effect(mdc,out[i],i);
 		if(i < nframes/3) {
 			out[i] = vol*(log(out[i])*10000.0)/5;
+			printf("-%d-",i);
 		} else {
 			out[i] = vol*sin(log(sin(out[i])));
 		}
 	}
-}
+}*/
 
 /*
 void by_60s(float* out, m_distortion *mdc, int nframes){

@@ -2,7 +2,6 @@
 
 %macro asmSin 0
 	;UTILIZA: xmm0,xmm1,xmm2,xmm3,xmm4,xmm5,eax
-;	movdqu	xmm0,[esi]	
 						;XMM0 = [buf[i],buf[i+1],buf[i+2],buf[i+3]] = POSITIVOS
 						;XMM1 = NEGATIVOS
 	movdqu  xmm3,xmm0	;XMM3 = [buf[i],buf[i+1],buf[i+2],buf[i+3]]	(NO se modifica)
@@ -51,15 +50,12 @@
 	addps	xmm0,xmm5	;XMM0 = (x + (x^5/5!) + (x^9/9!))[4] = POSITIVOS
 ;////////	
 	subps	xmm0,xmm1   ;XMM0 = POSITIVOS - NEGATIVOS
-;	movdqu  [esi],xmm0
 %endmacro
 
 %macro asmCos 0
 	;UTILIZA: eax,xmm0,xmm1,xmm2,xmm3,xmm4,xmm5
 	mov 	eax,unoFact
 	movdqu	xmm1,[eax]		;XMM1 = 1.0[4]
-	
-;	movdqu	xmm0,[esi]		
 							;XMM0 = buf[i,...,i+3]
 	
 	mulps	xmm0,xmm0		;XMM0 = buf^2[i,...,i+3]
@@ -99,19 +95,11 @@
 	addps	xmm1,xmm4
 	
 	movdqu	xmm0,xmm1
-	
-	;movdqu 	[esi],xmm0
 %endmacro
 
 %macro asmTan 0	
 	;los mismos q sin y cos mas xmm7
-;	movdqu	xmm0,[esi]
 	movdqu	xmm7,xmm0		;XMM0 = buf[4]
-	
-;	push dword	i
-;	push dword	buf
-;	call 	asmCos
-;	add 	esp,8
 
 	asmCos	
 ;	movdqu 	xmm1,[esi]		;XMM1 = cos(buf)[4]
@@ -122,17 +110,9 @@
 	movdqu xmm0,xmm7
 	movdqu xmm7,xmm1		;swap xmm0,xmm7
 	
-;	push dword	i
-;	push dword	buf
-;	call 	asmSin
-;	add 	esp,8
-
 	asmSin	
-;	movdqu	xmm0,[esi]		;XMM0 = sin(buf)[4]
 	
 	divps	xmm0,xmm7		;XMM1 = tan(buf)[4]
-	;movdqu	[esi],xmm0
-	;xmm7 = se utiliza para chequear si el valor debe ser nan o no (fijarse caso del cero)
 %endmacro
 
 %macro asmLog 0
@@ -142,7 +122,6 @@
 	;xmm3 calcula la nueva potencia y divide por la cte
 	;xmm4 guarda la cte
 	;eax  ayuda para levantar las ctes
-	;movdqu	xmm0,[esi]	
 						;XMM0 = buf[4]
 	pxor	xmm1,xmm1
 	cmpps	xmm1,xmm0,6	

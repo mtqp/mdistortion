@@ -87,3 +87,75 @@ hs_calcvol:
 	addps   %1,%2		;%1=[cte,cte,cte,cte]
 %endmacro
 
+;limpia de xmm0 tantos floats como numero haya en edx (esta entre 0 y 4)
+;usa xmm5 de registro auxiliar
+;utiliza busqueda binaria para hacer mas rapidos los calculos
+;se tuvo q crear xq pslldq no acepta un registro, sino un imm8
+;%macro mascara_y_limpiar
+;	pxor 	xmm5,xmm5
+;	cmpps	xmm5,xmm5,1	;xmm5 = [nan,nan,nan,nan]
+	
+;	cmp edx,2
+;	je	shdos
+;	jl	minordos
+;mayordos:
+;	cmp edx,3
+;	je	shtres
+;shcuatro:
+;	pxor xmm5,xmm5
+;	jmp 	shcero
+;minordos:
+;	cmp edx,0
+;	je shcero
+;shuno:
+;	pslldq,4
+;	pslrdq,4			;xmm5 = [0,nan,nan,nan]
+;	jmp shcero
+;shtres:
+;	pslrdq,4
+;	pslldq,4			;xmm5 = [nan,nan,nan,0]
+;	jmp shcero	
+;shdos: 	
+;	pslldq,8
+;	pslrdq,8
+;shcero:
+;%endmacro
+
+
+;limpia de xmm0 tantos floats como numero haya en edx (esta entre 0 y 4)
+;usa xmm5 de registro auxiliar
+;utiliza busqueda binaria para hacer mas rapidos los calculos
+;se tuvo q crear xq pslldq no acepta un registro, sino un imm8
+;optimizado para buffer de 4096 y uso en psychedelic if!!!
+%macro mascara_y_limpiar
+	pxor 	xmm5,xmm5
+	cmpps	xmm5,xmm5,1	;xmm5 = [nan,nan,nan,nan]
+	
+	cmp edx,1
+	jg	mayoruno
+	jl	shcero
+shuno:
+	pslldq,4
+	pslrdq,4			;xmm5 = [0,nan,nan,nan]
+	jmp shcero
+mayorduno:
+	cmp edx,3
+	je	shtres
+	jl	shdos
+shcuatro:
+	pxor xmm5,xmm5
+	jmp 	shcero
+shtres:
+	pslrdq,4
+	pslldq,4			;xmm5 = [nan,nan,nan,0]
+	jmp shcero	
+shdos: 	
+	pslldq,8
+	pslrdq,8			;xmm5 = [0,0,nan,nan]
+shcero:
+	pand	xmm0,xmm5
+	;LA HICE AL REVES, TENGO Q DEJARLO EN VEZ DE SACARLO1!!!
+
+%endmacro
+
+
