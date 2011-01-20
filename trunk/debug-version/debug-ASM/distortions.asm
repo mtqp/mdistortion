@@ -2,7 +2,6 @@
 
 extern rand		;funcion de C q retorna un numero aleatorio
 extern hall_asm
-extern psychedelic_if
 
 %define buf_out [ebp+8]
 %define md_ptr  [ebp+12]
@@ -34,6 +33,8 @@ section .data
 	fdp4_cte:	dd 100000000.0,100000000.0,100000000.0,100000000.0
 	rarecd_cte: dd 11000.0,11000.0,11000.0,11000.0
 	by60s_cte:	dd 100.0,100.0,100.0,100.0
+	psyif1a_cte:dd 10000.0,10000.0,10000.0,10000.0
+	psyif1b_cte:dd 5.0,5.0,5.0,5.0
 	
 ;-----------------------------------------------------
 
@@ -47,6 +48,7 @@ section .text
 	global rare_cuadratic
 	global mute
 	global random_day
+	global psychedelic_if
 
 %include "m_macros.asm"
 %include "maths_functions.asm"
@@ -381,4 +383,109 @@ fin_random_day:
 	add 	esp,12 	;restauro esp
 	
 	convencion_C_fin
+;||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+;||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+;void psychedelic_if(float* out, m_distortion *mdc, int nframes){
+;	int i = 0;
+;	float vol = mdc->_vctes->psyche_v+(mdc->_vctes->psyche_v*mdc->_dvol);
+;	for(i;i<nframes;i++){
+;		out[i] = equalizer_effect(mdc,out[i],i);		
+;		out[i] = delay_effect(mdc,out[i],i);
+;		out[i] = hall_effect(mdc,out[i],i);
+;		if(i < nframes/3) {
+;			out[i] = vol*(log(out[i])*10000.0)/5;
+;			printf("-%d-",i);
+;		} else {
+;			out[i] = vol*sin(log(sin(out[i])));
+psychedelic_if:			;psychedelic_if distortion function!
+	convencion_C
+
+;	necesito_calcular_vol md_ptr, _vol_anterior, 3, no_lrock_calcvol
+;	calcular_volumen _vol_anterior, hs_cte, 3 			
+
+no_psyif_calcvol:
+	mov esi,nframes
+	mov ebx,md_ptr
+	mov edi,buf_out
+
+	mov eax,esi
+	mov ecx,3
+	div ecx			;eax = nframes / 3
+	
+	mov edx,eax
+	sub	esi,edx		;esi = nframes - nframes/3
+	
+ciclo_psyif1:
+	movdqu	xmm0,[edi]	;xmm0 = first 4 smps
+
+	;call eq
+	;call delay
+	;call hall
+
+	asmLog
+
+	mov 	ecx,psyif1a_cte
+	movdqu 	xmm1,[ecx]
+	mov 	ecx,psyif1b_cte
+	movdqu 	xmm2,[ecx]
+	
+	mulps 	xmm0,xmm1
+	divps 	xmm0,xmm2
+
+	;multiply volume	
+	
+	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm0[i%4];
+	
+	lea edi,[edi+16]	;out* += 4;
+	
+	sub edx,4			;n -= 4;
+	cmp edx,4			;¿n>4?
+	jg  ciclo_psyif1	
+
+psyif_reg_medio:
+	;libres xmm5,xmm6,xmm7
+	asmLog
+	mov 	ecx,psyif1a_cte
+	movdqu 	xmm1,[ecx]
+	mov 	ecx,psyif1b_cte
+	movdqu 	xmm2,[ecx]
+	mulps 	xmm0,xmm1
+	divps 	xmm0,xmm2
+	;multiply volume
+
+	pxor	xmm5,xmm5
+	cmpps	xmm5,xmm5,1 ;xmm5 = [nan,nan,nan,nan] (todos unos)
+	
+	mov 	eax,edx
+	shl		eax,2		;cantidad de bytes q me tengo q mover para poner en cero todos los floats que deban procesarse
+	pslldq	xmm0,al			;NO SE PUEDEEEEE, HACER Q MACREARLO
+	;2⁵ = 32
+	
+	;add esi,edx			;los registros que faltan procesar
+	;aca hay q hacer el versito para procesar los del medio
+ciclo_psyif2:
+	movdqu	xmm0,[edi]	;xmm0 = first 4 smps
+
+	;call eq
+	;call delay
+	;call hall
+
+	asmSin
+	asmLog
+	asmSin
+
+	;multiply volume	
+	
+	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm0[i%4];
+	
+	lea edi,[edi+16]	;out* += 4;
+	
+	sub esi,4			;n -= 4;
+	cmp esi,0			;¿n==0?
+	jne ciclo_psyif2
+
+fin_psyif:	
+	convencion_C_fin
+
 ;||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
