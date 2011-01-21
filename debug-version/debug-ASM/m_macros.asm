@@ -127,35 +127,38 @@ hs_calcvol:
 ;utiliza busqueda binaria para hacer mas rapidos los calculos
 ;se tuvo q crear xq pslldq no acepta un registro, sino un imm8
 ;optimizado para buffer de 4096 y uso en psychedelic if!!!
-%macro mascara_y_limpiar
+%macro mascara_y_limpiar 1
 	pxor 	xmm5,xmm5
 	cmpps	xmm5,xmm5,1	;xmm5 = [nan,nan,nan,nan]
 	
 	cmp edx,1
 	jg	mayoruno
-	jl	shcero
-shuno:
+	jl	%1
+aaashuno:
 	pslldq,4
 	pslrdq,4			;xmm5 = [0,nan,nan,nan]
-	jmp shcero
-mayorduno:
+	jmp %1
+aaamayorduno:
 	cmp edx,3
 	je	shtres
 	jl	shdos
-shcuatro:
+aaashcuatro:
 	pxor xmm5,xmm5
-	jmp 	shcero
-shtres:
+	jmp  %1
+aaashtres:
 	pslrdq,4
 	pslldq,4			;xmm5 = [nan,nan,nan,0]
-	jmp shcero	
-shdos: 	
+	jmp %1	
+aaashdos: 	
 	pslldq,8
 	pslrdq,8			;xmm5 = [0,0,nan,nan]
-shcero:
+aaarightMask:
 	pand	xmm0,xmm5
-	;LA HICE AL REVES, TENGO Q DEJARLO EN VEZ DE SACARLO1!!!
-
+	jmp finMask
+aaaleftMask:
+	por		xmm0,xmm5	;xmm0 = [nro,nro,nan,nan]
+	pxor	xmm0,xmm5	;xmm0 = [nro,nro,0,0]
+aaafinMask:
 %endmacro
 
 
