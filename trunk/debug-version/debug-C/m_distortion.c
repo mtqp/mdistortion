@@ -138,9 +138,11 @@ void psychedelic_if(float* out, m_distortion *mdc, int nframes){
 		out[i] = delay_effect(mdc,out[i],i);
 		out[i] = hall_effect(mdc,out[i],i);
 		if(i < nframes/3) {
-			out[i] = vol*(log(out[i])*10000.0)/5;
+			//out[i] = vol*(log(out[i])*10000.0)/5;
+			out[i] = (taylorLog(out[i])*10000.0)/5;
 		} else {
-			out[i] = vol*sin(log(sin(out[i])));
+			//out[i] = vol*sin(log(sin(out[i])));
+			out[i] = taylorSin(taylorLog(taylorSin(out[i])));
 		}
 	}
 }

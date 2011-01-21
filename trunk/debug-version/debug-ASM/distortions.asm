@@ -411,10 +411,10 @@ no_psyif_calcvol:
 
 	mov eax,esi
 	mov ecx,3
+	xor edx,edx
 	div ecx			;eax = nframes / 3
 	
-	mov edx,eax
-	sub	esi,edx		;esi = nframes - nframes/3
+;	sub	esi,ecx		;esi = nframes - nframes/3
 	
 ciclo_psyif1:
 	movdqu	xmm0,[edi]	;xmm0 = first 4 smps
@@ -423,7 +423,9 @@ ciclo_psyif1:
 	;call delay
 	;call hall
 
+	push eax		;ESTOY CORTO DE REGISTROS ARREGLAR GOD DAMNINT!
 	asmLog
+	pop	 eax
 
 	mov 	ecx,psyif1a_cte
 	movdqu 	xmm1,[ecx]
@@ -439,12 +441,27 @@ ciclo_psyif1:
 	
 	lea edi,[edi+16]	;out* += 4;
 	
-	sub edx,4			;n -= 4;
-	cmp edx,4			;¿n>4?
+	sub	esi,4			;nframes -= 4
+	sub eax,4			;n -= 4;
+	cmp eax,4			;¿n>4?
 	jg  ciclo_psyif1	
 
 psyif_reg_medio:
+	movdqu xmm0,[edi]
+	movdqu xmm7,xmm0		;xmm7 = back(buf)
 	;libres xmm5,xmm6,xmm7
+	;call eq
+	;call delay
+	;call hall
+	asmSin
+	asmLog
+	asmSin
+	;multiply volume		;xmm0 = [b1,b2,b3,b4]
+
+	movdqu	xmm6,xmm0
+	movdqu	xmm0,xmm7
+	movdqu	xmm7,xmm6		;swap(xmm0,xmm7)
+	
 	asmLog
 	mov 	ecx,psyif1a_cte
 	movdqu 	xmm1,[ecx]
@@ -453,17 +470,61 @@ psyif_reg_medio:
 	mulps 	xmm0,xmm1
 	divps 	xmm0,xmm2
 	;multiply volume
+	
+							;xmm0 = 1era distor
+							;xmm7 = 2da distor				
+;---------------------------------------------------	
+	pxor 	xmm5,xmm5
+	cmpps	xmm5,xmm5,0	;xmm5 = [nan,nan,nan,nan]
+;	movdqu	xmm6,xmm5	;xmm6 = [nan,nan,nan,nan]
+	
+	cmp edx,1
+	jg	mayorduno
+	jl	cont_reg_medio
+shuno:						;1er float distor1, floats 2 3 y 4 distor 2
+	psrldq 	xmm5,4
+	pslldq 	xmm5,4			;xmm5 = [0,nan,nan,nan]
+	pand	xmm7,xmm5		;xmm7 = [0,buf,buf,buf]
+	
+	psrldq  xmm5,12			;xmm5 = [nan,0,0,0]
+	pand	xmm0,xmm5		;xmm0 = [buf,0,0,0]
+	
+	por		xmm0,xmm7		;xmm0 = [psy1(buf),psy2(buf),psy2(buf),psy2(buf)]
+	
+	jmp cont_reg_medio
+mayorduno:
+	cmp edx,3
+	je	shtres
+	jl	shdos
+shcuatro:					;--> era puramente distorsion tipo 2
+	movdqu	xmm7,xmm0	
+	jmp cont_reg_medio
+shtres:						;floats 1 2 3 distor1, float 4 distor 2
+	pslldq	xmm5,4
+	psrldq	xmm5,4			;xmm5 = [nan,nan,nan,0]
+	pand	xmm0,xmm5		;xmm0 = [psy1(buf),psy1(buf),psy1(buf),0]
 
-	pxor	xmm5,xmm5
-	cmpps	xmm5,xmm5,1 ;xmm5 = [nan,nan,nan,nan] (todos unos)
+	psrldq	xmm5,12
+	pand	xmm7,xmm5		;xmm7 = [0,0,0,psy2(buf)]
+
+	por 	xmm0,xmm7
+	jmp cont_reg_medio
+		
+shdos: 	
+	pslldq	xmm5,8
+	psrldq	xmm5,8			;xmm5 = [nan,nan,0,0]
+	pand	xmm0,xmm5		;xmm0 = [psy1(buf),psy1(buf),0,0]
+
+	pslldq	xmm5,8			;xmm5 = [0,0,nan,nan]
+	pand	xmm7,xmm5		;xmm7 = [0,0,psy2(buf),psy2(buf)]
 	
-	mov 	eax,edx
-	shl		eax,2		;cantidad de bytes q me tengo q mover para poner en cero todos los floats que deban procesarse
-	pslldq	xmm0,al			;NO SE PUEDEEEEE, HACER Q MACREARLO
-	;2⁵ = 32
+	por		xmm0,xmm7		;xmm0 = [psy1(buf),psy1(buf),psy2(buf),psy2(buf)]
+;---------------------------------------------------	
+cont_reg_medio:
+	movdqu 	[edi],xmm0
 	
-	;add esi,edx			;los registros que faltan procesar
-	;aca hay q hacer el versito para procesar los del medio
+	lea	edi,[edi+16]		;posiciono a siguiente buffer
+	sub esi,4
 ciclo_psyif2:
 	movdqu	xmm0,[edi]	;xmm0 = first 4 smps
 

@@ -23,7 +23,7 @@ void on_ASM_save_clicked(){
 	printf("==> Saving processed data into 'processed_stream_ASM'\n");
 	FILE *asm_save = fopen("processed_stream_ASM", "w");
 	for (i=0;i<dum_audio->dummy_size;i++){
-		fprintf(asm_save,"%f\n",dum_audio->dummy_buf[i]);
+		fprintf(asm_save,"linea %d = %f\n",i,dum_audio->dummy_buf[i]);
 	}
 	printf("==> Data saved\n");
 	fclose(asm_save);
