@@ -33,11 +33,21 @@
 %endmacro
 
 ;md=val1, distor_vol_anterior=val2, posicion_distor_vol=val_3, label_no_calc_vol=val4
-%macro necesito_calcular_vol 4
+%macro recalcular_vol 4
 	mov 	  ebx,%1				;estr
-	mov 	  eax,[%2]
+	mov dword eax,[%2]
 	cmp dword eax,[ebx+(%3*4-4)]	;¿¿vol_anterior == md->_dvol??
 	je  %4
+
+	pxor 	xmm6,xmm6
+	pxor	xmm5,xmm5
+	movss 	xmm6,[ebx+(%3*4-4)]
+	movlhps xmm6,xmm6		
+	movdqu 	xmm5,xmm6
+	pslldq 	xmm5,4
+	addps 	xmm6,xmm5		;xmm6 = [d_cte,d_cte,d_cte,d_cte]
+
+	;recalcularlo
 %endmacro
 
 ;distor_vol_anterior == val_1 ;distor_cte == val_2 ;posicion_distor_vol == val_3
@@ -45,7 +55,6 @@
 	mov 	  eax,[ebx+4]			;eax = md->_dvol
 	mov dword [%1],eax
 
-hs_calcvol:
 	pxor    xmm7,xmm7
 	pxor 	xmm6,xmm6
 
@@ -87,78 +96,5 @@ hs_calcvol:
 	addps   %1,%2		;%1=[cte,cte,cte,cte]
 %endmacro
 
-;limpia de xmm0 tantos floats como numero haya en edx (esta entre 0 y 4)
-;usa xmm5 de registro auxiliar
-;utiliza busqueda binaria para hacer mas rapidos los calculos
-;se tuvo q crear xq pslldq no acepta un registro, sino un imm8
-;%macro mascara_y_limpiar
-;	pxor 	xmm5,xmm5
-;	cmpps	xmm5,xmm5,1	;xmm5 = [nan,nan,nan,nan]
-	
-;	cmp edx,2
-;	je	shdos
-;	jl	minordos
-;mayordos:
-;	cmp edx,3
-;	je	shtres
-;shcuatro:
-;	pxor xmm5,xmm5
-;	jmp 	shcero
-;minordos:
-;	cmp edx,0
-;	je shcero
-;shuno:
-;	pslldq,4
-;	pslrdq,4			;xmm5 = [0,nan,nan,nan]
-;	jmp shcero
-;shtres:
-;	pslrdq,4
-;	pslldq,4			;xmm5 = [nan,nan,nan,0]
-;	jmp shcero	
-;shdos: 	
-;	pslldq,8
-;	pslrdq,8
-;shcero:
-;%endmacro
-
-
-;limpia de xmm0 tantos floats como numero haya en edx (esta entre 0 y 4)
-;usa xmm5 de registro auxiliar
-;utiliza busqueda binaria para hacer mas rapidos los calculos
-;se tuvo q crear xq pslldq no acepta un registro, sino un imm8
-;optimizado para buffer de 4096 y uso en psychedelic if!!!
-%macro mascara_y_limpiar 1
-	pxor 	xmm5,xmm5
-	cmpps	xmm5,xmm5,1	;xmm5 = [nan,nan,nan,nan]
-	
-	cmp edx,1
-	jg	mayoruno
-	jl	%1
-aaashuno:
-	pslldq,4
-	pslrdq,4			;xmm5 = [0,nan,nan,nan]
-	jmp %1
-aaamayorduno:
-	cmp edx,3
-	je	shtres
-	jl	shdos
-aaashcuatro:
-	pxor xmm5,xmm5
-	jmp  %1
-aaashtres:
-	pslrdq,4
-	pslldq,4			;xmm5 = [nan,nan,nan,0]
-	jmp %1	
-aaashdos: 	
-	pslldq,8
-	pslrdq,8			;xmm5 = [0,0,nan,nan]
-aaarightMask:
-	pand	xmm0,xmm5
-	jmp finMask
-aaaleftMask:
-	por		xmm0,xmm5	;xmm0 = [nro,nro,nan,nan]
-	pxor	xmm0,xmm5	;xmm0 = [nro,nro,0,0]
-aaafinMask:
-%endmacro
 
 
