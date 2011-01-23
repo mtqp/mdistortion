@@ -102,8 +102,8 @@ void log_rock(float* out, m_distortion *mdc, int nframes){
 		out[i] = delay_effect(mdc,out[i],i);
 		out[i] = hall_effect(mdc,out[i],i);
 //		out[i]=vol*sin(cos(log(sin(log(out[i])))));
-//		out[i] = vol*taylorSin(taylorCos(taylorLog(taylorSin(taylorLog(out[i])))));
-		out[i] = taylorSin(taylorCos(taylorLog(taylorSin(taylorLog(out[i])))));
+		out[i] = vol*taylorSin(taylorCos(taylorLog(taylorSin(taylorLog(out[i])))));
+		//out[i] = taylorSin(taylorCos(taylorLog(taylorSin(taylorLog(out[i])))));
 	}
 }
 
@@ -139,10 +139,10 @@ void psychedelic_if(float* out, m_distortion *mdc, int nframes){
 		out[i] = hall_effect(mdc,out[i],i);
 		if(i < nframes/3) {
 			//out[i] = vol*(log(out[i])*10000.0)/5;
-			out[i] = (taylorLog(out[i])*10000.0)/5;
+			out[i] = vol*(taylorLog(out[i])*10000.0)/5;
 		} else {
 			//out[i] = vol*sin(log(sin(out[i])));
-			out[i] = taylorSin(taylorLog(taylorSin(out[i])));
+			out[i] = vol*(taylorSin(taylorLog(taylorSin(out[i]))));
 		}
 	}
 }

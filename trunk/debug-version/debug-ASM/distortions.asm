@@ -8,8 +8,7 @@ extern hall_asm
 %define nframes [ebp+16]
 
 section .data
-	hs_cte : dd 1000.0
-	_vol_anterior : dd 1
+	_vol: dd 1.0,1.0,1.0,1.0
 ;-------------para funciones matematicas -------------
 	;anda barbaro definirlas asi y subirlas... para asi evitar hacer el shuffle... es un poco mas 
 	;de mem por CREO YO mucha mas velocidad.
@@ -30,12 +29,13 @@ section .data
 	siete:		dd 7.0,7.0,7.0,7.0
 	ocho:		dd 8.0,8.0,8.0,8.0
 	nueve:		dd 9.0,9.0,9.0,9.0
-	fdp4_cte:	dd 100000000.0,100000000.0,100000000.0,100000000.0
+;-----------------------------------------------------------------
+	fdp4_cte:	dd -100000000.0,-100000000.0,-100000000.0,-100000000.0
 	rarecd_cte: dd 11000.0,11000.0,11000.0,11000.0
 	by60s_cte:	dd 100.0,100.0,100.0,100.0
-	psyif1a_cte:dd 10000.0,10000.0,10000.0,10000.0
-	psyif1b_cte:dd 5.0,5.0,5.0,5.0
-	
+	psyif_cte:	dd -2000.0,-2000.0,-2000.0,-2000.0,
+	hs_cte: 	dd 1000.0,1000.0,1000.0,1000.0
+	;ctes de volumen levantarlas de la estructura!!
 ;-----------------------------------------------------
 
 section .text
@@ -53,12 +53,49 @@ section .text
 %include "m_macros.asm"
 %include "maths_functions.asm"
 
+;!!!!!!!!!!!!!!!!!!!!!!!HELL-SQRT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+hell_sqr:			;hell square distortion function!
+	convencion_C 
+
+;traigo el nuevo valor de volumen y lo cargo
+	recalcular_vol md_ptr, _vol, 3, no_hs_calcvol
+
+no_hs_calcvol:
+	mov esi,nframes ;contador ciclo
+	mov ebx,md_ptr
+	mov edi,buf_out	;buf_salida
+
+ciclo_hs:
+	movdqu	xmm0,[edi]	;xmm0 = first 4 smps
+	sqrtps	xmm0,xmm0	;xmm0 = [sqrt(out1),sqrt(out2),sqrt(out3),sqrt(out4)]
+	mov 	eax,hs_cte
+	movdqu 	xmm7,[eax]
+	mulps 	xmm0,xmm7	;xmm0 = first 4 res;
+
+;%%%%%%%%%%%%%%%%%%%%%%%% falta armar la recta!
+	mov		ebx,_vol
+	movdqu	xmm6,[ebx]
+	mulps	xmm0,xmm6	;xmm0 = vol*(cte*buf))
+	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm0[i%4];
+;%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	lea edi,[edi+16]	;out* += 4;
+	
+	sub esi,4			;n -= 4;
+	cmp esi,0			;¿n==0?
+	je fin_hs
+	jmp ciclo_hs
+	
+fin_hs:
+	convencion_C_fin
+;||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+
 ;|||||||||||||||||||||||LOG-ROCK||||||||||||||||||||||||||||
 log_rock:			;log rock distortion function!
 	convencion_C
 
-;	necesito_calcular_vol md_ptr, _vol_anterior, 3, no_lrock_calcvol
-;	calcular_volumen _vol_anterior, hs_cte, 3 			
+	recalcular_vol md_ptr, _vol, 3, no_lrock_calcvol
 
 no_lrock_calcvol:
 	mov esi,nframes
@@ -76,7 +113,13 @@ ciclo_lrock:
 	asmLog
 	asmCos
 	asmSin
-	;multiply volume	
+	
+;%%%%%%%%%%%%%%%%%%%%%%%%
+;	mulps	xmm0,xmm6	;[out[i]...out[i+4]] *= vol
+;	mov		eax,lrock_cte
+;	movdqu	xmm6,[eax]
+;	mulps	xmm0,xmm6	;[out[i]...out[i+4]] *= normalizacion cte volumen
+;%%%%%%%%%%%%%%%%%%%%%%%%
 
 	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm0[i%4];
 	
@@ -94,9 +137,8 @@ fin_lrock:
 log_rock2:			;log rock II distortion function!
 	convencion_C
 
-;	necesito_calcular_vol md_ptr, _vol_anterior, 3, no_lrock_calcvol
-;	calcular_volumen _vol_anterior, hs_cte, 3 			
-
+	recalcular_vol md_ptr, _vol, 3, no_lrock2_calcvol
+	
 no_lrock2_calcvol:
 	mov esi,nframes
 	mov ebx,md_ptr
@@ -112,7 +154,13 @@ ciclo_lrock2:
 	asmTan
 	asmTan
 	asmCos
-	;multiply volume	
+
+;%%%%%%%%%%%%%%%%%%%%%%%%
+;	mulps	xmm0,xmm6	;[out[i]...out[i+4]] *= vol
+;	mov		eax,lrock2_cte
+;	movdqu	xmm6,[eax]
+;	mulps	xmm0,xmm6	;[out[i]...out[i+4]] *= normalizacion cte volumen
+;%%%%%%%%%%%%%%%%%%%%%%%%
 
 	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm0[i%4];
 	
@@ -130,8 +178,7 @@ fin_lrock2:
 fuzzy_dark_pow4:			;fuzzy dark pow 4 distortion function!
 	convencion_C
 
-;	necesito_calcular_vol md_ptr, _vol_anterior, 3, no_lrock_calcvol
-;	calcular_volumen _vol_anterior, hs_cte, 3 			
+	recalcular_vol md_ptr, _vol, 3, no_lrock2_calcvol
 
 no_fdp4_calcvol:
 	mov esi,nframes
@@ -144,16 +191,20 @@ ciclo_fdp4:
 	;call eq
 
 	mov		eax,fdp4_cte
-	mov 	ebx,menosUno
+	;mov 	ebx,menosUno
 	movdqu	xmm1,[eax]
-	movdqu	xmm2,[ebx]
+	;movdqu	xmm2,[ebx]
 	
 	mulps	xmm0,xmm0	;XMM0 = BUF^2
 	mulps	xmm0,xmm0	;XMM0 = BUF^4
-	mulps	xmm0,xmm2	;xmm0 = -BUF^4
-	mulps	xmm0,xmm1	;xmm0 = (100000000.0*(-pow(out[i],4)))
-	
-	;multiply volume	
+	;mulps	xmm0,xmm2	;xmm0 = -BUF^4
+	mulps	xmm0,xmm1	;xmm0 = (100000000.0*(-pow(out[i],4))) = -(100000000.0*(pow(out[i],4)))
+
+;%%%%%%%%%%%%%%%%%%%%%%%%	
+	mov 	eax,_vol
+	movdqu 	xmm1,[eax]
+	mulps	xmm0,xmm1	;xmm0 = vol*buf
+;%%%%%%%%%%%%%%%%%%%%%%%%
 	;call delay
 	;call hall
 
@@ -170,42 +221,11 @@ fin_fdp4:
 
 ;|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-;!!!!!!!!!!!!!!!!!!!!!!!HELL-SQRT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-hell_sqr:			;hell square distortion function!
-	convencion_C 
-
-	necesito_calcular_vol md_ptr, _vol_anterior, 3, no_hs_calcvol
-	
-	calcular_volumen _vol_anterior, hs_cte, 3 			
-	
-no_hs_calcvol:
-	mov esi,nframes ;contador ciclo
-	mov ebx,md_ptr
-	mov edi,buf_out	;buf_salida
-
-ciclo_hs:
-	movdqu	xmm0,[edi]	;xmm0 = first 4 smps
-	sqrtps	xmm0,xmm0	;xmm0 = [sqrt(out1),sqrt(out2),sqrt(out3),sqrt(out4)]
-	mulps 	xmm0,xmm7	;xmm0 = first 4 res;
-	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm0[i%4];
-	
-	lea edi,[edi+16]	;out* += 4;
-	
-	sub esi,4			;n -= 4;
-	cmp esi,0			;¿n==0?
-	je fin_hs
-	jmp ciclo_hs
-	
-fin_hs:
-	convencion_C_fin
-;||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 ;|||||||||||||||||||RARE-CUADRATIC||||||||||||||||||||||||||
 rare_cuadratic:			;rare cuadratic distortion function!
 	convencion_C
-
-;	necesito_calcular_vol md_ptr, _vol_anterior, 3, no_lrock_calcvol
-;	calcular_volumen _vol_anterior, hs_cte, 3 			
+	recalcular_vol md_ptr, _vol, 3, no_rc_calcvol
 
 no_rc_calcvol:
 	mov esi,nframes
@@ -224,7 +244,12 @@ ciclo_rc:
 
 	mulps	xmm0,xmm0	;XMM0 = BUF^2
 	mulps	xmm0,xmm1	;xmm0 = (11000.0*(pow(out[i],2)));
-	;multiply volume	
+
+;%%%%%%%%%%%%%%%%%%%%%%%%
+	mov 	eax,_vol
+	movdqu	xmm2,[eax]
+	mulps	xmm0,xmm2	;xmm0 = vol * buf
+;%%%%%%%%%%%%%%%%%%%%%%%%
 
 	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm0[i%4];
 	
@@ -252,7 +277,7 @@ ciclo_bp:
 	
 	push 	eax			;push i (offset)
 	push  	ebx			;push m_dist
-	;call 	hall_asm	;//esto ESTA LLAMANDO SIEMPRE A HALL EH!
+	call 	hall_asm	;//esto ESTA LLAMANDO SIEMPRE A HALL EH!
 	;call 	dummy_asm
 	add 	esp,8		;recupero el sp de los push q hice
 
@@ -292,10 +317,8 @@ fin_mute:
 ;|||||||||||||||||||||BY60S||||||||||||||||||||||||||||||||
 by_60s:			;by_60s distortion function!
 	convencion_C
-
-;	necesito_calcular_vol md_ptr, _vol_anterior, 3, no_lrock_calcvol
-;	calcular_volumen _vol_anterior, hs_cte, 3 			
-
+	recalcular_vol md_ptr, _vol, 3, no_by60s_calcvol
+	
 no_by60s_calcvol:
 	mov esi,nframes
 	mov ebx,md_ptr
@@ -312,8 +335,11 @@ ciclo_by60s:
 	movdqu	xmm1,[eax]
 
 	mulps	xmm0,xmm1	;xmm0 = 100.0*out[i];
-	;multiply volume	
-
+;%%%%%%%%%%%%%%%%%%%%%%%%
+	mov		eax,_vol
+	movdqu	xmm2,[eax]
+	mulps	xmm0,xmm2	;xmm0 = vol * buf
+;%%%%%%%%%%%%%%%%%%%%%%%%
 	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm0[i%4];
 	
 	lea edi,[edi+16]	;out* += 4;
@@ -385,24 +411,11 @@ fin_random_day:
 	convencion_C_fin
 ;||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-;||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-;void psychedelic_if(float* out, m_distortion *mdc, int nframes){
-;	int i = 0;
-;	float vol = mdc->_vctes->psyche_v+(mdc->_vctes->psyche_v*mdc->_dvol);
-;	for(i;i<nframes;i++){
-;		out[i] = equalizer_effect(mdc,out[i],i);		
-;		out[i] = delay_effect(mdc,out[i],i);
-;		out[i] = hall_effect(mdc,out[i],i);
-;		if(i < nframes/3) {
-;			out[i] = vol*(log(out[i])*10000.0)/5;
-;			printf("-%d-",i);
-;		} else {
-;			out[i] = vol*sin(log(sin(out[i])));
+;||||||||||||||||||psychedelic - if||||||||||||||||||||||||
 psychedelic_if:			;psychedelic_if distortion function!
 	convencion_C
 
-;	necesito_calcular_vol md_ptr, _vol_anterior, 3, no_lrock_calcvol
-;	calcular_volumen _vol_anterior, hs_cte, 3 			
+	recalcular_vol md_ptr, _vol, 3, no_psyif_calcvol
 
 no_psyif_calcvol:
 	mov esi,nframes
@@ -427,16 +440,16 @@ ciclo_psyif1:
 	asmLog
 	pop	 eax
 
-	mov 	ecx,psyif1a_cte
+	mov 	ecx,psyif_cte
 	movdqu 	xmm1,[ecx]
-	mov 	ecx,psyif1b_cte
-	movdqu 	xmm2,[ecx]
-	
 	mulps 	xmm0,xmm1
-	divps 	xmm0,xmm2
-
-	;multiply volume	
 	
+;%%%%%%%%%%%%%%%%%%%%%%%%
+	mov		ecx,_vol
+	movdqu	xmm2,[ecx]
+	mulps	xmm0,xmm2
+;%%%%%%%%%%%%%%%%%%%%%%%%
+
 	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm0[i%4];
 	
 	lea edi,[edi+16]	;out* += 4;
@@ -456,27 +469,30 @@ psyif_reg_medio:
 	asmSin
 	asmLog
 	asmSin
-	;multiply volume		;xmm0 = [b1,b2,b3,b4]
+;%%%%%%%%%%%%%%%%%%%%%%%%
+	mov		ecx,_vol
+	movdqu	xmm1,[ecx]
+	mulps	xmm0,xmm1		;xmm0 = vol*buf
+;%%%%%%%%%%%%%%%%%%%%%%%%
+							;xmm0 = [b1,b2,b3,b4]
 
 	movdqu	xmm6,xmm0
 	movdqu	xmm0,xmm7
 	movdqu	xmm7,xmm6		;swap(xmm0,xmm7)
 	
 	asmLog
-	mov 	ecx,psyif1a_cte
+	mov 	ecx,psyif_cte
 	movdqu 	xmm1,[ecx]
-	mov 	ecx,psyif1b_cte
-	movdqu 	xmm2,[ecx]
 	mulps 	xmm0,xmm1
-	divps 	xmm0,xmm2
-	;multiply volume
+	mov		ecx,_vol
+	movdqu	xmm1,[ecx]
+	mulps	xmm0,xmm1		;xmm0 = vol * buf
 	
 							;xmm0 = 1era distor
 							;xmm7 = 2da distor				
 ;---------------------------------------------------	
 	pxor 	xmm5,xmm5
 	cmpps	xmm5,xmm5,0	;xmm5 = [nan,nan,nan,nan]
-;	movdqu	xmm6,xmm5	;xmm6 = [nan,nan,nan,nan]
 	
 	cmp edx,1
 	jg	mayorduno
@@ -536,8 +552,12 @@ ciclo_psyif2:
 	asmLog
 	asmSin
 
-	;multiply volume	
-	
+;%%%%%%%%%%%%%%%%%%%%%%%%
+	mov		ecx,_vol
+	movdqu	xmm1,[ecx]
+	mulps	xmm0,xmm1	;xmm0 = vol*buf
+;%%%%%%%%%%%%%%%%%%%%%%%%		
+
 	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm0[i%4];
 	
 	lea edi,[edi+16]	;out* += 4;
