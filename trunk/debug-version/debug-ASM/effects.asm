@@ -5,6 +5,7 @@ section .data
 
 section .text
 	global hall_asm
+	global delay_asm
 
 hall_asm:
 	%define md_ptr 	[ebp-20]		;PORQUE!!?!?!?!?!?!?!?!?!?!?!?!?!
@@ -52,4 +53,44 @@ ciclo_hl:
 
 dummy_asm:
 	ret
+	
+delay_asm:			;POR ALGUAN RAZON ESTOY APUNTANDO AL QUINOTO, ARREGLAR!
+	pushad
+;	convencion_C
+	
+	mov 	esi,md_ptr
+	mov 	edi,i
+	mov		esi,[esi+24]	;edx = delay*
+							;[esi+8] = cant_buf_active
+	xor		eax,eax
+	mov		edx,[esi+20]	;edx = float** dl_bufs	
+ciclo_delay:
+	mov		ecx,edx	
+	mov		ecx,[ecx+eax]
+	add		ecx,[esi+4]		;me posiciono en la matriz
 
+	movdqu	xmm1,[edx]		;xmm1 = matriz[i][j]	
+	movdqu	xmm2,xmm0		;xmm2 = smp
+
+	addps	xmm0,xmm1		;xmm0 += matriz[i][j]
+	
+	movdqu	[ecx],xmm2		;matriz[i][j] = smp
+
+	inc		eax				;itero por todos los buffers
+	cmp		eax,[esi+8]
+	jl		ciclo_delay
+	
+;//////////	md->_delay->dl_sub_i++;///////////
+	mov		eax,[esi+4]		;eax = dl_sub_i
+	shl		eax,2			;eax += 4
+
+	cmp		eax,[esi+16]	;¿¿dl_subi == dl_speed??
+	jne	fin_delay
+	mov		eax,0			;reset dl_sub_i
+	
+fin_delay:
+	mov	dword [esi+4],eax
+
+;	convencion_C_fin
+	popad
+	ret

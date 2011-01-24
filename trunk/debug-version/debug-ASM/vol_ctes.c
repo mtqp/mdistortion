@@ -6,6 +6,7 @@ vol_ctes* vol_new(){
 	vol_ctes* v = (vol_ctes*) malloc(sizeof(vol_ctes));
 	if(v!=NULL){
 		set_vol_ctes(v);
+		printf("vol * value = %d\n",(int) v);
 		return v;
 	} else {
 		printf("Couldn't malloc Volume Structure\n");

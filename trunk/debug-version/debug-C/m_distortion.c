@@ -102,7 +102,7 @@ void log_rock(float* out, m_distortion *mdc, int nframes){
 		out[i] = delay_effect(mdc,out[i],i);
 		out[i] = hall_effect(mdc,out[i],i);
 //		out[i]=vol*sin(cos(log(sin(log(out[i])))));
-		out[i] = vol*taylorSin(taylorCos(taylorLog(taylorSin(taylorLog(out[i])))));
+		out[i] = vol*(taylorSin(taylorCos(taylorLog(taylorSin(taylorLog(out[i]))))));
 		//out[i] = taylorSin(taylorCos(taylorLog(taylorSin(taylorLog(out[i])))));
 	}
 }
@@ -115,8 +115,8 @@ void log_rock2(float* out, m_distortion *mdc, int nframes){//
 		out[i] = delay_effect(mdc,out[i],i);
 		out[i] = hall_effect(mdc,out[i],i);
 		//out[i]=  vol*cos(tan(tan(log((out[i])))));
-		//out[i] = vol*taylorCos(taylorTan(taylorTan(taylorLog(out[i]))));
-		out[i] = taylorCos(taylorTan(taylorTan(taylorLog(out[i]))));
+		out[i] = vol*taylorCos(taylorTan(taylorTan(taylorLog(out[i]))));
+		//out[i] = taylorCos(taylorTan(taylorTan(taylorLog(out[i]))));
 	}
 }
 
@@ -161,10 +161,12 @@ void by_60s(float* out, m_distortion *mdc, int nframes){
 void fuzzy_dark_pow4(float* out, m_distortion *mdc, int nframes){
 	int i = 0;
 	float vol = mdc->_vctes->fuzzy_dark_v+(mdc->_vctes->fuzzy_dark_v*mdc->_dvol);
+	printf("%f\n",mdc->_dvol);
+	printf("volumn fdp4 %f\n",vol);
 	for(i;i<nframes;i++){
 		out[i] = equalizer_effect(mdc,out[i],i);
-		//out[i] = vol*(100000000.0*(-pow(out[i],4)));
-		out[i] = (100000000.0*(-pow(out[i],4)));
+		out[i] = vol*(100000000.0*(-pow(out[i],4)));
+		//out[i] = (100000000.0*(-pow(out[i],4)));
 		out[i] = delay_effect(mdc,out[i],i);
 		out[i] = hall_effect(mdc,out[i],i);
 	}
@@ -178,8 +180,8 @@ void rare_cuadratic(float* out, m_distortion *mdc, int nframes){
 		out[i] = equalizer_effect(mdc,out[i],i);
 		out[i] = delay_effect(mdc,out[i],i);
 		out[i] = hall_effect(mdc,out[i],i);
-		//out[i] = vol*(11000.0*(pow(out[i],2)));
-		out[i] = (11000.0*(pow(out[i],2)));
+		out[i] = vol*(11000.0*(pow(out[i],2)));
+		//out[i] = (11000.0*(pow(out[i],2)));
 	}
 }
 
