@@ -55,9 +55,14 @@ float delay_func(m_distortion *md, float smp, int i){
 		md->_delay->dl_bufs[j][md->_delay->dl_sub_i] = old_smp;
 	}
 	
+	//esto va como funcion aparte!//////////////////////////
+	///////////////////////////////////////////////////////
 	for(j=bufs_active;j<md->_delay->dl_total_bufs;j++){
 		md->_delay->dl_bufs[j][md->_delay->dl_sub_i] = 0.0;	
 	}
+	//////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////
+	//CUANDO SE RESETEE LA CANTIDAD DE DISTORS ANDANDO SE CLEANEE
 	//parche provisorio mandar cero (cambiar de 4 a 1 y de vuelta a 4)
 	//podria llegar a hacerse un memset... hay q ver si puedo mantener el real time y mejora la eficiencia
 	//para limpiar cuanod se cambia de velocidad tbm andaria un memset, pero no se si se justifica

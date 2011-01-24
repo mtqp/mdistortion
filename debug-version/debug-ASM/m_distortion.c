@@ -40,6 +40,7 @@ void init_m_distortion(m_distortion * md){
 	distortion_channel  = f_dist[md->_last_dist_active]; 
 	printf("M_DISTORTION initialized\n\n");
 	
+	printf("pos mem VOLUMEN ctes %d\n", md->_vctes);
 }
 
 void free_m_distortion_and_effects(m_distortion *md){
