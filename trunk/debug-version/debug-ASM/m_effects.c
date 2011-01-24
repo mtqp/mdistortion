@@ -56,7 +56,8 @@ float delay_func(m_distortion *md, float smp, int i){
 	}
 	
 	//esto va como funcion aparte!//////////////////////////
-	///////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////POR AHORA NO LO PUSE FIJARSE
+	/// SI ES ESTRICTAMENTE NECESARIO1!!!!!!
 	for(j=bufs_active;j<md->_delay->dl_total_bufs;j++){
 		md->_delay->dl_bufs[j][md->_delay->dl_sub_i] = 0.0;	
 	}
@@ -90,12 +91,6 @@ float hall_func(m_distortion *md, float smp, int i){
 	return smp;
 }
 
-/*
-	TODAVIA ESTO NO HACE NADA.
-*/
-float volume_func(m_distortion *md, float smp, int i){
-	return 0.0;//no creo poder tenerla en una funcion sepada xq las ctes son diferentes... ahh claro sisisi si puedo, para eso tengo la struct ctes!
-}
 
 /*
 	Función dummy que no modifica el sample, necesaria cuando

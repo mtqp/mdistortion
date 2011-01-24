@@ -14,7 +14,7 @@ typedef float (EFFECT) (struct _m_distortion *md, float sample, int i);
 EFFECT equalizer_func;
 EFFECT delay_func;
 EFFECT hall_func;
-EFFECT volume_func;
+//EFFECT volume_func;
 EFFECT dummy_func;
 
 EFFECT * f_effect[5];

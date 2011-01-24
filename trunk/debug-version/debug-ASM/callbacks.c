@@ -2,11 +2,13 @@
 #include "callbacks.h"
 #include <math.h>
 
+int blahbli = 1;
+
 ///DUM AUDIO//
 void on_dum_callback_clicked(){
-	srand(time(NULL));
 	distortionize(m_dist, dum_audio->dummy_buf, dum_audio->dummy_size); //la gran magia
-	reset_buf(dum_audio);	
+
+//	reset_buf(dum_audio);	
 /*	int i;
 	for(i=0;i<dum_audio->dummy_size;i++){
 		if (i%4 == 0 && i!=0) printf("\nLinea %d:\n",i/4);
@@ -17,8 +19,11 @@ void on_dum_callback_clicked(){
 }
 
 void on_ASM_save_clicked(){
+	printf("%d\n",blahbli);
+	blahbli++;
+
 	int i;
-	reset_buf(dum_audio);	
+//	reset_buf(dum_audio);	
 	distortionize(m_dist, dum_audio->dummy_buf, dum_audio->dummy_size); //la gran magia
 	printf("==> Saving processed data into 'processed_stream_ASM'\n");
 	FILE *asm_save = fopen("processed_stream_ASM", "w");
@@ -27,7 +32,7 @@ void on_ASM_save_clicked(){
 	}
 	printf("==> Data saved\n");
 	fclose(asm_save);
-	reset_buf(dum_audio);		
+//	reset_buf(dum_audio);		
 }
 
 		////////////////////////////////////////////
