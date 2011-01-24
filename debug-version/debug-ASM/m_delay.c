@@ -45,6 +45,7 @@ m_delay* delay_new (int size, int total){
 					}
 				}
 				printf("	Delay Effect Set\n");
+				printf("delay* = %d\n",(int) d);
 				return d;
 			}
 		}

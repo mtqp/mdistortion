@@ -34,7 +34,8 @@ http://www.smartelectronix.com/musicdsp/text/filters005.txt
 #endif
 
 typedef struct {
-	float a0, a1, a2, a3, a4;
+	float a0[4];
+	float a1, a2, a3, a4;
 	float x1, x2, y1, y2;
 	float _dbgain, _freq, _srate, _bandwidth;
 } m_equalizer;

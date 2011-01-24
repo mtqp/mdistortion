@@ -6,7 +6,7 @@ float equalize_sample(float sample, m_equalizer * eq){
 	float eq_sample;
 
 	/* Obtener sample ecualizada */
-	eq_sample = eq->a0 * sample + eq->a1 * eq->x1 + eq->a2 * eq->x2 - eq->a3 * eq->y1 - eq->a4 * eq->y2;
+	eq_sample = eq->a0[0] * sample + eq->a1 * eq->x1 + eq->a2 * eq->x2 - eq->a3 * eq->y1 - eq->a4 * eq->y2;
 
 	/* Recalcular history buffers */
 	eq->x2 = eq->x1;
@@ -103,7 +103,10 @@ m_equalizer *band_EQ_new(int type, float dbGain, float freq, float srate, float 
 	}
 
 	/* Coeficientes EQ */
-	eq->a0 = b0 /a0;
+	eq->a0[0] = b0 /a0;
+	eq->a0[1] = b0 /a0;
+	eq->a0[2] = b0 /a0;
+	eq->a0[3] = b0 /a0;
 	eq->a1 = b1 /a0;
 	eq->a2 = b2 /a0;
 	eq->a3 = a1 /a0;
@@ -155,11 +158,21 @@ void reset_eq_params(m_equalizer *eq, float bandwidth, int filter_type){
 	}
 
 	/* Coeficientes EQ */
-	eq->a0 = b0 /a0;
+	eq->a0[0] = b0 /a0;
+	eq->a0[1] = b0 /a0;
+	eq->a0[2] = b0 /a0;
+	eq->a0[3] = b0 /a0;
 	eq->a1 = b1 /a0;
 	eq->a2 = b2 /a0;
 	eq->a3 = a1 /a0;
 	eq->a4 = a2 /a0;
+
+//sacar esto dsp!!!
+	eq->x1 = 1.0;
+	eq->x2 = 2.0;
+	eq->y1 = 3.0;
+	eq->y2 = 4.0;
+/////////////////
 
 	eq->_bandwidth = bandwidth;
 }

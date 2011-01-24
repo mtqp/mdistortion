@@ -30,7 +30,7 @@ void init_m_distortion(m_distortion * md){
 	f_effect[e_equalizer]	= &equalizer_func;		//Almacena los function* a los distintos
 	f_effect[e_delay]		= &delay_func;			//tipos de efectos
 	f_effect[e_hall]		= &hall_func;
-	f_effect[e_volume]		= &volume_func;
+	//f_effect[e_volume]		= &volume_func;
 	f_effect[e_dummy]		= &dummy_func;
 
 	equalizer_effect = f_effect[e_dummy];
