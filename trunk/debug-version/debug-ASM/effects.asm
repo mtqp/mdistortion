@@ -102,10 +102,12 @@ fin_delay:
 	popad
 	ret
 ;////////////////////////////////////////
-eq_asm:			;fijarse si se puede evitar el pushad
+eq_asm2:			;fijarse si se puede evitar el pushad
 	%define eq_ptr [ebp-20]
 	pushad					;xmm0 = [smp0,smp1,smp2,smp3]
 	;convencion_C	
+	
+	;	eq_sample = eq->a0[0] * sample + eq->a1 * eq->x1 + eq->a2 * eq->x2 - eq->a3 * eq->y1 - eq->a4 * eq->y2;
 	
 	mov 	eax,eq_ptr
 	movdqu	xmm1,[eax]		;xmm1 = [a0,a0,a0,a0]
@@ -123,29 +125,310 @@ eq_asm:			;fijarse si se puede evitar el pushad
 	psrldq	xmm3,8			;xmm3 = [x1*a1+x2*a2,-y1*a3+(-y2*a4),0,0]
 	haddps	xmm3,xmm3		;xmm3 = [x1*a1+x2*a2+(-y1*a3)+(-y2*a4),0,0,0]
 	
-	mulps	xmm3,xmm1		;xmm3 = [eq_smp[0],0,0,0]
+	movss	xmm5,xmm1		;xmm5 = [a0*smp0,0,0,0]
+	addps	xmm3,xmm5		;xmm3 = [eq_smp[0],0,0,0]
+	movss	xmm0,xmm3		;xmm0 = [eqsmp[0],smp1,smp2,smp3]
 
 	movdqu	xmm5,[eax+32]	;xmm5 = [x1,x2,y1,y2]
-	;instruccion extra para ver si anda bien o no
-	addps	xmm5,xmm0
+	
 	pslldq	xmm5,4			;xmm5 = [0,x1,x2,y1]
 	pshufd	xmm6,xmm5,00100000b
 
-	movdqu	xmm6,xmm5
-	pslldq	xmm6,4			;xmm6 = [0,0,x1,x2]
-	psrldq	xmm6,12			;xmm6 = [x2,0,0,0]
-	pslldq	xmm6,12			;xmm6 = [0,0,x2,0]
+	pxor	xmm5,xmm6		;xmm5 = [0,x1,0,y1]
 	
-	pxor	xmm5,xmm6		;xmm5 = [0,x1,0,x2]
-		
-;/* Recalcular history buffers */
-;	eq->x2 = eq->x1;
-;	eq->x1 = sample;
-;	eq->y2 = eq->y1;
-;	eq->y1 = eq_sample;
+	movdqu	xmm7,xmm3		;xmm7 = [eqsmp[0],0,0,0]	
+	pslldq	xmm7,8			;xmm7 = [0,0,eq_sqmp[0],0]
+
+	movss	xmm7,xmm0
+	por 	xmm5,xmm7		;xmm5 = [smp,x1,eq_smp[0],y1] = [x1',x2',y1',y2']
+	
+	;falta hacer el return eqsmp!
+	
+;si se puede se puede obviar esta instruccion y mandarla solo al final
+;	movdqu	[eax+32],xmm5
+	movdqu	xmm3,xmm5		;xmm3 = [x1',x2',y1',y2']
+	mulps	xmm3,xmm2
+	mulps	xmm3,xmm4		;xmm3 = [x1'*a1,x2'*a2,-y1'*a3,-y2'*a4]
+
+	haddps	xmm3,xmm3		;xmm3 = [x1'*a1+x2'*a2,-y1'*a3+(-y2'*a4),x1'*a1+x2'*a2,-y1'*a3+(-y2'*a4)]
+	psrldq	xmm3,8			;xmm3 = [x1'*a1+x2'*a2,-y1'*a3+(-y2'*a4),0,0]
+	haddps	xmm3,xmm3		;xmm3 = [x1'*a1+x2'*a2+(-y1'*a3)+(-y2'*a4),0,0,0]
+	
+	movdqu	xmm7,xmm1		;xmm7 = [a0*smp0,a0*smp1,a0*smp2,a0*smp3] (puede ser una instruccion q mueva la quad baja)
+	psrldq	xmm7,4			;xmm7 = [a0*smp1,a0*smp2,a0*smp3,0]
+	pxor 	xmm6,xmm6
+	movss	xmm6,xmm7		;xmm6 = [a0*smp1,0,0,0]
+							
+	addps	xmm3,xmm6 		;xmm3 = [eqsmp[1],0,0,0]
+	pslldq	xmm3,4			;xmm3 = [0,eqmp[1],0,0]
+	movss	xmm3,xmm0		;xmm3 = [eqsmp[0],eqsmp[1],0,0]
+	movsd	xmm0,xmm3		;xmm0 = [eqsmp[0],eqsmp[1],smp2,smp3]
+	
+	pslldq	xmm5,4			;xmm5 = [0,x1',x2',y1']
+	pxor	xmm7,xmm7
+	pshufd	xmm7,xmm3,00100000b
+	
+	pxor	xmm5,xmm7		;xmm5 = [0,x1',0,y1']
+	
+	pslldq	xmm3,8			;xmm3 = [0,0,eqsmp[1],0]
+	
+	movdqu	xmm7,xmm0		;xmm7 = [smp0,smp1,smp2,smp3]
+	psrldq	xmm7,4			;xmm7 = [smp1,smp2,smp3,0]
+	movss	xmm3,xmm7		;xmm3 = [smp1,0,eqsmp[1],0]
+	
+	por		xmm5,xmm3		;xmm5 = [x1'',x2'',y1'',y2'']
+	movdqu	xmm3,xmm5
+	
+;xmm0 --> smps!
+;xmm1 --> a0*smp0,a0*smp1,a0*smp2,a0*smp3
+;xmm2 --> [a1,a2,a3,a4]
+;xmm3 --> x1'',x2'',y1'',y2''
+;xmm4 --> 1,1,-1,-1
+;xmm5,xmm6,xmm7 utilizables!
+
+	mulps	xmm3,xmm2
+	mulps	xmm3,xmm4		;xmm3 = [x1''*a1,x2''*a2,-y1''*a3,-y2''*a4]
+	
+	haddps	xmm3,xmm3		;xmm3 = [x1''*a1+x2''*a2,-y1''*a3+(-y2''*a4),x1''*a1+x2''*a2,-y1''*a3+(-y2''*a4)]
+	psrldq	xmm3,8			;xmm3 = [x1''*a1+x2''*a2,-y1''*a3+(-y2''*a4),0,0]
+	haddps	xmm3,xmm3		;xmm3 = [x1''*a1+x2''*a2+(-y1''*a3)+(-y2''*a4),0,0,0]
+	
+	movhlps	xmm7,xmm1		;xmm7 = [a0*smp2,a0*smp3,fruit,fruit]
+	mulps	xmm3,xmm7		;xmm3 = [eqsmp[2],0,0,0]
+	
+	pxor	xmm5,xmm5
+	movhlps	xmm5,xmm0		;xmm5 = [smp2,smp3,0,0]
+	movlhps	xmm7,xmm0		;xmm7 = [0,0,smp2,smp3]
+	pslldq 	xmm7,4
+	psrldq	xmm7,4			;xmm7 = [0,0,smp2,0]
+	pshufd	xmm7,xmm7,10010011b
+							;xmm7 = [smp2,0,0,0]
+	psrldq	xmm5,4
+	pslldq	xmm5,4			;xmm5 = [0,smp3,0,0]
+	movss	xmm6,xmm3
+
+	pslldq	xmm3,8			;xmm3 = [0,0,eqsmp[2],0]
+	por		xmm3,xmm7		;xmm3 = smp2,0,eqsmp[2],0]
+
+	por		xmm6,xmm5		;xmm6 = [eqsmp[2],smp3,0,0]
+	movlhps	xmm0,xmm6		;xmm0 = [eqsmp[0],eqsmp[1],eqsmp[2],smp3]
+	
 
 	
+		
+;/* Recalcular history buffers */
+;	eq->x1 = sample;
+;	eq->x2 = eq->x1;
+;	eq->y1 = eq_sample;
+;	eq->y2 = eq->y1;
+
+
+
+	;convencion_C_fin	
+	popad
+	ret
+
+
+eq_asm:			;hay registros sin utilizarse, todavia se puede mejorar mas!
+	pushad					;xmm0 = [smp0,smp1,smp2,smp3]
+	;convencion_C			;xmm1 = [a0*smp0,a0*smp1,a0*smp2,a0*smp3]
+							;xmm2 = [x1,x2,y1,y2]
+							;el resto son usables
+	
+	mov 	eax,eq_ptr
+	movdqu	xmm1,[eax]		;xmm1 = [a0,a0,a0,a0]
+	mulps	xmm1,xmm0		;xmm1 = [a0*smp0,a0*smp1,a0*smp2,a0*smp3]
+	movdqu	xmm2,[eax+32]	;xmm2 = [x1,x2,y1,y2]
+
+
+	movdqu	xmm3,[eax+16]	;xmm3 = [a1,a2,a3,a4]
+	mov		ebx,mask_eq
+	movdqu	xmm4,[ebx]		;xmm4 = [1,1,-1,-1]
+
+	mulps	xmm3,xmm2		;xmm3 = [a1*x1,a2*x2,a3*y1,a4*y2]
+	mulps	xmm3,xmm4		;xmm3 = [a1*x1,a2*x2,-a3*y1,-a4*y2]
+		;pisable xmm4
+	
+	haddps	xmm3,xmm3		;xmm3 = [x1*a1+x2*a2,-y1*a3+(-y2*a4),x1*a1+x2*a2,-y1*a3+(-y2*a4)]
+	psrldq	xmm3,8			;xmm3 = [x1*a1+x2*a2,-y1*a3+(-y2*a4),0,0]
+	haddps	xmm3,xmm3		;xmm3 = [x1*a1+x2*a2+(-y1*a3)+(-y2*a4),0,0,0] -->ojo q en [1] deja fruta!!!!! va a explotar todo asi
+;esto lo soluciona
+	movlhps	xmm3,xmm3
+	pslldq	xmm3,4
+	psrldq	xmm3,4
+	movhlps	xmm3,xmm3
+;esto lo soluciono
+	
+	pxor	xmm4,xmm4
+	movss	xmm4,xmm1		;xmm4 = [ao*smp,0,0,0]
+	addps	xmm3,xmm4		;xmm3 = [eqsmp[0],0,0,0]
+		;pisable xmm4
+	movss	xmm4,xmm0		;xmm4 = [smp,0,0,0]
+	movlhps xmm4,xmm3		;xmm4 = [smp,0,eqsmp[0],0]
+		;pisable xmm3
+	movss	xmm0,xmm4		;xmm0 = [eqsmp0,smp1,smp2,smp3]
+	
+	pslldq	xmm2,4			;xmm2 = [0,x1,x2,y1]
+	movhlps	xmm3,xmm2		;xmm3 = [x2,y1,0,0]
+	psrldq	xmm3,4
+	pslldq	xmm3,4			;xmm3 = [0,y1,0,0]
+	movlhps	xmm2,xmm3		;xmm2 = [0,x1,0,y1]
+		;pisable xmm3
+	por		xmm2,xmm4		;xmm2 = [x1',x2',y1',y2']
+		;pisable xmm4
+;------
+;------
+	movdqu	xmm3,[eax+16]	;xmm3 = [a1,a2,a3,a4]
+	mov		ebx,mask_eq
+	movdqu	xmm4,[ebx]		;xmm4 = [1,1,-1,-1]
+
+	mulps	xmm3,xmm2		;xmm3 = [a1*x1',a2*x2',a3*y1',a4*y2']
+	mulps	xmm3,xmm4		;xmm3 = [a1*x1',a2*x2',-a3*y1',-a4*y2']
+		;pisable xmm4
+
+	haddps	xmm3,xmm3		;xmm3 = [x1'*a1+x2'*a2,-y1'*a3+(-y2'*a4),x1'*a1+x2'*a2,-y1'*a3+(-y2'*a4)]
+	psrldq	xmm3,8			;xmm3 = [x1'*a1+x2'*a2,-y1'*a3+(-y2'*a4),0,0]
+	haddps	xmm3,xmm3		;xmm3 = [x1'*a1+x2'*a2+(-y1'*a3)+(-y2'*a4),0,0,0] -->ojo q en [1] deja fruta!!!!! va a explotar todo asi
+;esto lo soluciona
+	movlhps	xmm3,xmm3
+	pslldq	xmm3,4
+	psrldq	xmm3,4
+	movhlps	xmm3,xmm3
+;esto lo soluciono
+	
+	pxor	xmm4,xmm4
+	movsq	xmm4,xmm1
+	psrldq	xmm4,4			;xmm4 = [a0*smp2,0,0,0]
+	addps	xmm3,xmm4		;xmm3 = [eqsmp1,0,0,0]
+		;pisable xmm4
+	movsd	xmm4,xmm0		;xmm4 = [eqsmp1,smp1,0,0]
+	psrldq	xmm4,4
+	movlhps xmm4,xmm3		;xmm4 = [smp,0,eqsmp1,0]
+		;pisable xmm3
+	pslldq	xmm3,4			;xmm3 = [0,eqsmp2,0,0]
+	movlhps	xmm5,xmm0		;xmm5 = [X,X,eqsmp1,smp2]
+	movhlps	xmm5,xmm5		;xmm5 = [eqsmp1,smp2,eqsmp1,smp2]
+	movss	xmm3,xmm4		;xmm3 = [eqsmp1,eqsmp2,0,0]
+	movsd	xmm0,xmm3		;xmm0 = [eqsmp1,eqsmp2,smp3,smp4]
+		;pisable xmm3,xmm5
+	pslldq	xmm2,4			;xmm2 = [0,x1',x2',y1']
+	movhlps	xmm3,xmm2		;xmm3 = [x2',y1',0,0]
+	psrldq	xmm3,4
+	pslldq	xmm3,4			;xmm3 = [0,y1',0,0]
+	movlhps	xmm2,xmm3		;xmm2 = [0,x1',0,y1']
+		;pisable xmm3
+	por		xmm2,xmm4		;xmm2 = [x1'',x2'',y1'',y2'']
+		;pisable xmm4
+;------	
+;------
+	movdqu	xmm3,[eax+16]	;xmm3 = [a1,a2,a3,a4]
+	mov		ebx,mask_eq
+	movdqu	xmm4,[ebx]		;xmm4 = [1,1,-1,-1]
+
+	mulps	xmm3,xmm2		;xmm3 = [a1*x1'',a2*x2'',a3*y1'',a4*y2'']
+	mulps	xmm3,xmm4		;xmm3 = [a1*x1'',a2*x2'',-a3*y1'',-a4*y2'']
+		;pisable xmm4	
+
+	haddps	xmm3,xmm3		;xmm3 = [x1'*a1+x2'*a2,-y1'*a3+(-y2'*a4),x1'*a1+x2'*a2,-y1'*a3+(-y2'*a4)]
+	psrldq	xmm3,8			;xmm3 = [x1'*a1+x2'*a2,-y1'*a3+(-y2'*a4),0,0]
+	haddps	xmm3,xmm3		;xmm3 = [x1'*a1+x2'*a2+(-y1'*a3)+(-y2'*a4),0,0,0] -->ojo q en [1] deja fruta!!!!! va a explotar todo asi
+;esto lo soluciona
+	movlhps	xmm3,xmm3
+	pslldq	xmm3,4
+	psrldq	xmm3,4
+	movhlps	xmm3,xmm3
+;esto lo soluciono
+
+	pxor	xmm4,xmm4
+	movhlps	xmm4,xmm1		;xmm4 = [ao*smp2,a0*smp3,0,0]
+	movlhps	xmm4,xmm4
+	pslldq	xmm4,4
+	psrldq	xmm4,4
+	movhlps	xmm4,xmm4		;xmm4 = [a0*smp2,0,0,0]
+	addps	xmm3,xmm4		;xmm3 = [eqsmp2,0,0,0]
+		;pisable xmm4
+		
+	movhlps	xmm4,xmm0		;xmm4 = [smp2,smp3,0,0]
+	movlhps	xmm4,xmm4		;xmm4 = [smp2,smp3,smp2,smp3]
+	psrldq	xmm4,4
+	pslldq 	xmm4,4			;xmm4 = [0,smp3,smp2,smp3]
+	
+	por		xmm4,xmm3		;xmm4 = [eqsmp2,smp3,smp2,smp3]
+	movlhps	xmm0,xmm4		;xmm0 = [eqsmp0,eqsmp1,eqsmp2,smp3]
+	
+	movlhps	xmm3,xmm3		;xmm3 = [eqsmp2,0,eqsmp2,0]
+	psrldq	xmm3,4
+	pslldq	xmm3,4			;xmm3 = [0,0,eqsmp2,0]
+	
+	pslldq	xmm4,4
+	psrldq	xmm4,4
+	movhlps	xmm4,xmm4		;xmm4 = [smp2,0,smp2,0]
+	
+	movlhps	xmm4,xmm3		;xmm4 = [smp2,0,0,0]
+	
+	por 	xmm4,xmm3		;xmm4 = [smp2,0,eqsmp2,0]
+		;pisable xmm3
+	pslldq	xmm2,4			;xmm2 = [0,x1'',x2'',y1'']
+	movhlps	xmm3,xmm2		;xmm3 = [x2'',y1'',0,0]
+	psrldq	xmm3,4
+	pslldq	xmm3,4			;xmm3 = [0,y1'',0,0]
+	movlhps	xmm2,xmm3		;xmm2 = [0,x1'',0,y1'']
+		;pisable xmm3
+	por		xmm2,xmm4		;xmm2 = [x1''',x2''',y1''',y2''']
+;------
+;------
+	movdqu	xmm3,[eax+16]	;xmm3 = [a1,a2,a3,a4]
+	mov		ebx,mask_eq
+	movdqu	xmm4,[ebx]		;xmm4 = [1,1,-1,-1]
+
+	mulps	xmm3,xmm2		;xmm3 = [a1*x1''',a2*x2''',a3*y1''',a4*y2''']
+	mulps	xmm3,xmm4		;xmm3 = [a1*x1''',a2*x2''',-a3*y1''',-a4*y2''']
+		;pisable xmm4	
+	
+	haddps	xmm3,xmm3		;xmm3 = [x1'*a1+x2'*a2,-y1'*a3+(-y2'*a4),x1'*a1+x2'*a2,-y1'*a3+(-y2'*a4)]
+	psrldq	xmm3,8			;xmm3 = [x1'*a1+x2'*a2,-y1'*a3+(-y2'*a4),0,0]
+	haddps	xmm3,xmm3		;xmm3 = [x1'*a1+x2'*a2+(-y1'*a3)+(-y2'*a4),0,0,0] -->ojo q en [1] deja fruta!!!!! va a explotar todo asi
+;esto lo soluciona
+	movlhps	xmm3,xmm3
+	pslldq	xmm3,4
+	psrldq	xmm3,4
+	movhlps	xmm3,xmm3
+;esto lo soluciono
+
+	pxor	xmm4,xmm4
+	movhlps	xmm4,xmm1		;xmm4 = [ao*smp2,a0*smp3,0,0]
+	psrldq	xmm4,4			;xmm4 = [a0*smp3,0,0,0]
+	addps	xmm3,xmm4		;xmm3 = [eqsmp3,0,0,0]
+		;pisable xmm4
+		
+	movhlps	xmm4,xmm0		;xmm4 = [eqsmp2,smp3,0,0]
+	movlhps	xmm4,xmm4		;xmm4 = [eqsmp2,smp3,eqsmp2,smp3]
+	pslldq	xmm4,4
+	psrldq	xmm4,4			;xmm4 = [eqsmp2,smp3,eqsmp2,0]
+	movhlps	xmm4,xmm4		;xmm4 = [eqsmp2,0,eqsmp2,0]
+	
+	pslldq	xmm3,4			;xmm3 = [0,eqsmp3,0,0]
+	
+	por		xmm4,xmm3		;xmm4 = [eqsmp2,eqsmp2,eqsmp2,0]
+	movlhps	xmm0,xmm4		;xmm0 = [eqsmp0,eqsmp1,eqsmp2,eqsmp3]	=D
+	
+	pslldq	xmm3,4			;xmm3 = [0,0,eqsmp3,0]
+	
+	movlhps	xmm4,xmm3		;xmm4 = [eqsmp2,0,0,0]
+	por		xmm4,xmm3		;xmm4 = [eqsmp2,0,eqsmp3,0]
+			;pisable xmm3
+	pslldq	xmm2,4			;xmm2 = [0,x1''',x2'',y1''']
+	movhlps	xmm3,xmm2		;xmm3 = [x2''',y1''',0,0]
+	psrldq	xmm3,4
+	pslldq	xmm3,4			;xmm3 = [0,y1''',0,0]
+	movlhps	xmm2,xmm3		;xmm2 = [0,x1''',0,y1''']
+		;pisable xmm3
+	por		xmm2,xmm4		;xmm2 = [x1'''',x2'''',y1'''',y2'''']
+
+	movdqu	[eax+32],xmm2	;guardo los factores de vuelta en mem
+
 	;convencion_C_fin	
 	popad
 	ret
 	
+
