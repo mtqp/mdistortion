@@ -167,13 +167,6 @@ void reset_eq_params(m_equalizer *eq, float bandwidth, int filter_type){
 	eq->a3 = a1 /a0;
 	eq->a4 = a2 /a0;
 
-//sacar esto dsp!!!
-	eq->x1 = 1.0;
-	eq->x2 = 2.0;
-	eq->y1 = 3.0;
-	eq->y2 = 4.0;
-/////////////////
-
 	eq->_bandwidth = bandwidth;
 }
 

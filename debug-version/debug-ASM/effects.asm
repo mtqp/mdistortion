@@ -257,17 +257,24 @@ eq_asm:			;hay registros sin utilizarse, todavia se puede mejorar mas!
 	pslldq	xmm3,4
 	psrldq	xmm3,4
 	movhlps	xmm3,xmm3
+	pxor	xmm7,xmm7
+	movlhps	xmm3,xmm7
 ;esto lo soluciono
 	
 	pxor	xmm4,xmm4
 	movss	xmm4,xmm1		;xmm4 = [ao*smp,0,0,0]
 	addps	xmm3,xmm4		;xmm3 = [eqsmp[0],0,0,0]
+	
 		;pisable xmm4
 	movss	xmm4,xmm0		;xmm4 = [smp,0,0,0]
 	movlhps xmm4,xmm3		;xmm4 = [smp,0,eqsmp[0],0]
 		;pisable xmm3
-	movss	xmm0,xmm4		;xmm0 = [eqsmp0,smp1,smp2,smp3]
+	pxor 	xmm7,xmm7
+	movhlps	xmm7,xmm4
+	movss	xmm0,xmm7
 	
+;	movss	xmm0,xmm4		;xmm0 = [eqsmp0,smp1,smp2,smp3]
+		
 	pslldq	xmm2,4			;xmm2 = [0,x1,x2,y1]
 	movhlps	xmm3,xmm2		;xmm3 = [x2,y1,0,0]
 	psrldq	xmm3,4
@@ -278,6 +285,7 @@ eq_asm:			;hay registros sin utilizarse, todavia se puede mejorar mas!
 		;pisable xmm4
 ;------
 ;------
+eqb:
 	movdqu	xmm3,[eax+16]	;xmm3 = [a1,a2,a3,a4]
 	mov		ebx,mask_eq
 	movdqu	xmm4,[ebx]		;xmm4 = [1,1,-1,-1]
@@ -294,21 +302,24 @@ eq_asm:			;hay registros sin utilizarse, todavia se puede mejorar mas!
 	pslldq	xmm3,4
 	psrldq	xmm3,4
 	movhlps	xmm3,xmm3
+	pxor	xmm7,xmm7
+	movlhps	xmm3,xmm7
 ;esto lo soluciono
 	
 	pxor	xmm4,xmm4
-	movsq	xmm4,xmm1
+	movsd	xmm4,xmm1
 	psrldq	xmm4,4			;xmm4 = [a0*smp2,0,0,0]
-	addps	xmm3,xmm4		;xmm3 = [eqsmp1,0,0,0]
+	addps	xmm3,xmm4		;xmm3 = [eqsmp2,0,0,0]
 		;pisable xmm4
-	movsd	xmm4,xmm0		;xmm4 = [eqsmp1,smp1,0,0]
+shit:
+	movsd	xmm4,xmm0		;xmm4 = [eqsmp1,smp2,0,0]
 	psrldq	xmm4,4
-	movlhps xmm4,xmm3		;xmm4 = [smp,0,eqsmp1,0]
+	movlhps xmm4,xmm3		;xmm4 = [smp,0,eqsmp2,0]
 		;pisable xmm3
 	pslldq	xmm3,4			;xmm3 = [0,eqsmp2,0,0]
 	movlhps	xmm5,xmm0		;xmm5 = [X,X,eqsmp1,smp2]
 	movhlps	xmm5,xmm5		;xmm5 = [eqsmp1,smp2,eqsmp1,smp2]
-	movss	xmm3,xmm4		;xmm3 = [eqsmp1,eqsmp2,0,0]
+	movss	xmm3,xmm5		;xmm3 = [eqsmp1,eqsmp2,0,0]
 	movsd	xmm0,xmm3		;xmm0 = [eqsmp1,eqsmp2,smp3,smp4]
 		;pisable xmm3,xmm5
 	pslldq	xmm2,4			;xmm2 = [0,x1',x2',y1']
@@ -321,6 +332,7 @@ eq_asm:			;hay registros sin utilizarse, todavia se puede mejorar mas!
 		;pisable xmm4
 ;------	
 ;------
+eqc:
 	movdqu	xmm3,[eax+16]	;xmm3 = [a1,a2,a3,a4]
 	mov		ebx,mask_eq
 	movdqu	xmm4,[ebx]		;xmm4 = [1,1,-1,-1]
@@ -337,6 +349,8 @@ eq_asm:			;hay registros sin utilizarse, todavia se puede mejorar mas!
 	pslldq	xmm3,4
 	psrldq	xmm3,4
 	movhlps	xmm3,xmm3
+	pxor	xmm7,xmm7
+	movlhps	xmm3,xmm7
 ;esto lo soluciono
 
 	pxor	xmm4,xmm4
@@ -344,7 +358,9 @@ eq_asm:			;hay registros sin utilizarse, todavia se puede mejorar mas!
 	movlhps	xmm4,xmm4
 	pslldq	xmm4,4
 	psrldq	xmm4,4
-	movhlps	xmm4,xmm4		;xmm4 = [a0*smp2,0,0,0]
+	movhlps	xmm4,xmm4		;xmm4 = [a0*smp2,0,a0*smp2,0]
+	pxor 	xmm7,xmm7		
+	movlhps	xmm4,xmm7		;xmm4 = [a0*smp2,0,0,0]
 	addps	xmm3,xmm4		;xmm3 = [eqsmp2,0,0,0]
 		;pisable xmm4
 		
@@ -364,19 +380,20 @@ eq_asm:			;hay registros sin utilizarse, todavia se puede mejorar mas!
 	psrldq	xmm4,4
 	movhlps	xmm4,xmm4		;xmm4 = [smp2,0,smp2,0]
 	
-	movlhps	xmm4,xmm3		;xmm4 = [smp2,0,0,0]
+	movlhps	xmm4,xmm7		;xmm4 = [smp2,0,0,0]
 	
 	por 	xmm4,xmm3		;xmm4 = [smp2,0,eqsmp2,0]
 		;pisable xmm3
 	pslldq	xmm2,4			;xmm2 = [0,x1'',x2'',y1'']
-	movhlps	xmm3,xmm2		;xmm3 = [x2'',y1'',0,0]
+	movhlps	xmm3,xmm2		;xmm3 = [x2'',y1'',fruit,0]
 	psrldq	xmm3,4
-	pslldq	xmm3,4			;xmm3 = [0,y1'',0,0]
+	pslldq	xmm3,4			;xmm3 = [0,y1'',fruit,0]
 	movlhps	xmm2,xmm3		;xmm2 = [0,x1'',0,y1'']
 		;pisable xmm3
 	por		xmm2,xmm4		;xmm2 = [x1''',x2''',y1''',y2''']
 ;------
 ;------
+eqd:
 	movdqu	xmm3,[eax+16]	;xmm3 = [a1,a2,a3,a4]
 	mov		ebx,mask_eq
 	movdqu	xmm4,[ebx]		;xmm4 = [1,1,-1,-1]
@@ -393,31 +410,40 @@ eq_asm:			;hay registros sin utilizarse, todavia se puede mejorar mas!
 	pslldq	xmm3,4
 	psrldq	xmm3,4
 	movhlps	xmm3,xmm3
+	pxor	xmm7,xmm7
+	movlhps	xmm3,xmm7
 ;esto lo soluciono
 
 	pxor	xmm4,xmm4
 	movhlps	xmm4,xmm1		;xmm4 = [ao*smp2,a0*smp3,0,0]
 	psrldq	xmm4,4			;xmm4 = [a0*smp3,0,0,0]
 	addps	xmm3,xmm4		;xmm3 = [eqsmp3,0,0,0]
+
 		;pisable xmm4
 		
 	movhlps	xmm4,xmm0		;xmm4 = [eqsmp2,smp3,0,0]
 	movlhps	xmm4,xmm4		;xmm4 = [eqsmp2,smp3,eqsmp2,smp3]
+	movdqu	xmm6,xmm4		;xmm6 = [eqsmp2,smp3,eqsmp2,smp3]
 	pslldq	xmm4,4
 	psrldq	xmm4,4			;xmm4 = [eqsmp2,smp3,eqsmp2,0]
 	movhlps	xmm4,xmm4		;xmm4 = [eqsmp2,0,eqsmp2,0]
 	
 	pslldq	xmm3,4			;xmm3 = [0,eqsmp3,0,0]
 	
-	por		xmm4,xmm3		;xmm4 = [eqsmp2,eqsmp2,eqsmp2,0]
+	por		xmm4,xmm3		;xmm4 = [eqsmp2,eqsmp3,eqsmp2,0]
 	movlhps	xmm0,xmm4		;xmm0 = [eqsmp0,eqsmp1,eqsmp2,eqsmp3]	=D
 	
 	pslldq	xmm3,4			;xmm3 = [0,0,eqsmp3,0]
-	
-	movlhps	xmm4,xmm3		;xmm4 = [eqsmp2,0,0,0]
-	por		xmm4,xmm3		;xmm4 = [eqsmp2,0,eqsmp3,0]
+
+fuck:
+	psrldq  xmm6,4
+	movhlps	xmm4,xmm6		;xmm4 = [smp3,0,0,0]
+	pxor	xmm7,xmm7
+	movlhps	xmm4,xmm7
+	por		xmm4,xmm3		;xmm4 = [smp3,0,eqsmp3,0]
 			;pisable xmm3
 	pslldq	xmm2,4			;xmm2 = [0,x1''',x2'',y1''']
+	pxor	xmm3,xmm3
 	movhlps	xmm3,xmm2		;xmm3 = [x2''',y1''',0,0]
 	psrldq	xmm3,4
 	pslldq	xmm3,4			;xmm3 = [0,y1''',0,0]
