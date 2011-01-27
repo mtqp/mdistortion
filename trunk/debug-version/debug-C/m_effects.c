@@ -33,9 +33,9 @@ void eq_new(m_distortion* md){
 	Función que ecualiza el sample pasado como parámetro.
 */
 float equalizer_func(m_distortion *md, float smp, int i){
-	smp = equalize_sample(smp, md->m_bass);
-	smp = equalize_sample(smp, md->m_treb);
-	return equalize_sample(smp, md->m_mid);
+	return smp = equalize_sample(smp, md->m_bass);
+//	smp = equalize_sample(smp, md->m_treb);
+//	return equalize_sample(smp, md->m_mid);
 }
 
 /*

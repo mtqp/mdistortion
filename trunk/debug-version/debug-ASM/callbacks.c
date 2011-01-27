@@ -29,6 +29,7 @@ void on_ASM_save_clicked(){
 	FILE *asm_save = fopen("processed_stream_ASM", "w");
 	for (i=0;i<dum_audio->dummy_size;i++){
 		fprintf(asm_save,"linea %d = %f\n",i,dum_audio->dummy_buf[i]);
+	//	fprintf(asm_save,"linea %d = %f - x1=%f : x2=%f : y1=%f : y2=%f\n",i,dum_audio->dummy_buf[i],m_dist->m_bass->x1,m_dist->m_bass->x2,m_dist->m_bass->y1,m_dist->m_bass->y2);		
 	}
 	printf("==> Data saved\n");
 	fclose(asm_save);

@@ -26,6 +26,8 @@ void on_C_save_clicked(){
 	for (i=0;i<dum_audio->dummy_size;i++){
 //		fprintf(c_save,"%f\n",dum_audio->dummy_buf[i]);
 		fprintf(c_save,"linea %d = %f\n",i,dum_audio->dummy_buf[i]);
+//		fprintf(c_save,"linea %d = %f - x1=%f : x2=%f : y1=%f : y2=%f\n",i,dum_audio->dummy_buf[i],m_dist->m_bass->x1,m_dist->m_bass->x2,m_dist->m_bass->y1,m_dist->m_bass->y2);		
+
 	}
 	printf("==> Data saved\n");
 	fclose(c_save);
