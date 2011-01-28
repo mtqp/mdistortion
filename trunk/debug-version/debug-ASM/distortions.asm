@@ -3,7 +3,8 @@
 extern rand		;funcion de C q retorna un numero aleatorio
 extern hall_asm
 extern delay_asm
-extern eq_asm
+;extern eq_asm
+extern equalizer_func_asm
 
 %define buf_out [ebp+8]
 %define md_ptr  [ebp+12]
@@ -309,18 +310,17 @@ by_pass:
 	mov edi,buf_out	;buf_salida
 	xor eax,eax
 
-	mov ecx,ebx
-	mov	ecx,[ecx+12]
+	;mov ecx,ebx
+	;mov	ecx,[ecx+12]
 ciclo_bp:
 	movdqu	xmm0,[edi]	;xmm0 = first 4 smps
 	
-	
 	push 	eax			;push i (offset)
-	;push  	ebx			;push m_dist
-	push 	ecx			;push eq!!
+	push  	ebx			;push m_dist
+	;push 	ecx			;push eq!!
 	;call 	hall_asm	;//esto ESTA LLAMANDO SIEMPRE A HALL EH!
 	;call 	delay_asm
-	call	eq_asm
+	call	equalizer_func_asm
 	;call 	dummy_asm
 	add 	esp,8		;recupero el sp de los push q hice
 
