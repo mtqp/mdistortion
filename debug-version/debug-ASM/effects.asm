@@ -113,17 +113,17 @@ equalizer_func_asm:
 
 	push 	ebx
 	call 	eq_asm		;bass
-	shl 	esp,3
+	add 	esp,4
 
-	shl		ebx,2
+	add		ebx,4
 	push 	ebx
 	call 	eq_asm		;treb
-	shl 	esp,3
+	add 	esp,4
 
-	shr 	ebx,2
+	sub 	ebx,4
 	push 	ebx
 	call 	eq_asm		;mid
-	shl	 	esp,3
+	add	 	esp,4
 
 	pop		ebx
 	ret
@@ -138,7 +138,7 @@ eq_asm:			;hay registros sin utilizarse, todavia se puede mejorar mas!
 							;xmm2 = [x1,x2,y1,y2]
 							;el resto son usables
 	
-	mov 	esi,eq_ptr
+	mov 	esi,ebx
 	movdqu	xmm1,[esi]		;xmm1 = [a0,a0,a0,a0]
 	mulps	xmm1,xmm0		;xmm1 = [a0*smp0,a0*smp1,a0*smp2,a0*smp3]
 	movdqu	xmm2,[esi+32]	;xmm2 = [x1,x2,y1,y2]
