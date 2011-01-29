@@ -27,7 +27,7 @@
 	int main (int argc, char *argv[]) {
 		jack_client_t *client;
 		const char **ports;
-		unsigned long buf_size = 4096;
+		buf_size = 1024;
 		
 	
 		if (argc < 2) {

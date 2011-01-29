@@ -9,7 +9,7 @@ void init_m_effects(m_distortion* md){
 /////DELAY/////
 	md->_delay = delay_new(262144,8);
 /////HALL//////
-	md->_hall  = hall_new(4096,4);
+	md->_hall  = hall_new(1024,4);
 //////EQ//////
 	eq_new(md);
 	printf("M_EFFECTS initialized\n\n");
@@ -33,9 +33,9 @@ void eq_new(m_distortion* md){
 	Función que ecualiza el sample pasado como parámetro.
 */
 float equalizer_func(m_distortion *md, float smp, int i){
-	return smp = equalize_sample(smp, md->m_bass);
-//	smp = equalize_sample(smp, md->m_treb);
-//	return equalize_sample(smp, md->m_mid);
+	smp = equalize_sample(smp, md->m_bass);
+	smp = equalize_sample(smp, md->m_treb);
+	return equalize_sample(smp, md->m_mid);
 }
 
 /*

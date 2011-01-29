@@ -11,7 +11,7 @@ void init_m_effects(m_distortion* md){
 	md->_delay = delay_new(262144,8);
 
 /////HALL//////
-	md->_hall  = hall_new(4096,4);
+	md->_hall  = hall_new(1024,4);
 	printf(":::::::::::::::::::::::::::\n");
 	printf("posicion de mem de hall %d\n", (int) md->_hall);
 	printf("buf quantity! %d\n", (int) md->_hall->hll_buf_quantity);
@@ -19,6 +19,15 @@ void init_m_effects(m_distortion* md){
 
 //////EQ//////
 	eq_new(md);
+
+	printf("bass* =%d\n",(int)md->m_bass);
+	printf("mid* =%d\n",(int)md->m_mid);	
+	printf("treb* =%d\n",(int)md->m_treb);
+	
+	printf("bass ao=%f\n",md->m_bass->a0[0]);
+	printf("mid ao=%f\n",md->m_mid->a0[0]);
+	printf("treb ao=%f\n",md->m_treb->a0[0]);
+
 	printf("M_EFFECTS initialized\n\n");
 }
 

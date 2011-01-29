@@ -7,12 +7,12 @@ int ijj = 0;
 float equalize_sample(float sample, m_equalizer * eq){
 	float eq_sample;
 	eq_sample = eq->a0 * sample + eq->a1 * eq->x1 + eq->a2 * eq->x2 - eq->a3 * eq->y1 - eq->a4 * eq->y2;
-	if(ijj<15){
-	/* Obtener sample ecualizada */
+/**	if(ijj<15){
+	
 printf("x1=%f : x2=%f : y1=%f : y2=%f\n",eq->x1,eq->x2,eq->y1,eq->y2);		
 	ijj++;
 	printf("eqsmp = %f\n",eq_sample);
-}
+}**/
 	/* Recalcular history buffers */
 	eq->x2 = eq->x1;
 	eq->x1 = sample;

@@ -20,6 +20,8 @@ jack_port_t *output_right;
 struct _m_distortion *m_dist; 
 struct _m_user_interface *m_ui;
 
+int buf_size;
+
 /*typedef struct _globals {
 	//FILE *f_out;
 	int plot_x;

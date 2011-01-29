@@ -48,7 +48,7 @@ ciclo_hl:
 	movdqu	xmm3,[ebx]		;xmm3 = hall_bufs[j][i]
 	addps  	xmm0,xmm3		;xmm0 = (smp += md->_hall->hll_bufs[j][i])
 
-	mulps	xmm1,xmm3		;xmm1 = md->_hall->hll_coef*(save_smp/2);
+	mulps	xmm1,xmm5		;xmm1 = md->_hall->hll_coef*(save_smp/2);
 	movdqu  [ebx],xmm1		;guardo en memoria
 
 	inc 	eax			
@@ -114,33 +114,35 @@ fin_delay:
 ;post			--> xmm0 = eq([smpi,smpi+1,smpi+2,smpi+3]) (bass,mid,treb)
 ;registros usados	--> xmm1,xmm2,xmm3,xmm4,xmm5,xmm6,xmm7
 equalizer_func:
-	;convencion_C
-	push 	ebx			;md_ptr!
+	convencion_C
+	;push 	ebx			;md_ptr!
 	
-	mov		ebx,[ebx+12]
+	mov		esi,ebx
+	mov		ebx,[esi+12]
 
-	push 	ebx
+;	push dword [ebx]
 	call 	eq_asm		;bass
-	add 	esp,4
+;	add 	esp,4
 
-	add		ebx,4
-	push 	ebx
+;	add		ebx,4
+;	push dword [ebx]
+	mov		ebx,[esi+16]
 	call 	eq_asm		;treb
-	add 	esp,4
+;	add 	esp,4
 
-	sub 	ebx,4
-	push 	ebx
+;	add 	ebx,4
+;	push dword [ebx]
+	mov		ebx,[esi+20]
 	call 	eq_asm		;mid
-	add	 	esp,4
+;	add	 	esp,4
 
-	pop		ebx
-	ret
-	;convencion_C_fin
+	;pop		ebx
+	;ret
+	convencion_C_fin
 ;////////////////////////////////////////
 
 
 eq_asm:			;hay registros sin utilizarse, todavia se puede mejorar mas!
-	%define eq_ptr 	[ebp-20]
 	;pushad					;xmm0 = [smp0,smp1,smp2,smp3]
 	convencion_C			;xmm1 = [a0*smp0,a0*smp1,a0*smp2,a0*smp3]
 							;xmm2 = [x1,x2,y1,y2]

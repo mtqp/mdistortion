@@ -11,11 +11,11 @@ void init_m_effects(m_distortion* md){
 	md->_delay = delay_new(262144,8);
 
 /////HALL//////
-	md->_hall  = hall_new(4096,4);
+	md->_hall  = hall_new(1024,4);
 	printf(":::::::::::::::::::::::::::\n");
-	printf("posicion de mem de hall %d\n", (int) md->_hall);
+/*	printf("posicion de mem de hall %d\n", (int) md->_hall);
 	printf("buf quantity! %d\n", (int) md->_hall->hll_buf_quantity);
-	printf("pos mem buf quantity! %d\n", (int) &(md->_hall->hll_buf_quantity));
+	printf("pos mem buf quantity! %d\n", (int) &(md->_hall->hll_buf_quantity));*/
 
 //////EQ//////
 	eq_new(md);
