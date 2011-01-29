@@ -15,6 +15,10 @@ section .text
 
 ;////////////////////////////////////////
 hall_func:
+;precondicion  		-->	xmm0 =  [smpi,smpi+1,smpi+2,smpi+3]
+;post				--> xmm0 = delay([smpi,smpi+1,smpi+2,smpi+3]) 
+;registros usados	--> xmm1,xmm3,xmm4,xmm5,xmm6
+
 	;convencion_C
 	pushad					;necesito hacer push de todos los registros, xq se modifica de todo! (dsp ver si se puede evitar)
 	mov 	edx,md_ptr 
@@ -59,6 +63,9 @@ dummy_func:
 	ret
 ;////////////////////////////////////////
 delay_func:	
+;precondicion  		-->	xmm0 =  [smpi,smpi+1,smpi+2,smpi+3]
+;post				--> xmm0 = delay([smpi,smpi+1,smpi+2,smpi+3]) 
+;registros usados	--> xmm1,xmm2
 	pushad
 ;	convencion_C
 	
@@ -105,6 +112,7 @@ fin_delay:
 ;////////////////////////////////////////
 ;precondicion 	--> xmm0 = [smpi,smpi+1,smpi+2,smpi+3]
 ;post			--> xmm0 = eq([smpi,smpi+1,smpi+2,smpi+3]) (bass,mid,treb)
+;registros usados	--> xmm1,xmm2,xmm3,xmm4,xmm5,xmm6,xmm7
 equalizer_func:
 	;convencion_C
 	push 	ebx			;md_ptr!
