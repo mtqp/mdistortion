@@ -59,7 +59,25 @@ hell_sqr:			;hell square distortion function!
 	convencion_C 
 
 ;traigo el nuevo valor de volumen y lo cargo
-	recalcular_vol md_ptr, _vol, 3, no_hs_calcvol
+	mov ebx,md_ptr
+	mov	eax,_vol
+	mov dword edx,[eax]		;eax = _vol
+	
+	add	ebx,4				;ebx = dvol*
+	mov	ecx,[ebx]			;ebx = dvol
+	
+	cmp	edx,ecx
+	je	no_hs_calcvol
+	
+	pxor 	xmm6,xmm6
+	pxor	xmm5,xmm5
+	movss 	xmm6,[ebx]
+	movlhps xmm6,xmm6		
+	movdqu 	xmm5,xmm6
+	pslldq 	xmm5,4
+	por 	xmm6,xmm5		;xmm6 = [d_cte,d_cte,d_cte,d_cte]
+	
+	movdqu	[eax],xmm6
 
 no_hs_calcvol:
 	mov esi,nframes ;contador ciclo
@@ -79,15 +97,15 @@ ciclo_hs:
 	mulps 	xmm0,xmm7	;xmm0 = first 4 res;
 
 ;%VOL%
-	movdqu 	xmm1,[ecx+32]	;xmm1 = [0.015,0.015,0.015,0.015]
+;	movdqu 	xmm1,[ecx+32]	;xmm1 = [0.015,0.015,0.015,0.015]
+;
+;	mov		ebx,_vol
+;	movdqu	xmm6,[ebx]
 
-	mov		ebx,_vol
-	movdqu	xmm6,[ebx]
+;	mulps	xmm6,xmm1
+;	addps	xmm6,xmm1
 
-	mulps	xmm6,xmm1
-	addps	xmm6,xmm1
-
-	mulps	xmm0,xmm6	;xmm0 = vol*(cte*buf))
+;	mulps	xmm0,xmm6	;xmm0 = vol*(cte*buf))
 ;%%%%%
 
 	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm0[i%4];
@@ -151,17 +169,17 @@ ciclo_lrock:
 	pop		eax			;restauro eax
 	
 ;%VOL%
-	mov ecx,ebx  	;ecx = mdptr
-	add	ecx,8		;
-	mov	ecx,[ecx]	;ecx = *volctes
+;	mov ecx,ebx  	;ecx = mdptr
+;	add	ecx,8		;
+;	mov	ecx,[ecx]	;ecx = *volctes
 	
-	movdqu 	xmm1,[ecx]	;[0.25,0.25,0.25,0.25]
-	mov		ecx,_vol
-	movdqu	xmm6,[ecx]
-	mulps	xmm6,xmm1
-	addps	xmm6,xmm1	;vol*cte + cte [4]	(normalizacion volumen)
+;	movdqu 	xmm1,[ecx]	;[0.25,0.25,0.25,0.25]
+;	mov		ecx,_vol
+;	movdqu	xmm6,[ecx]
+;	mulps	xmm6,xmm1
+;	addps	xmm6,xmm1	;vol*cte + cte [4]	(normalizacion volumen)
 
-	mulps	xmm0,xmm6	;vol*buf
+;	mulps	xmm0,xmm6	;vol*buf
 ;%%%%%%
 
 	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm0[i%4];
@@ -225,16 +243,16 @@ ciclo_lrock2:
 	pop		eax
 
 ;%VOL%
-	mov ecx,ebx  	;ecx = mdptr
-	add	ecx,8		;
-	mov	ecx,[ecx]	;ecx = *volctes
-	add	ecx,16
+;	mov ecx,ebx  	;ecx = mdptr
+;	add	ecx,8		;
+;	mov	ecx,[ecx]	;ecx = *volctes
+;	add	ecx,16
 	
-	movdqu 	xmm1,[ecx]	;[0.5,0.5,0.5,0.5]
-	mov		ecx,_vol
-	movdqu	xmm6,[ecx]
-	mulps	xmm6,xmm1
-	addps	xmm6,xmm1	;vol*cte + cte [4]	(normalizacion volumen)
+;	movdqu 	xmm1,[ecx]	;[0.5,0.5,0.5,0.5]
+;	mov		ecx,_vol
+;	movdqu	xmm6,[ecx]
+;	mulps	xmm6,xmm1
+;	addps	xmm6,xmm1	;vol*cte + cte [4]	(normalizacion volumen)
 ;%%%%%
 
 	mulps 	xmm0,xmm6	;vol*buf
@@ -287,16 +305,16 @@ ciclo_fdp4:
 	mulps	xmm0,xmm1	;xmm0 = (100000000.0*(-pow(out[i],4))) = -(100000000.0*(pow(out[i],4)))
 
 ;%VOL%
-	mov ecx,ebx  	;ecx = mdptr
-	add	ecx,8		;
-	mov	ecx,[ecx]	;ecx = *volctes
-	add	ecx,80
+;	mov ecx,ebx  	;ecx = mdptr
+;	add	ecx,8		;
+;	mov	ecx,[ecx]	;ecx = *volctes
+;	add	ecx,80
 	
-	movdqu 	xmm1,[ecx]	;[0.0125,0.0125,0.0125,0.0125]
-	mov		ecx,_vol
-	movdqu	xmm6,[ecx]
-	mulps	xmm6,xmm1
-	addps	xmm6,xmm1	;vol*cte + cte [4]	(normalizacion volumen)
+;	movdqu 	xmm1,[ecx]	;[0.0125,0.0125,0.0125,0.0125]
+;	mov		ecx,_vol
+;	movdqu	xmm6,[ecx]
+;	mulps	xmm6,xmm1
+;	addps	xmm6,xmm1	;vol*cte + cte [4]	(normalizacion volumen)
 ;%%%%%
 
 	mulps	xmm0,xmm6	;xmm0 = vol*buf
@@ -374,16 +392,16 @@ ciclo_rc:
 	mulps	xmm0,xmm1	;xmm0 = (11000.0*(pow(out[i],2)));
 
 ;%VOL%
-	mov ecx,ebx  	;ecx = mdptr
-	add	ecx,8		;
-	mov	ecx,[ecx]	;ecx = *volctes
-	add	ecx,96
+;	mov ecx,ebx  	;ecx = mdptr
+;	add	ecx,8		;
+;	mov	ecx,[ecx]	;ecx = *volctes
+;	add	ecx,96
 	
-	movdqu 	xmm1,[ecx]	;[-1.0,-1.0,-1.0,-1.0]
-	mov		ecx,_vol
-	movdqu	xmm6,[ecx]
-	mulps	xmm6,xmm1
-	addps	xmm6,xmm1	;vol*cte + cte [4]	(normalizacion volumen)
+;	movdqu 	xmm1,[ecx]	;[-1.0,-1.0,-1.0,-1.0]
+;	mov		ecx,_vol
+;	movdqu	xmm6,[ecx]
+;	mulps	xmm6,xmm1
+;	addps	xmm6,xmm1	;vol*cte + cte [4]	(normalizacion volumen)
 ;%%%%%
 
 	mulps 	xmm0,xmm6	;xmm0 = vol * buf
@@ -446,18 +464,18 @@ ciclo_by60s:
 	mulps	xmm0,xmm1	;xmm0 = 100.0*out[i];
 
 ;%VOL%
-	mov ecx,ebx  	;ecx = mdptr
-	add	ecx,8		;
-	mov	ecx,[ecx]	;ecx = *volctes
-	add	ecx,64
+;	mov ecx,ebx  	;ecx = mdptr
+;	add	ecx,8		;
+;	mov	ecx,[ecx]	;ecx = *volctes
+;	add	ecx,64
 	
-	movdqu 	xmm1,[ecx]	;[-1.0,-1.0,-1.0,-1.0]
-	mov		ecx,_vol
-	movdqu	xmm6,[ecx]
-	mulps	xmm6,xmm1
-	addps	xmm6,xmm1	;vol*cte + cte [4]	(normalizacion volumen)
+;	movdqu 	xmm1,[ecx]	;[-1.0,-1.0,-1.0,-1.0]
+;	mov		ecx,_vol
+;	movdqu	xmm6,[ecx]
+;	mulps	xmm6,xmm1
+;	addps	xmm6,xmm1	;vol*cte + cte [4]	(normalizacion volumen)
 
-	mulps	xmm0,xmm6	;xmm0 = vol * buf
+;	mulps	xmm0,xmm6	;xmm0 = vol * buf
 ;%%%%%%
 
 	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm0[i%4];
@@ -528,18 +546,18 @@ ciclo_psyif1:
 	mulps 	xmm0,xmm1
 	
 ;%VOL%
-	mov ecx,ebx  	;ecx = mdptr
-	add	ecx,8		;
-	mov	ecx,[ecx]	;ecx = *volctes
-	add	ecx,64
+;	mov ecx,ebx  	;ecx = mdptr
+;	add	ecx,8		;
+;	mov	ecx,[ecx]	;ecx = *volctes
+;	add	ecx,64
 	
-	movdqu 	xmm1,[ecx]	;[-1.0,-1.0,-1.0,-1.0]
-	mov		ecx,_vol
-	movdqu	xmm6,[ecx]
-	mulps	xmm6,xmm1
-	addps	xmm6,xmm1	;vol*cte + cte [4]	(normalizacion volumen)
+;	movdqu 	xmm1,[ecx]	;[-1.0,-1.0,-1.0,-1.0]
+;	mov		ecx,_vol
+;	movdqu	xmm6,[ecx]
+;	mulps	xmm6,xmm1
+;	addps	xmm6,xmm1	;vol*cte + cte [4]	(normalizacion volumen)
 
-	mulps	xmm0,xmm6
+;	mulps	xmm0,xmm6
 ;%%%%%
 
 	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm0[i%4];
@@ -591,18 +609,18 @@ psyif_reg_medio:
 	mulps 	xmm0,xmm1
 
 ;%VOL%
-	mov ecx,ebx  	;ecx = mdptr
-	add	ecx,8		;
-	mov	ecx,[ecx]	;ecx = *volctes
-	add	ecx,64
+;	mov ecx,ebx  	;ecx = mdptr
+;	add	ecx,8		;
+;	mov	ecx,[ecx]	;ecx = *volctes
+;	add	ecx,64
 	
-	movdqu 	xmm1,[ecx]	;[-1.0,-1.0,-1.0,-1.0]
-	mov		ecx,_vol
-	movdqu	xmm6,[ecx]
-	mulps	xmm6,xmm1
-	addps	xmm6,xmm1	;vol*cte + cte [4]	(normalizacion volumen)
+;	movdqu 	xmm1,[ecx]	;[-1.0,-1.0,-1.0,-1.0]
+;	mov		ecx,_vol
+;	movdqu	xmm6,[ecx]
+;	mulps	xmm6,xmm1
+;	addps	xmm6,xmm1	;vol*cte + cte [4]	(normalizacion volumen)
 
-	mulps	xmm0,xmm6
+;	mulps	xmm0,xmm6
 ;%%%%%	
 							;xmm0 = 1era distor
 							;xmm7 = 2da distor				
@@ -685,18 +703,18 @@ ciclo_psyif2:
 	asmSin
 
 ;%VOL%
-	mov ecx,ebx  	;ecx = mdptr
-	add	ecx,8		;
-	mov	ecx,[ecx]	;ecx = *volctes
-	add	ecx,64
+;	mov ecx,ebx  	;ecx = mdptr
+;	add	ecx,8		;
+;	mov	ecx,[ecx]	;ecx = *volctes
+;	add	ecx,64
 	
-	movdqu 	xmm1,[ecx]	;[-1.0,-1.0,-1.0,-1.0]
-	mov		ecx,_vol
-	movdqu	xmm6,[ecx]
-	mulps	xmm6,xmm1
-	addps	xmm6,xmm1	;vol*cte + cte [4]	(normalizacion volumen)
+;	movdqu 	xmm1,[ecx]	;[-1.0,-1.0,-1.0,-1.0]
+;	mov		ecx,_vol
+;	movdqu	xmm6,[ecx]
+;	mulps	xmm6,xmm1
+;	addps	xmm6,xmm1	;vol*cte + cte [4]	(normalizacion volumen)
 
-	mulps	xmm0,xmm6
+;	mulps	xmm0,xmm6
 ;%%%%%
 
 	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm0[i%4];

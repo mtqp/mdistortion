@@ -59,7 +59,25 @@ hell_sqr:			;hell square distortion function!
 	convencion_C 
 
 ;traigo el nuevo valor de volumen y lo cargo
-	recalcular_vol md_ptr, _vol, 3, no_hs_calcvol
+	mov ebx,md_ptr
+	mov	eax,_vol
+	mov dword edx,[eax]		;eax = _vol
+	
+	add	ebx,4				;ebx = dvol*
+	mov	ecx,[ebx]			;ebx = dvol
+	
+	cmp	edx,ecx
+	je	no_hs_calcvol
+	
+	pxor 	xmm6,xmm6
+	pxor	xmm5,xmm5
+	movss 	xmm6,[ebx]
+	movlhps xmm6,xmm6		
+	movdqu 	xmm5,xmm6
+	pslldq 	xmm5,4
+	por 	xmm6,xmm5		;xmm6 = [d_cte,d_cte,d_cte,d_cte]
+	
+	movdqu	[eax],xmm6
 
 no_hs_calcvol:
 	mov esi,nframes ;contador ciclo
