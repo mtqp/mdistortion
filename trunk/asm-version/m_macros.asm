@@ -1,3 +1,21 @@
+%macro convencion_C_mem 1
+	push ebp
+	mov ebp,esp
+	sub esp,%1
+	push edi
+	push esi
+	push ebx
+%endmacro
+
+%macro convencion_C_fin_mem 1
+	pop ebx
+	pop esi
+	pop edi
+	add esp,%1
+	pop ebp
+	ret
+%endmacro
+
 %macro convencion_C 0
 	push ebp
 	mov ebp,esp
@@ -15,11 +33,21 @@
 %endmacro
 
 ;md=val1, distor_vol_anterior=val2, posicion_distor_vol=val_3, label_no_calc_vol=val4
-%macro necesito_calcular_vol 4
+%macro recalcular_vol 4
 	mov 	  ebx,%1				;estr
-	mov 	  eax,[%2]
+	mov dword eax,[%2]
 	cmp dword eax,[ebx+(%3*4-4)]	;¿¿vol_anterior == md->_dvol??
 	je  %4
+
+	pxor 	xmm6,xmm6
+	pxor	xmm5,xmm5
+	movss 	xmm6,[ebx+(%3*4-4)]
+	movlhps xmm6,xmm6		
+	movdqu 	xmm5,xmm6
+	pslldq 	xmm5,4
+	addps 	xmm6,xmm5		;xmm6 = [d_cte,d_cte,d_cte,d_cte]
+
+	;recalcularlo
 %endmacro
 
 ;distor_vol_anterior == val_1 ;distor_cte == val_2 ;posicion_distor_vol == val_3
@@ -27,7 +55,6 @@
 	mov 	  eax,[ebx+4]			;eax = md->_dvol
 	mov dword [%1],eax
 
-hs_calcvol:
 	pxor    xmm7,xmm7
 	pxor 	xmm6,xmm6
 
@@ -49,7 +76,7 @@ hs_calcvol:
 	pxor 	xmm6,xmm6
 	pxor	xmm5,xmm5
 	movss 	xmm6,[%2]
-	movlhps xmm6,xmm6
+	movlhps xmm6,xmm6		;ESTO SE PUEDE REEMPLAZAR POR UPLOAD CTE
 	movdqu 	xmm5,xmm6
 	pslldq 	xmm5,4
 	addps 	xmm6,xmm5		;xmm6 = [d_cte,d_cte,d_cte,d_cte]
@@ -57,3 +84,17 @@ hs_calcvol:
 	mulps	xmm7,xmm6		;xmm7 = [cte*vol,cte*vol,cte*vol,cte*vol]
 ;----------------------------------------------
 %endmacro
+
+;carga en el 1er registro pasado como parametro la constante del tercer parametro. (utiliza un segundo registro xmmX provisorio)
+%macro upload_cte 3		;parametros : [regDST,regIntermedio,floatASetear]	('regIntermedio' se modificara)
+	pxor    %1,%1
+	pxor    %2,%2
+	movss   %1,[%3]		;%1=[0,0,0,cte]
+	movlhps %1,%1		;%1=[0,cte,0,cte]
+	movdqu  %2,%1		;%2=[0,cte,0,cte]
+	pslldq  %2,4		;%2=[cte,0,cte,0]
+	addps   %1,%2		;%1=[cte,cte,cte,cte]
+%endmacro
+
+
+
