@@ -35,16 +35,16 @@ void eq_new(m_distortion* md){
 
 /*
 	Función que ecualiza el sample pasado como parámetro.
-*/
+
 float equalizer_func(m_distortion *md, float smp, int i){
 	smp = equalize_sample(smp, md->m_bass);
 	smp = equalize_sample(smp, md->m_treb);
 	return equalize_sample(smp, md->m_mid);
-}
+}*
 
 /*
 	Función que aplica efecto delay sobre el sample de parámetro.
-*/
+
 float delay_func(m_distortion *md, float smp, int i){
 	float old_smp;
 	int bufs_active = md->_delay->dl_cant_bufs_active;
@@ -75,11 +75,11 @@ float delay_func(m_distortion *md, float smp, int i){
 	}
 	
 	return smp;
-}
+}*/
 
 /*
 	Función que aplica efecto hall sobre el sample de parámetro.
-*/
+
 float hall_func(m_distortion *md, float smp, int i){
 	int j;
 	float save_smp;
@@ -89,13 +89,13 @@ float hall_func(m_distortion *md, float smp, int i){
 		md->_hall->hll_bufs[j][i] = md->_hall->hll_coef*(save_smp/2);
 	}
 	return smp;
-}
+}*/
 
 
 /*
 	Función dummy que no modifica el sample, necesaria cuando
 	NO se quiere aplicar un efecto a la señal
-*/
+
 float dummy_func(m_distortion *md, float smp, int i){
 	return smp;
-}
+}*/

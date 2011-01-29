@@ -8,13 +8,13 @@ section .data
 	mask_eq: dd 1.0,1.0,-1.0,-1.0
 
 section .text
-	global hall_asm
-	global delay_asm
-	;global eq_asm
-	global equalizer_func_asm
+	global dummy_func
+	global hall_func
+	global delay_func
+	global equalizer_func
 
 ;////////////////////////////////////////
-hall_asm:
+hall_func:
 	;convencion_C
 	pushad					;necesito hacer push de todos los registros, xq se modifica de todo! (dsp ver si se puede evitar)
 	mov 	edx,md_ptr 
@@ -55,10 +55,10 @@ ciclo_hl:
 	ret
 	;convencion_C_fin
 ;////////////////////////////////////////
-dummy_asm:
+dummy_func:
 	ret
 ;////////////////////////////////////////
-delay_asm:	
+delay_func:	
 	pushad
 ;	convencion_C
 	
@@ -105,7 +105,7 @@ fin_delay:
 ;////////////////////////////////////////
 ;precondicion 	--> xmm0 = [smpi,smpi+1,smpi+2,smpi+3]
 ;post			--> xmm0 = eq([smpi,smpi+1,smpi+2,smpi+3]) (bass,mid,treb)
-equalizer_func_asm:
+equalizer_func:
 	;convencion_C
 	push 	ebx			;md_ptr!
 	
