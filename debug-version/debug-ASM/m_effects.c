@@ -6,14 +6,17 @@
 */
 void init_m_effects(m_distortion* md){
 	printf("Init M_EFFECTS\n");
+	
 /////DELAY/////
 	md->_delay = delay_new(262144,8);
+
 /////HALL//////
 	md->_hall  = hall_new(4096,4);
 	printf(":::::::::::::::::::::::::::\n");
 	printf("posicion de mem de hall %d\n", (int) md->_hall);
 	printf("buf quantity! %d\n", (int) md->_hall->hll_buf_quantity);
 	printf("pos mem buf quantity! %d\n", (int) &(md->_hall->hll_buf_quantity));
+
 //////EQ//////
 	eq_new(md);
 	printf("M_EFFECTS initialized\n\n");
@@ -33,14 +36,7 @@ void eq_new(m_distortion* md){
 		printf("	EQ Set\n");
 }
 
-/*
-	Función que ecualiza el sample pasado como parámetro.
 
-float equalizer_func(m_distortion *md, float smp, int i){
-	smp = equalize_sample(smp, md->m_bass);
-	smp = equalize_sample(smp, md->m_treb);
-	return equalize_sample(smp, md->m_mid);
-}*
 
 /*
 	Función que aplica efecto delay sobre el sample de parámetro.
@@ -77,25 +73,4 @@ float delay_func(m_distortion *md, float smp, int i){
 	return smp;
 }*/
 
-/*
-	Función que aplica efecto hall sobre el sample de parámetro.
 
-float hall_func(m_distortion *md, float smp, int i){
-	int j;
-	float save_smp;
-	for(j=0;j<md->_hall->hll_buf_quantity;j++){
-		save_smp = smp;
-		smp += md->_hall->hll_bufs[j][i];
-		md->_hall->hll_bufs[j][i] = md->_hall->hll_coef*(save_smp/2);
-	}
-	return smp;
-}*/
-
-
-/*
-	Función dummy que no modifica el sample, necesaria cuando
-	NO se quiere aplicar un efecto a la señal
-
-float dummy_func(m_distortion *md, float smp, int i){
-	return smp;
-}*/

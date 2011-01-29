@@ -1,22 +1,6 @@
 
 #include "m_eq.h"
 
-/* Aplica ecualización sobre el sample */
-float equalize_sample(float sample, m_equalizer * eq){
-	float eq_sample;
-
-	/* Obtener sample ecualizada */
-	eq_sample = eq->a0 * sample + eq->a1 * eq->x1 + eq->a2 * eq->x2 - eq->a3 * eq->y1 - eq->a4 * eq->y2;
-
-	/* Recalcular history buffers */
-	eq->x2 = eq->x1;
-	eq->x1 = sample;
-	eq->y2 = eq->y1;
-	eq->y1 = eq_sample;
-
-	return eq_sample;
-}
-
 /* Inicializa filter ecualizador */
 m_equalizer *band_EQ_new(int type, float dbGain, float freq, float srate, float bandwidth){
 	m_equalizer *eq;
@@ -103,7 +87,10 @@ m_equalizer *band_EQ_new(int type, float dbGain, float freq, float srate, float 
 	}
 
 	/* Coeficientes EQ */
-	eq->a0 = b0 /a0;
+	eq->a0[0] = b0 /a0;
+	eq->a0[1] = b0 /a0;
+	eq->a0[2] = b0 /a0;
+	eq->a0[3] = b0 /a0;
 	eq->a1 = b1 /a0;
 	eq->a2 = b2 /a0;
 	eq->a3 = a1 /a0;
@@ -155,7 +142,10 @@ void reset_eq_params(m_equalizer *eq, float bandwidth, int filter_type){
 	}
 
 	/* Coeficientes EQ */
-	eq->a0 = b0 /a0;
+	eq->a0[0] = b0 /a0;
+	eq->a0[1] = b0 /a0;
+	eq->a0[2] = b0 /a0;
+	eq->a0[3] = b0 /a0;
 	eq->a1 = b1 /a0;
 	eq->a2 = b2 /a0;
 	eq->a3 = a1 /a0;

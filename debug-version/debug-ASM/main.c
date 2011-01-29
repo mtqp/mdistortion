@@ -45,6 +45,7 @@ int main (int argc, char *argv[]) {
 	printf("Initialising DUM AUDIO STRUCTURE\n");
 	dum_audio = init_dummy_audio(buf_size);
 	printf("DUM AUDIO INITIALIZED\n");
+	
 	//free_m_distortion_and_effects(m_dist);
 	///////////////////////////////////////
 	//----inicializar interfaz grafica---//

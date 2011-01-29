@@ -3,7 +3,7 @@
 
 struct _m_distortion;
 
-#include <jack/jack.h>
+//#include <jack/jack.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -41,16 +41,16 @@ void set_m_distortion( m_distortion * md, int distor);
 
 typedef void (DISTORTION)(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes);
 
+extern DISTORTION log_rock;
+extern DISTORTION log_rock2;
 extern DISTORTION hell_sqr;
-DISTORTION log_rock;
-DISTORTION log_rock2;
-DISTORTION psychedelic_if;
-DISTORTION by_60s;
-DISTORTION fuzzy_dark_pow4;
-DISTORTION rare_cuadratic;
-DISTORTION random_day;
-DISTORTION mute;
-extern DISTORTION by_pass;		//todavia no esta completa, es apra probar el hall!
+extern DISTORTION psychedelic_if;
+extern DISTORTION by_60s;
+extern DISTORTION fuzzy_dark_pow4;
+extern DISTORTION rare_cuadratic;
+extern DISTORTION random_day;
+extern DISTORTION mute;
+extern DISTORTION by_pass;
 
 DISTORTION * f_dist[10];	
 DISTORTION * distortion_channel;

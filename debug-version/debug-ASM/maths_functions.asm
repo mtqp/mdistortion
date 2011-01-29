@@ -102,9 +102,6 @@
 	movdqu	xmm7,xmm0		;XMM0 = buf[4]
 
 	asmCos	
-;	movdqu 	xmm1,[esi]		;XMM1 = cos(buf)[4]
-;	movdqu	[esi],xmm7		;RESTAURO en buf los valores originales
-;	movdqu 	xmm7,xmm1		;xmm7 = cos(buf)[4]
 	
 	movdqu xmm1,xmm0
 	movdqu xmm0,xmm7

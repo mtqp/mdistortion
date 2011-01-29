@@ -30,7 +30,6 @@ void init_m_distortion(m_distortion * md){
 	f_effect[e_equalizer]	= &equalizer_func;		//Almacena los function* a los distintos
 	f_effect[e_delay]		= &delay_func;			//tipos de efectos
 	f_effect[e_hall]		= &hall_func;
-	//f_effect[e_volume]		= &volume_func;
 	f_effect[e_dummy]		= &dummy_func;
 
 	equalizer_effect = f_effect[e_dummy];
@@ -40,7 +39,6 @@ void init_m_distortion(m_distortion * md){
 	distortion_channel  = f_dist[md->_last_dist_active]; 
 	printf("M_DISTORTION initialized\n\n");
 	
-	printf("pos mem VOLUMEN ctes %d\n", md->_vctes);
 }
 
 void free_m_distortion_and_effects(m_distortion *md){
@@ -96,118 +94,3 @@ void set_m_distortion( m_distortion * md, int dist){
   recibe por parámetro el buffer in, devolviendo el out en el
   mismo buffer
 */
-/*void log_rock(float* out, m_distortion *mdc, int nframes){
-	int i = 0;
-	float vol = mdc->_vctes->log_rock_v+(mdc->_vctes->log_rock_v*mdc->_dvol);
-	for(i;i<nframes;i++){
-		out[i] = equalizer_effect(mdc,out[i],i);
-		out[i] = delay_effect(mdc,out[i],i);
-		out[i] = hall_effect(mdc,out[i],i);
-		out[i]=vol*sin(cos(log(sin(log(out[i])))));
-	}
-}*/
-
-/*
-void log_rock2(float* out, m_distortion *mdc, int nframes){//
-	int i = 0;
-	float vol = mdc->_vctes->log_rock2_v+(mdc->_vctes->log_rock2_v*mdc->_dvol);
-	for(i;i<nframes;i++){
-		out[i] = equalizer_effect(mdc,out[i],i);		
-		out[i] = delay_effect(mdc,out[i],i);
-		out[i] = hall_effect(mdc,out[i],i);
-		out[i]=  vol*cos(tan(tan(log((out[i])))));
-	}
-}*/
-
-/*
-void hell_sqr(float* out, m_distortion *mdc, int nframes){
-	int i = 0;
-	float vol = mdc->_vctes->hell_sqr_v+(mdc->_vctes->hell_sqr_v*mdc->_dvol);
-	for(i;i<nframes;i++){
-		out[i]= vol*(1000.0*sqrt(out[i]));
-	}
-}*/
-
-/*
-void psychedelic_if(float* out, m_distortion *mdc, int nframes){
-	int i = 0;
-	float vol = mdc->_vctes->psyche_v+(mdc->_vctes->psyche_v*mdc->_dvol);
-	for(i;i<nframes;i++){
-		out[i] = equalizer_effect(mdc,out[i],i);		
-		out[i] = delay_effect(mdc,out[i],i);
-		out[i] = hall_effect(mdc,out[i],i);
-		if(i < nframes/3) {
-			out[i] = vol*(log(out[i])*10000.0)/5;
-			printf("-%d-",i);
-		} else {
-			out[i] = vol*sin(log(sin(out[i])));
-		}
-	}
-}*/
-
-/*
-void by_60s(float* out, m_distortion *mdc, int nframes){
-	int i=0;
-	float vol = mdc->_vctes->by_60s_v+(mdc->_vctes->by_60s_v*mdc->_dvol);
-	for(i;i<nframes;i++){
-		out[i] = equalizer_effect(mdc,out[i],i);
-		out[i] = delay_effect(mdc,out[i],i);
-		out[i] = hall_effect(mdc,out[i],i);
-		out[i] = vol*(100.0 * out[i]);
-	}
-}*/
-
-/*
-void fuzzy_dark_pow4(float* out, m_distortion *mdc, int nframes){
-	int i = 0;
-	float vol = mdc->_vctes->fuzzy_dark_v+(mdc->_vctes->fuzzy_dark_v*mdc->_dvol);
-	for(i;i<nframes;i++){
-		out[i] = equalizer_effect(mdc,out[i],i);
-		out[i] = vol*(100000000.0*(-pow(out[i],4)));
-		out[i] = delay_effect(mdc,out[i],i);
-		out[i] = hall_effect(mdc,out[i],i);
-	}
-}*/
-
-/*
-void rare_cuadratic(float* out, m_distortion *mdc, int nframes){
-	int i = 0;
-	float vol = mdc->_vctes->rare_c_v+(mdc->_vctes->rare_c_v*mdc->_dvol);
-	for(i;i<nframes;i++){
-		out[i] = equalizer_effect(mdc,out[i],i);
-		out[i] = delay_effect(mdc,out[i],i);
-		out[i] = hall_effect(mdc,out[i],i);
-		out[i] = vol*(11000.0*(pow(out[i],2)));
-	}
-}*/
-
-/*void random_day(float* out, m_distortion *mdc, int nframes){
-	unsigned int mod2;
-	mod2 = rand()%7;
-	if(mod2 == 0) 			log_rock(out,mdc,nframes);
-	if(mod2 == 1)			log_rock2(out,mdc,nframes);
-	if(mod2 == 2)			hell_sqr(out,mdc,nframes);
-	if(mod2 == 3)			psychedelic_if(out,mdc,nframes);
-	if(mod2 == 4)			by_60s(out,mdc,nframes);
-	if(mod2 == 5)			fuzzy_dark_pow4(out,mdc,nframes);
-	if(mod2 == 6)			rare_cuadratic(out,mdc,nframes);
-}	
-*/
-/*
-void by_pass(float* out, m_distortion *mdc, int nframes){
-	int i=0;
-   	for (i;i<nframes;i++){
-		out[i] = equalizer_effect(mdc,out[i],i);
-		out[i] = hall_effect(mdc,out[i],i);
-		out[i] = delay_effect(mdc,out[i],i);
-   	}
-}*/
-
-/*
-void mute(float* out, m_distortion *mdc, int nframes){
-	int i=0;
-	for(i;i<nframes;i++){
-		out[i] = 0.0;
-	}
-}*/
-
