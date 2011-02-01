@@ -7,8 +7,9 @@
 
 /*Cierra el programa cuando es llamada por la interfaz*/
 G_MODULE_EXPORT int on_quit_clicked( GtkButton *button, gpointer   data ){
-    gtk_main_quit ();
     free_m_distortion_and_effects(m_dist);
+	free(m_ui);
+    gtk_main_quit ();
 	/*free(input_port);
 	free(output_left);
 	free(output_right);*/
@@ -253,6 +254,8 @@ void on_hall_toggled(GtkToggleButton *eq, GtkToggleButton *button){
 	}
 }
 
+int wowo;
+
 G_MODULE_EXPORT 
 void on_hl_onoff_toggled(GtkContainer* intensity, GtkToggleButton *on_offb){
 	if(on_offb->active){
@@ -261,18 +264,19 @@ void on_hl_onoff_toggled(GtkContainer* intensity, GtkToggleButton *on_offb){
 		hall_effect = f_effect[e_hall];
 		/*desactiva eq*/
 		gtk_toggle_button_set_active((GtkToggleButton*) m_ui->eq_onoff,false);
-
+		wowo=1;
 	}
 	else{
 		/*desactiva hall*/
 		gtk_widget_set_sensitive((GtkWidget*) intensity, no_sensitivo);
 		hall_effect = f_effect[e_dummy];
+		wowo=0;
 	}
 }
 
 G_MODULE_EXPORT void on_hl_intensity_scale_value_changed(GtkAdjustment* hl_intensity_adjs, GtkRange* range){
 	/*ajusta el porcentaje de hall en la señal dado x la barra en la interfaz*/
-	m_dist->_hall->hll_coef = hl_intensity_adjs->value + 1.0;
+	m_dist->_hall->hll_coef = hl_intensity_adjs->value + 15.0;
 }
 
 ////////////////////////////////////////////
@@ -291,7 +295,21 @@ int process (jack_nframes_t nframes, void *arg){
 	memcpy (outL, in, sizeof (jack_default_audio_sample_t) * nframes);
 	memcpy (outR, in, sizeof (jack_default_audio_sample_t) * nframes);
 	
-	distortionize(m_dist, outL, sizeof (jack_default_audio_sample_t) * nframes); //la gran magia
+	//distortionize(m_dist, outL, sizeof (jack_default_audio_sample_t) * nframes); //la gran magia
+	distortionize(m_dist, outR, sizeof (jack_default_audio_sample_t) * nframes); //la gran magia
+
+int i =0 ;
+	if(wowo==1){
+		printf("==> Saving processed data into 'processed_stream_C'\n");
+		FILE *c_save = fopen("wtfHall", "w");
+		for (i=0;i<buf_size;i++){
+			fprintf(c_save,"linea %d = %f\n",i,outL[i]);
+		}
+		printf("==> Data saved\n");
+		fclose(c_save);
+		wowo = 0;	
+	}
+
 
 	return 0;      
 }
