@@ -162,7 +162,7 @@ void on_treb_scale_value_changed(GtkAdjustment *t_adjs, GtkRange *range ){
 
 G_MODULE_EXPORT
 void on_volume_value_changed(GtkAdjustment *vol_adjs, GtkRange *range){
-	m_dist->_dvol = vol_adjs->value;
+	m_dist->_dvol = vol_adjs->value+1.0;
 }
 
 G_MODULE_EXPORT
@@ -295,8 +295,8 @@ int process (jack_nframes_t nframes, void *arg){
 	memcpy (outL, in, sizeof (jack_default_audio_sample_t) * nframes);
 	memcpy (outR, in, sizeof (jack_default_audio_sample_t) * nframes);
 	
-	//distortionize(m_dist, outL, sizeof (jack_default_audio_sample_t) * nframes); //la gran magia
-	distortionize(m_dist, outR, sizeof (jack_default_audio_sample_t) * nframes); //la gran magia
+	distortionize(m_dist, outL, sizeof (jack_default_audio_sample_t) * nframes); //la gran magia
+	//distortionize(m_dist, outR, sizeof (jack_default_audio_sample_t) * nframes); //la gran magia
 
 int i =0 ;
 	if(wowo==1){
