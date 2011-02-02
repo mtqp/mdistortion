@@ -2,38 +2,27 @@
 #include "callbacks.h"
 #include <math.h>
 
-int blahbli = 1;
+int cantidad_veces_guardado = 1;
 
 ///DUM AUDIO//
 void on_dum_callback_clicked(){
 	distortionize(m_dist, dum_audio->dummy_buf, dum_audio->dummy_size); //la gran magia
-
 //	reset_buf(dum_audio);	
-/*	int i;
-	for(i=0;i<dum_audio->dummy_size;i++){
-		if (i%4 == 0 && i!=0) printf("\nLinea %d:\n",i/4);
-		printf("\t%f,",dum_audio->dummy_buf[i]);
-	}
-	printf("\n");
-*/
 }
 
 void on_ASM_save_clicked(){
-	printf("%d\n",blahbli);
-	blahbli++;
-
 	int i;
 //	reset_buf(dum_audio);	
 	distortionize(m_dist, dum_audio->dummy_buf, dum_audio->dummy_size); //la gran magia
-	printf("==> Saving processed data into 'processed_stream_ASM'\n");
+	printf("%d ==> Saving processed data into 'processed_stream_ASM'\n",cantidad_veces_guardado);
 	FILE *asm_save = fopen("processed_stream_ASM", "w");
 	for (i=0;i<dum_audio->dummy_size;i++){
 		fprintf(asm_save,"linea %d = %f\n",i,dum_audio->dummy_buf[i]);
-	//	fprintf(asm_save,"linea %d = %f - x1=%f : x2=%f : y1=%f : y2=%f\n",i,dum_audio->dummy_buf[i],m_dist->m_bass->x1,m_dist->m_bass->x2,m_dist->m_bass->y1,m_dist->m_bass->y2);		
 	}
 	printf("==> Data saved\n");
 	fclose(asm_save);
 //	reset_buf(dum_audio);		
+	cantidad_veces_guardado++;
 }
 
 		////////////////////////////////////////////
@@ -48,7 +37,7 @@ G_MODULE_EXPORT int on_quit_clicked( GtkButton *button, gpointer   data ){
 	/*free(input_port);
 	free(output_left);
 	free(output_right);*/
-    printf("LIBERA TODO M_DISTORTION, Y GTK, PENSAR COMO VER SI LIBERA TODO JACK\n");
+    //printf("LIBERA TODO M_DISTORTION, Y GTK, PENSAR COMO VER SI LIBERA TODO JACK\n");
     return false;
 }
 

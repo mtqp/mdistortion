@@ -9,7 +9,6 @@ enum {
 	e_equalizer,
 	e_delay,
 	e_hall,
-	e_volume,
 	e_dummy
 };
 

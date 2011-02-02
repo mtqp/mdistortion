@@ -2,36 +2,25 @@
 #include <stdio.h>
 #include "callbacks.h"
 
-int blahbli = 1;
-
+int cantidad_veces_guardado = 1;
 ///DUM AUDIO//
 void on_dum_callback_clicked(){
 	distortionize(m_dist, dum_audio->dummy_buf, dum_audio->dummy_size); //la gran magia
 //	reset_buf(dum_audio);	
-	/*int i;
-	for(i=0;i<dum_audio->dummy_size;i++){
-		printf("%f,",dum_audio->dummy_buf[i]);
-	}
-	printf("\n");*/
 }
 void on_C_save_clicked(){
-	printf("%d\n",blahbli);
-	blahbli++;
-
 	int i;
 //	reset_buf(dum_audio);	
 	distortionize(m_dist, dum_audio->dummy_buf, dum_audio->dummy_size); //la gran magia
-	printf("==> Saving processed data into 'processed_stream_C'\n");
+	printf("%d ==> Saving processed data into 'processed_stream_C'\n",cantidad_veces_guardado);
 	FILE *c_save = fopen("processed_stream_C", "w");
 	for (i=0;i<dum_audio->dummy_size;i++){
-//		fprintf(c_save,"%f\n",dum_audio->dummy_buf[i]);
 		fprintf(c_save,"linea %d = %f\n",i,dum_audio->dummy_buf[i]);
-//		fprintf(c_save,"linea %d = %f - x1=%f : x2=%f : y1=%f : y2=%f\n",i,dum_audio->dummy_buf[i],m_dist->m_bass->x1,m_dist->m_bass->x2,m_dist->m_bass->y1,m_dist->m_bass->y2);		
-
 	}
 	printf("==> Data saved\n");
 	fclose(c_save);
 //	reset_buf(dum_audio);	
+	cantidad_veces_guardado++;
 }
 
 		////////////////////////////////////////////
@@ -46,7 +35,7 @@ G_MODULE_EXPORT int on_quit_clicked( GtkButton *button, gpointer   data ){
 	/*free(input_port);
 	free(output_left);
 	free(output_right);*/
-    printf("LIBERA TODO M_DISTORTION, Y GTK, PENSAR COMO VER SI LIBERA TODO JACK\n");
+    //printf("LIBERA TODO M_DISTORTION, Y GTK, PENSAR COMO VER SI LIBERA TODO JACK\n");
     return false;
 }
 
@@ -270,7 +259,7 @@ G_MODULE_EXPORT void on_q_extreme_clicked(gpointer n, GtkRadioButton* b){
 
 G_MODULE_EXPORT void on_dl_speed_scale_value_changed(GtkAdjustment* dl_speed_adjs, GtkRange* range){
 	/*ajusta la velocidad del delay a el valor de la barra*/
-	m_dist->_delay->dl_speed = (int)dl_speed_adjs->value;	//todavia hay q ver como arreglar el cambiar la velocidad
+	m_dist->_delay->dl_speed = (int)dl_speed_adjs->value;	
 }
 
 ////////////HALL///////////////////////

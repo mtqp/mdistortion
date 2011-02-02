@@ -1,7 +1,7 @@
 %include "m_macros.asm"
 
-	%define md_ptr 	[ebp-20]		;PORQUE!!?!?!?!?!?!?!?!?!?!?!?!?!
-	%define i 		[ebp-16]		;hiper WTF
+	%define md_ptr 	[ebp-20]	
+	%define i 		[ebp-16]	
 
 section .data
 	cte_dos: dd 2.0 
