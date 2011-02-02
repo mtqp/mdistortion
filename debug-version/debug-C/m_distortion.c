@@ -151,6 +151,9 @@ void by_60s(float* out, m_distortion *mdc, int nframes){
 	int i=0;
 	float vol = mdc->_vctes->by_60s_v+(mdc->_vctes->by_60s_v*mdc->_dvol);
 	for(i;i<nframes;i++){
+		/**if (i<10){
+			printf("vol value= %f\n",vol);
+		}*/
 		out[i] = equalizer_effect(mdc,out[i],i);
 		out[i] = delay_effect(mdc,out[i],i);
 		out[i] = hall_effect(mdc,out[i],i);

@@ -127,7 +127,26 @@ fin_hs:
 log_rock:			;log rock distortion function!
 	convencion_C
 
-	recalcular_vol md_ptr, _vol, 3, no_lrock_calcvol
+;traigo el nuevo valor de volumen y lo cargo
+	mov ebx,md_ptr
+	mov	eax,_vol
+	mov dword edx,[eax]		;eax = _vol
+	
+	add	ebx,4				;ebx = dvol*
+	mov	ecx,[ebx]			;ebx = dvol
+	
+	cmp	edx,ecx
+	je	no_lrock_calcvol
+	
+	pxor 	xmm6,xmm6
+	pxor	xmm5,xmm5
+	movss 	xmm6,[ebx]
+	movlhps xmm6,xmm6		
+	movdqu 	xmm5,xmm6
+	pslldq 	xmm5,4
+	por 	xmm6,xmm5		;xmm6 = [d_cte,d_cte,d_cte,d_cte]
+	
+	movdqu	[eax],xmm6
 
 no_lrock_calcvol:
 	mov esi,nframes
@@ -202,7 +221,27 @@ fin_lrock:
 log_rock2:			;log rock II distortion function!
 	convencion_C
 
-	recalcular_vol md_ptr, _vol, 3, no_lrock2_calcvol
+;traigo el nuevo valor de volumen y lo cargo
+	mov ebx,md_ptr
+	mov	eax,_vol
+	mov dword edx,[eax]		;eax = _vol
+	
+	add	ebx,4				;ebx = dvol*
+	mov	ecx,[ebx]			;ebx = dvol
+	
+	cmp	edx,ecx
+	je	no_lrock2_calcvol
+	
+	pxor 	xmm6,xmm6
+	pxor	xmm5,xmm5
+	movss 	xmm6,[ebx]
+	movlhps xmm6,xmm6		
+	movdqu 	xmm5,xmm6
+	pslldq 	xmm5,4
+	por 	xmm6,xmm5		;xmm6 = [d_cte,d_cte,d_cte,d_cte]
+	
+	movdqu	[eax],xmm6
+
 	
 no_lrock2_calcvol:
 	mov esi,nframes
@@ -277,7 +316,27 @@ fin_lrock2:
 fuzzy_dark_pow4:			;fuzzy dark pow 4 distortion function!
 	convencion_C
 
-	recalcular_vol md_ptr, _vol, 3, no_lrock2_calcvol
+;traigo el nuevo valor de volumen y lo cargo
+	mov ebx,md_ptr
+	mov	eax,_vol
+	mov dword edx,[eax]		;eax = _vol
+	
+	add	ebx,4				;ebx = dvol*
+	mov	ecx,[ebx]			;ebx = dvol
+	
+	cmp	edx,ecx
+	je	no_fdp4_calcvol
+	
+	pxor 	xmm6,xmm6
+	pxor	xmm5,xmm5
+	movss 	xmm6,[ebx]
+	movlhps xmm6,xmm6		
+	movdqu 	xmm5,xmm6
+	pslldq 	xmm5,4
+	por 	xmm6,xmm5		;xmm6 = [d_cte,d_cte,d_cte,d_cte]
+	
+	movdqu	[eax],xmm6
+
 
 no_fdp4_calcvol:
 	mov esi,nframes
@@ -352,7 +411,28 @@ fin_fdp4:
 
 rare_cuadratic:			;rare cuadratic distortion function!
 	convencion_C
-	recalcular_vol md_ptr, _vol, 3, no_rc_calcvol
+
+;traigo el nuevo valor de volumen y lo cargo
+	mov ebx,md_ptr
+	mov	eax,_vol
+	mov dword edx,[eax]		;eax = _vol
+	
+	add	ebx,4				;ebx = dvol*
+	mov	ecx,[ebx]			;ebx = dvol
+	
+	cmp	edx,ecx
+	je	no_rc_calcvol
+	
+	pxor 	xmm6,xmm6
+	pxor	xmm5,xmm5
+	movss 	xmm6,[ebx]
+	movlhps xmm6,xmm6		
+	movdqu 	xmm5,xmm6
+	pslldq 	xmm5,4
+	por 	xmm6,xmm5		;xmm6 = [d_cte,d_cte,d_cte,d_cte]
+	
+	movdqu	[eax],xmm6
+
 
 no_rc_calcvol:
 	mov esi,nframes
@@ -425,7 +505,27 @@ fin_rc:
 
 by_60s:			;by_60s distortion function!
 	convencion_C
-	recalcular_vol md_ptr, _vol, 3, no_by60s_calcvol
+
+;traigo el nuevo valor de volumen y lo cargo
+	mov ebx,md_ptr
+	mov	eax,_vol
+	mov dword edx,[eax]		;eax = _vol
+	
+	add	ebx,4				;ebx = dvol*
+	mov	ecx,[ebx]			;ebx = dvol
+	
+	cmp	edx,ecx
+	je	no_by60s_calcvol
+	
+	pxor 	xmm6,xmm6
+	pxor	xmm5,xmm5
+	movss 	xmm6,[ebx]
+	movlhps xmm6,xmm6		
+	movdqu 	xmm5,xmm6
+	pslldq 	xmm5,4
+	por 	xmm6,xmm5		;xmm6 = [d_cte,d_cte,d_cte,d_cte]
+	
+	movdqu	[eax],xmm6
 
 no_by60s_calcvol:
 	mov esi,nframes
@@ -498,11 +598,27 @@ fin_by60s:
 psychedelic_if:			;psychedelic_if distortion function!
 	convencion_C
 
-	recalcular_vol md_ptr, _vol, 3, no_psyif_calcvol
-
-init_psyif:
-	xor	esi,esi	
+;traigo el nuevo valor de volumen y lo cargo
+	mov ebx,md_ptr
+	mov	eax,_vol
+	mov dword edx,[eax]		;eax = _vol
 	
+	add	ebx,4				;ebx = dvol*
+	mov	ecx,[ebx]			;ebx = dvol
+	
+	cmp	edx,ecx
+	je	no_psyif_calcvol
+	
+	pxor 	xmm6,xmm6
+	pxor	xmm5,xmm5
+	movss 	xmm6,[ebx]
+	movlhps xmm6,xmm6		
+	movdqu 	xmm5,xmm6
+	pslldq 	xmm5,4
+	por 	xmm6,xmm5		;xmm6 = [d_cte,d_cte,d_cte,d_cte]
+	
+	movdqu	[eax],xmm6
+
 no_psyif_calcvol:
 	;mov esi,nframes	;no alcanzan los registros.
 	mov ebx,md_ptr
@@ -513,6 +629,9 @@ no_psyif_calcvol:
 	xor edx,edx
 	div ecx			;eax = nframes / 3
 ;	sub	esi,ecx		;esi = nframes - nframes/3
+
+init_psyif:
+	xor	esi,esi	
 	
 ciclo_psyif1:
 	movdqu	xmm0,[edi]	;xmm0 = first 4 smps
@@ -848,8 +967,8 @@ mute:
 	mov edi,buf_out	;buf_salida
 
 	xor	eax,eax
-ciclo_mute:
 	pxor 	xmm0,xmm0
+ciclo_mute:
 	movdqu	[edi],xmm0	;[out[i]...out[i+4]] = xmm0[i%4];
 	
 	lea edi,[edi+16]	;out* += 4;
