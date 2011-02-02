@@ -28,7 +28,7 @@
 int main (int argc, char *argv[]) {
 	srand(time(NULL));
 	
-	int buf_size = 1024;
+	int buf_size = 4096;
 	
 	///////////////////////////////////////
 	//-------inicializar m dist----------//

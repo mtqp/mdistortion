@@ -9,7 +9,7 @@ void init_m_distortion(m_distortion * md){
 	printf("\nInit M_DISTORTION\n");
 
 	/////VOLUMEN////
-	md->_dvol  = 1.0;
+	md->_dvol  = 0.0;
 	md->_vctes = vol_new();
 
 	/////DISTORTIONS////

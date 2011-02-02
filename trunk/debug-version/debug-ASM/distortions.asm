@@ -178,7 +178,7 @@ ciclo_lrock:
 	call	[ecx]		;call 	delay_effect
 	pop		ebx
 	pop		eax			
-		;---->estas dos instrucciones si se sacan no pierdo nada cero
+		;---->estas dos instrucciones si se sacan no pierdo nada creo (fijarse! =D)
 	push 	eax			;salvo eax
 	asmLog
 	asmSin
@@ -656,7 +656,7 @@ ciclo_psyif1:
 	pop		ebx
 	pop		esi
 
-	push eax		;ESTOY CORTO DE REGISTROS ARREGLAR GOD DAMNINT!
+	push eax		;ESTOY CORTO DE REGISTROS --> repensarlo mas eficientemente, se puede?
 	asmLog
 	pop	 eax
 

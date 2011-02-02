@@ -1,7 +1,7 @@
 %include "m_macros.asm"
 
-	%define md_ptr 	[ebp-20]		;PORQUE!!?!?!?!?!?!?!?!?!?!?!?!?!
-	%define i 		[ebp-16]		;hiper WTF
+	%define md_ptr 	[ebp-20]		
+	%define i 		[ebp-16]		
 
 section .data
 	cte_dos: dd 2.0 
@@ -59,9 +59,11 @@ ciclo_hl:
 	ret
 	;convencion_C_fin
 ;////////////////////////////////////////
+
 dummy_func:
 	ret
 ;////////////////////////////////////////
+
 delay_func:	
 ;precondicion  		-->	xmm0 =  [smpi,smpi+1,smpi+2,smpi+3]
 ;post				--> xmm0 = delay([smpi,smpi+1,smpi+2,smpi+3]) 
@@ -110,6 +112,7 @@ fin_delay:
 	popad
 	ret
 ;////////////////////////////////////////
+
 ;precondicion 	--> xmm0 = [smpi,smpi+1,smpi+2,smpi+3]
 ;post			--> xmm0 = eq([smpi,smpi+1,smpi+2,smpi+3]) (bass,mid,treb)
 ;registros usados	--> xmm1,xmm2,xmm3,xmm4,xmm5,xmm6,xmm7
@@ -120,21 +123,13 @@ equalizer_func:
 	mov		esi,ebx
 	mov		ebx,[esi+12]
 
-;	push dword [ebx]
 	call 	eq_asm		;bass
-;	add 	esp,4
 
-;	add		ebx,4
-;	push dword [ebx]
 	mov		ebx,[esi+16]
 	call 	eq_asm		;treb
-;	add 	esp,4
 
-;	add 	ebx,4
-;	push dword [ebx]
 	mov		ebx,[esi+20]
 	call 	eq_asm		;mid
-;	add	 	esp,4
 
 	;pop		ebx
 	;ret
@@ -198,7 +193,6 @@ eq_asm:			;hay registros sin utilizarse, todavia se puede mejorar mas!
 		;pisable xmm4
 ;------
 ;------
-eqb:
 	movdqu	xmm3,[esi+16]	;xmm3 = [a1,a2,a3,a4]
 	mov		ebx,mask_eq
 	movdqu	xmm4,[ebx]		;xmm4 = [1,1,-1,-1]
@@ -224,7 +218,7 @@ eqb:
 	psrldq	xmm4,4			;xmm4 = [a0*smp2,0,0,0]
 	addps	xmm3,xmm4		;xmm3 = [eqsmp2,0,0,0]
 		;pisable xmm4
-shit:
+
 	movsd	xmm4,xmm0		;xmm4 = [eqsmp1,smp2,0,0]
 	psrldq	xmm4,4
 	movlhps xmm4,xmm3		;xmm4 = [smp,0,eqsmp2,0]
@@ -245,7 +239,6 @@ shit:
 		;pisable xmm4
 ;------	
 ;------
-eqc:
 	movdqu	xmm3,[esi+16]	;xmm3 = [a1,a2,a3,a4]
 	mov		ebx,mask_eq
 	movdqu	xmm4,[ebx]		;xmm4 = [1,1,-1,-1]
@@ -306,7 +299,6 @@ eqc:
 	por		xmm2,xmm4		;xmm2 = [x1''',x2''',y1''',y2''']
 ;------
 ;------
-eqd:
 	movdqu	xmm3,[esi+16]	;xmm3 = [a1,a2,a3,a4]
 	mov		ebx,mask_eq
 	movdqu	xmm4,[ebx]		;xmm4 = [1,1,-1,-1]
@@ -348,7 +340,6 @@ eqd:
 	
 	pslldq	xmm3,4			;xmm3 = [0,0,eqsmp3,0]
 
-fuck:
 	psrldq  xmm6,4
 	movhlps	xmm4,xmm6		;xmm4 = [smp3,0,0,0]
 	pxor	xmm7,xmm7

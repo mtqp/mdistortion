@@ -9,7 +9,7 @@ void init_m_effects(m_distortion* md){
 /////DELAY/////
 	md->_delay = delay_new(262144,8);
 /////HALL//////
-	md->_hall  = hall_new(1024,4);
+	md->_hall  = hall_new(4096,4);
 //////EQ//////
 	eq_new(md);
 	printf("M_EFFECTS initialized\n\n");
@@ -51,13 +51,6 @@ float delay_func(m_distortion *md, float smp, int i){
 		md->_delay->dl_bufs[j][md->_delay->dl_sub_i] = old_smp;
 	}
 	
-	for(j=bufs_active;j<md->_delay->dl_total_bufs;j++){
-		md->_delay->dl_bufs[j][md->_delay->dl_sub_i] = 0.0;	
-	}
-	//parche provisorio mandar cero (cambiar de 4 a 1 y de vuelta a 4)
-	//podria llegar a hacerse un memset... hay q ver si puedo mantener el real time y mejora la eficiencia
-	//para limpiar cuanod se cambia de velocidad tbm andaria un memset, pero no se si se justifica
-	
 	md->_delay->dl_sub_i++;
 	
 	if(md->_delay->dl_sub_i >= md->_delay->dl_speed){	
@@ -79,13 +72,6 @@ float hall_func(m_distortion *md, float smp, int i){
 		md->_hall->hll_bufs[j][i] = md->_hall->hll_coef*(save_smp/2);
 	}
 	return smp;
-}
-
-/*
-	TODAVIA ESTO NO HACE NADA.
-*/
-float volume_func(m_distortion *md, float smp, int i){
-	return 0.0;//no creo poder tenerla en una funcion sepada xq las ctes son diferentes... ahh claro sisisi si puedo, para eso tengo la struct ctes!
 }
 
 /*

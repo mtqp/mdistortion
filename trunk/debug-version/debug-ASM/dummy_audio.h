@@ -5,8 +5,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-/*typedef int    dummy_audio_size;
-typedef float* dummy_audio_buf;*/
 #define dummy_audio_size int
 #define dummy_audio_buf  float* 
 
