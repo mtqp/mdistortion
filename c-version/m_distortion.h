@@ -39,8 +39,6 @@ void free_m_distortion_and_effects(m_distortion *md);
 void distortionize(m_distortion *md, jack_default_audio_sample_t *out, jack_nframes_t nframes);
 void set_m_distortion( m_distortion * md, int distor);
 
-//extern volume_hell_sqr(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes);
-
 typedef void (DISTORTION)(jack_default_audio_sample_t *out, m_distortion *mdc, jack_nframes_t nframes);
 
 DISTORTION log_rock;
