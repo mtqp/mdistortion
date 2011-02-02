@@ -16,11 +16,10 @@ EFFECT hall_func;
 EFFECT volume_func;
 EFFECT dummy_func;
 
-EFFECT * f_effect[5];
+EFFECT * f_effect[4];
 EFFECT * equalizer_effect;
 EFFECT * delay_effect;
 EFFECT * hall_effect;
-EFFECT * volume_effect; //todavia volume no se usa para nada
 
 void init_m_effects(struct _m_distortion* md);
 void eq_new(struct _m_distortion* md);

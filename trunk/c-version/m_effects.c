@@ -51,12 +51,6 @@ float delay_func(m_distortion *md, float smp, int i){
 		md->_delay->dl_bufs[j][md->_delay->dl_sub_i] = old_smp;
 	}
 	
-	for(j=bufs_active;j<md->_delay->dl_total_bufs;j++){
-		md->_delay->dl_bufs[j][md->_delay->dl_sub_i] = 0.0;	
-	}
-	
-	//CUANDO CAMBIA de 4 a uno menor y vuelve mete basura... limpiando los arrays safas... hay q ver q otra forma hay
-	//parche provisorio mandar cero
 	md->_delay->dl_sub_i++;
 	if(md->_delay->dl_sub_i >= md->_delay->dl_speed){	
 		md->_delay->dl_sub_i = 0;
@@ -77,13 +71,6 @@ float hall_func(m_distortion *md, float smp, int i){
 		md->_hall->hll_bufs[j][i] = md->_hall->hll_coef*(save_smp/2);
 	}
 	return smp;
-}
-
-/*
-	TODAVIA ESTO NO HACE NADA.
-*/
-float volume_func(m_distortion *md, float smp, int i){
-	return 0.0;//no creo poder tenerla en una funcion sepada xq las ctes son diferentes... ahh claro sisisi si puedo, para eso tengo la struct ctes!
 }
 
 /*
